@@ -1,0 +1,7 @@
+diff a/src/environment/environment.js b/src/environment/environment.js	(rejected hunks)
+@@ -4,3 +4,2 @@ export default axios.create({
+-    baseURL: "http://localhost:3001/api/v1/"
+-})
+-
++  baseURL: "http://localhost:3001/api/v1/"
++});

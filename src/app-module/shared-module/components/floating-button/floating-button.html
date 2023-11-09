@@ -1,0 +1,33 @@
+<div v-if="showElement" class="floating-button-main-container">
+  <div id="floating-menu-container" v-touch:moving="touchMove" v-touch:start="touchStart" v-touch:end="touchEnd">
+    <div id="floating-menu-content-wrapper" style="display: none;">
+      <div class="practice-wt-wrapper-floating">
+        <div class="practice-walktrough-floating">
+          <h6>"Practice" is now available at Nearpeer!</h6>
+          <p>Create a custom quiz from the topic of your own choice and invite friends to compete with them Live! Try now. Guess what? It's free for everyone.</p>
+          <div class="d-flex">
+            <button class="btn-np " @click="floatingMenuClickToggle()">Cancel</button>
+            <button class="btn-contained" @click="goToPractice()">Go</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="floating-menu-logo" @click="floatingMenuClickToggle()">
+      <img
+        id="floting-button-image"
+        src="./../../../../assets/practice/info_black_24dp 1.svg"
+      />
+    </div>
+  </div>
+
+  <div
+    style="position: fixed;  bottom: 10px; width: 100%; left: 55%; transform: translateX(-50px);"
+    id="close-floting-element"
+    v-show="showDeleteArea"
+  >
+    <img
+      id="floting-button-image"
+      src="./../../../../assets/practice/cancel_black_24dp_new.svg"
+    />
+  </div>
+</div>

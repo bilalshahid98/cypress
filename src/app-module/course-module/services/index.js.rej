@@ -1,0 +1,5 @@
+diff a/src/app-module/course-module/services/index.js b/src/app-module/course-module/services/index.js	(rejected hunks)
+@@ -1 +1 @@
+-export * from './course-service.js';
+\ No newline at end of file
++export * from "./course-service.js";

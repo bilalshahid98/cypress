@@ -1,0 +1,51 @@
+<div class="pdf-container" id="pdf-container">
+  <div class="pdf-controls">
+    <div class="progress">
+      <div
+        class="progress-bar bg-color"
+        id="progress-bar"
+        role="progressbar"
+        :style="{ 'width': watchPercg +'%'}"
+        aria-valuenow="60"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      ></div>
+    </div>
+    <div class="pdf-controls-buttons">
+      <div class="page-controls">
+        <div class="page-controls-arrow zoom-icon" @click="zoomOut">-</div>
+        <div class="page-controls-arrow zoom-icon" @click="zoomIn">+</div>
+      </div>
+      <div class="page-controls">
+        <div class="page-controls-arrow" @click="showPrevPage"><</div>
+        <p class="page-controls-text">{{pageNum}} of {{totalPages}}</p>
+        <div class="page-controls-arrow" @click="showNextPage">></div>
+      </div>
+      <div>
+        <img
+          v-if="!isFullScreen"
+          @click.stop="fullScreen"
+          style="cursor: pointer;"
+          class="maximize"
+          src="../../../../assets/player-icons/fullscreen-white-18dp.svg"
+        />
+        <img
+          v-if="isFullScreen"
+          @click.stop="exitFulScreen()"
+          style="cursor: pointer;"
+          class="minimize"
+          src="../../../../assets/player-icons/fullscreen_exit-white-18dp.svg"
+        />
+      </div>
+    </div>
+  </div>
+  <div id="pdf-center" class="pdf-center">
+    <div class="pdf-loader" v-if="pdfLoading">
+      <img
+        class="loader-gif"
+        src="./../../../../assets/website_loading_animation.gif"
+      />
+    </div>
+    <canvas id="pdf-render"></canvas>
+  </div>
+</div>

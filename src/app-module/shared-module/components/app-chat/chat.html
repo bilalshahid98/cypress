@@ -1,0 +1,273 @@
+<div class="live-chat">
+    <div class="live-chat-video">
+      <div class="live-chat-video-wrapper" v-if="loaded">
+          <div id="meet" style="height: 100%;"></div>
+          <!-- <zoom-meeting @meetingEnd="zoomMeetingEnd()" v-if="session.url_type !== 'NEARPEER' && checkZoomLink(session.url)" :meetingNumber="zoomMeetingId" :userName="getUserName()" :role="is_instructor ? 1 : 0"></zoom-meeting> -->
+          <iframe id="live_session_iframe" v-if="session.url_type !== 'NEARPEER' && !checkZoomLink(session.url)" :src="session.url" allow="camera;microphone" frameborder="0"></iframe>
+          <div class="session-form" v-if="show_custom_form">
+            <session-custom-form @form-saved-event="handleFormSaveEvent('custom')" type="live_session_form" :form_name="session.custom_form?.form_name" :form_id="session.custom_form_id" :form_data="session.custom_form?.form_data ?? []" :is_mandatory="session.is_custom_form_mandatory" ref="customFormModal" />
+          </div>
+        </div>
+<!--    <video poster="http://content.bitsontherun.com/thumbs/bkaovAYt-320.jpg" autoplay="" loop="" width="480" height="270">-->
+<!--      <source src="http://content.bitsontherun.com/videos/bkaovAYt-52qL9xLP.mp4">-->
+<!--      <source src="http://content.bitsontherun.com/videos/bkaovAYt-27m5HpIu.webm">-->
+<!--      <p class="warning">Your browser does not support HTML5 video.</p>-->
+<!--    </video>-->
+      <div class="live-chat-detail">
+        <p class="ls-course font-family-bold">{{session.course?.name ? session.course.name : ""}}</p>
+        <div class="d-flex align-items-center">
+          <h5 class="ls-title font-family-bold text-truncate">{{ session.name }}</h5>
+            <span class="live-badge font-family-bold" v-if="session.status === 'STARTED'">&#9679; Live</span>
+        </div>
+        <!-- <h5 class="ls-title font-family-bold text-truncate">{{ session.name  }} <span class="live-badge font-family-bold" v-if="session.status === 'STARTED'">&#9679; Live</span></h5> -->
+        <div class="ls-desc">{{ session.description }}</div>
+        <div class="flex-view ls-professer-detail align-items-center">
+          <div class="ls-professer-avatar">
+              <img :src="session.instructor_pic" alt="Instructor Profile Picture">
+          </div>
+          <div class="professer-detail">
+              <div class="ls-professer-name font-family-bold">{{session.instructor_name}}</div>
+              <div class="ls-prols-professer-namefesser-exp">
+                  {{session.instructor_profile}}
+              </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div v-show="session.allow_chat" class="live-chat-wrapper storyComment">
+    <div class="live-chat-header font-family-bold">
+     <p>Live chat <span>({{chats.length}})</span></p>
+     <div class="live-user">{{session_user_count || 0}} Live Now</div>
+    </div>
+    <div class="live-chat-comments">
+      <div class="d-md-none">
+        <div class="live-chat-header-mobile font-family-bold">
+          <p>Live chat <span>({{chats.length}})</span></p>
+          <div class="live-user">{{session_user_count || 0}} Live Now</div>
+         </div>
+      </div>
+      <ul ref="chatContainer" class="live-chat-comments-wrapper">
+        <li v-for="chat in chats" :key="chat.id">
+          <div class="live-chat-user-avatar">
+              <img v-if="chat.user?.image" :src="chat.user?.image" alt="" />
+              <img v-if="!chat.user?.image" src="../../../../assets/Mask Group 29.svg" alt="" />
+          </div>
+          <div class="live-chat-comment">
+            <div class="live-chat-comment-card reply-line">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="live-chat-user-name font-family-bold">{{ chat.user?.full_name ?? "Guest User" }}</div>
+                  <div class="live-chat-user-time">
+                    <!-- {{ chat.comment_time }} -->
+                    {{ new Date(chat.comment_time).toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric", hour12: true }) }}
+                  </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                  <p class="flex-1">
+                    {{ chat.text }}
+                  </p>
+                  <div class="dropdown ml-3 d-none d-md-block">
+                    <div class="act-dot cursor" data-toggle="dropdown"><img class="cursor" src="../../../../assets/live-chat/dots.svg" class="dropdown-toggle"></div>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item" href="#" @click="openReportModal(chat.id)">Report</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="live-chat-action">
+                  <div class="live-chat-action-btn" :style="chat.selfLiked  ? {color: '#CE434E'} : {color: '#8A8A8A'}" @click="reactComment(chat)">
+                    <svg :id="`comment_like_svg_${chat.id}`" width="16" height="16" viewBox="0 0 16 16" :stroke="chat.selfLiked ? '#CE434E' : '#8A8A8A'" :fill="chat.selfLiked ? '#dedede' : 'none'" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5.04837 13.9999H3.21935C2.89596 13.9999 2.58581 13.8735 2.35714 13.6485C2.12847 13.4234 2 13.1182 2 12.7999V8.59996C2 8.2817 2.12847 7.97648 2.35714 7.75144C2.58581 7.52639 2.89596 7.39997 3.21935 7.39997H5.04837M9.31609 6.19997V3.79999C9.31609 3.3226 9.12339 2.86477 8.78038 2.5272C8.43737 2.18964 7.97215 2 7.48707 2L5.04837 7.39997V13.9999H11.9255C12.2196 14.0032 12.5049 13.9018 12.729 13.7143C12.9531 13.5269 13.1007 13.2661 13.1448 12.9799L13.9862 7.57996C14.0127 7.40798 14.0009 7.23238 13.9516 7.06532C13.9024 6.89826 13.8168 6.74375 13.7008 6.61248C13.5848 6.48121 13.4412 6.37633 13.2799 6.3051C13.1187 6.23388 12.9436 6.198 12.7668 6.19997H9.31609Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {{ (((chat || {}).reaction || {}).count || 0) }}
+                  </div>
+                  <div class="live-chat-action-btn" @click="liveChatReplyBtn(chat.id)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M14 10C14 10.3536 13.8595 10.6928 13.6095 10.9428C13.3594 11.1929 13.0203 11.3333 12.6667 11.3333H5.08088C4.81566 11.3333 4.56131 11.4387 4.37377 11.6262L2.85355 13.1464C2.53857 13.4614 2 13.2383 2 12.7929V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H12.6667C13.0203 2 13.3594 2.14048 13.6095 2.39052C13.8595 2.64057 14 2.97971 14 3.33333V10Z" stroke="#9D9D9D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Reply
+                  </div>
+                  <div class="live-chat-action-btn d-md-none" @click="openReportModal(chat.id)">
+                    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8.07092 2.00052L11 4.92908V9.07092L8.07092 12H3.92908L1 9.07092V4.92908L3.92908 2L8.07092 2.00052ZM5.3815 8.44315V9.47397H6.41232V8.44315H5.3815ZM5.3815 4.31986V7.41233H6.41232V4.31986H5.3815Z" fill="#B4B4B4"/>
+                      </svg>                      
+                    Report
+                  </div>
+                </div>
+            </div>
+            
+           <!-- <div class="live-chat-reply">
+             <span>02:23 pm</span>
+             <span><img src="../../../../assets/live-chat/comment-like.svg" alt="">Like</span>
+             <span><img src="../../../../assets/live-chat/write-comment.svg" alt=""> Reply</span>
+             <span>21 Replies</span>
+           </div> -->
+           <ul>
+             <li v-for="reply in chat.replies">
+               <div class="live-chat-user-avatar">
+                   <img v-if="reply.user?.image" :src="reply.user?.image" alt="" />
+                   <img v-if="!reply.user?.image" src="../../../../assets/Mask Group 29.svg" alt="" />
+               </div>
+               <div class="live-chat-comment">
+                  <div class="live-chat-comment-card">
+                    <div class="live-chat-user-name">{{ reply.user?.full_name ?? "Guest User" }}</div>
+                    <p>
+                        {{ reply.text }}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+             <div class="live-chat-comment-box reply" style="display: none;" :id="`reply_input_${chat.id}`" >
+                  <div class="flex-view">
+                      <div class="live-chat-user-avatar" v-if="instructor">
+                          <img v-if="instructor && instructor.image" :src="instructor.image" alt="" />
+                          <img v-else src="../../../../assets/Mask Group 29.svg" alt="" />
+                      </div>
+                      <div class="live-chat-user-avatar" v-else>
+                          <img v-if="user && user.image" :src="user.image" alt="" />
+                          <img v-else src="../../../../assets/Mask Group 29.svg" alt="" />
+                      </div>
+                    <div class="live-chat-comment-area">
+                      <textarea @keyup="replyInputValueChange(chat.id)" @keyup.enter="send_message_reply(chat.id)" :id="`reply_input_field_${chat.id}`" style="overflow:hidden" placeholder="Share your thoughts"></textarea>
+                      <div class="live-chat-comment-btn">
+                        <div v-if="user !== null">
+                            <button class="send-button" id="sendButtonReply" v-on:click="send_message_reply(chat.id)" >
+                              <svg :id="`reply_send_svg_${chat.id}`" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.01953 17.1445V21.396C9.01953 21.693 9.2102 21.9561 9.49253 22.0496C9.56311 22.0725 9.63553 22.0835 9.70703 22.0835C9.92153 22.0835 10.1287 21.9827 10.2607 21.803L12.7476 18.4187L9.01953 17.1445Z" />
+                                <path d="M22.7112 1.1275C22.5004 0.978081 22.2236 0.957915 21.9944 1.078L1.36946 11.8488C1.12562 11.9762 0.981707 12.2365 1.00187 12.5106C1.02296 12.7856 1.20537 13.0203 1.46479 13.1092L7.19852 15.069L19.4094 4.62824L9.96043 16.0123L19.5698 19.2967C19.6413 19.3205 19.7165 19.3334 19.7916 19.3334C19.9163 19.3334 20.0401 19.2994 20.1491 19.2334C20.3233 19.1271 20.4416 18.9484 20.4718 18.7476L22.9926 1.78933C23.0302 1.53266 22.9221 1.27783 22.7112 1.1275Z" />
+                              </svg> 
+                            </button>
+                        </div>
+                        <div v-else v-on:click="send_message_reply(chat.id)" class="font-family-bold cursor" style="color: #E03249;">Sign In</div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+        </li>
+        
+      </ul>
+    </div>
+
+    <div class="live-chat-comment-box">
+      <div class="flex-view align-items-center">
+        <div class="live-chat-user-avatar" v-if="instructor">
+            <img v-if="instructor && instructor.image" :src="instructor.image" alt="" />
+            <img v-else src="../../../../assets/Mask Group 29.svg" alt="" />
+        </div>
+        <div class="live-chat-user-avatar" v-else>
+            <img v-if="user && user.image" :src="user.image" alt="" />
+            <img v-else src="../../../../assets/Mask Group 29.svg" alt="" />
+        </div>
+        <div class="live-chat-comment-area">
+          <textarea v-model="message" @keyup.enter="send_message" id="storyCommentBox" style="overflow:hidden" placeholder="Share your thoughts"></textarea>
+          <div class="live-chat-comment-btn">
+<!--              <div class="image-upload">-->
+<!--                <label for="file-input">-->
+<!--                  <img src="../../../../assets/live-chat/file-upload.svg" width="15px" alt="">-->
+<!--                </label>-->
+<!--              -->
+<!--                <input id="file-input" type="file" />-->
+<!--              </div>-->
+            <div v-if="user !== null">
+
+                <button class="send-button" id="sendButton" v-on:click="send_message" >
+                  <svg v-bind:class="message.length ? 'filled' : 'empty'" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.01953 17.1445V21.396C9.01953 21.693 9.2102 21.9561 9.49253 22.0496C9.56311 22.0725 9.63553 22.0835 9.70703 22.0835C9.92153 22.0835 10.1287 21.9827 10.2607 21.803L12.7476 18.4187L9.01953 17.1445Z" />
+                    <path d="M22.7112 1.1275C22.5004 0.978081 22.2236 0.957915 21.9944 1.078L1.36946 11.8488C1.12562 11.9762 0.981707 12.2365 1.00187 12.5106C1.02296 12.7856 1.20537 13.0203 1.46479 13.1092L7.19852 15.069L19.4094 4.62824L9.96043 16.0123L19.5698 19.2967C19.6413 19.3205 19.7165 19.3334 19.7916 19.3334C19.9163 19.3334 20.0401 19.2994 20.1491 19.2334C20.3233 19.1271 20.4416 18.9484 20.4718 18.7476L22.9926 1.78933C23.0302 1.53266 22.9221 1.27783 22.7112 1.1275Z" />
+                  </svg> 
+                    <!-- <span class="send-icon" id="sendIconEmpty" v-if="!message.length">&#128172;</span>
+                    <span class="send-icon" id="sendIconFilled" v-if="message.length">&#128232;</span> -->
+                </button>
+<!--              <img src="../../../../assets/live-chat/send.svg" width="15px" alt="" v-on:click="send_message" >-->
+            </div>
+            <div v-else v-on:click="send_message" class="font-family-bold cursor" style="color: #E03249;">Sign In</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- <app-custon-form @form-saved-event="handleFormSaveEvent('custom')" v-if="show_custom_form" type="live_session_form" :form_id="session.custom_form_id" :form_data="session.custom_form?.form_data ?? []" :is_mandatory="session.is_custom_form_mandatory" ref="customFormModal"/> -->
+
+  <!-- Report comment Modal start -->
+
+  <div class="modal ls-modal backdrop" id="report_an_issue" tabindex="-1" aria-labelledby="report_an_issue_Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content ls-modal-content">
+        <div class="modal-header ls-modal-header">
+          <div>
+            <h5 class="modal-title font-family-bold" id="report_an_issue_Label">Report Chat</h5>
+            <p>You can report the live chat, if you feel something not good.</p>
+          </div>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <img src="../../../../assets/live-chat/close-icon.svg" alt="#" />
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="#" class="report-issue-form">
+              <label for="reportAnIssue">Please share your valuable feedback with us so that we can enhance your experience.</label>
+              <textarea autofocus class="form-control" id="reportAnIssue" placeholder="Max 250 Characters" required placeholder="Type here anything...."></textarea>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-np outlined button-height" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-np btn-contained hy button-height" @click="submitReport()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report comment Modal end -->
+
+  <div class="ls-modal feedback-bg" v-if="sessionFinished">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content ls-modal-content">
+        <div class="modal-header ls-modal-header">
+          <div>
+            <h5 class="modal-title font-family-bold" id="report_an_issue_Label">How’s your experience with Live Session?</h5>
+            <p>Please share your valuable feedback with us so that we can enhance our courses and provide a better learning experience</p>
+          </div>
+          <button type="button" class="close" @click="skipFeedback">
+            <img src="../../../../assets/live-chat/close-icon.svg" alt="#" />
+          </button>
+        </div>
+        <div class="modal-body feedback">
+          <div class="d-lg-flex mb-4">
+            <label class="mb-3">Rating</label>
+            <star-rating 
+              v-model="feedback.experience" 
+              :show-rating="false"
+              :star-size="30"
+            />
+          </div>
+          <form action="#" class="feedback-form d-lg-flex">
+              <label for="feedBack" class="mb-3">Your Feedback</label>
+              <textarea class="form-control" id="feedBack" placeholder="Type your feedback here..."></textarea>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-np outlined button-height" data-dismiss="modal" @click="skipFeedback">Skip</button>
+          <button type="button" class="btn-np btn-contained hy button-height" :disabled="disableBtn" v-bind:class="{ disabled: disableBtn }" @click="addFeedback">Submit Feedback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ls-modal feedback-bg" v-if="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content ls-modal-content">
+        <div class="modal-header ls-modal-header">
+          <div>
+            <h5 class="modal-title font-family-bold" id="report_an_issue_Label">Paid course live session</h5>
+            <p>You need to purchase this course in order to watch this live session</p>
+          </div>
+          <button type="button" class="close">
+            <img src="../../../../assets/live-chat/close-icon.svg" alt="#" />
+          </button>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn-np btn-contained hy button-height">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+.user-live ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.user-live li {
+  position: relative;
+  display: inline-block;
+}
+.user-live li:not(:last-child) {
+  margin-right: 5px;
+}
+.user-live-avatar {
+  width: 35px;
+  height: 35px;
+  border: 2px solid #E03249;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+.user-live-label {
+  color: #fff;
+  font-size: 11px;
+  padding: 2px;
+  line-height: 1;
+  background: #E03249;
+  border-radius: 1px;
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+}
+.user-live-other-label {
+  width: 35px;
+  height: 35px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+.user-live-other:hover .user-live-other-dd {
+  display: block;
+  animation: fade-in 0.8s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+.user-live-other-dd {
+  display: none;
+  padding: 10px;
+  background: #fff;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 220px;
+  max-height: 168px;
+  overflow-y: auto;
+  border: 1px solid #ececec;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.user-live-other-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ECECEC;
+}
+.user-live-other-item img {
+  width: 21px;
+  height: 21px;
+  margin-right: 14px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+.user-live-other-item p {
+  font-size: 9px;
+}
+
+@media only screen and (max-width: 600px) {
+  .user-live-avatar, .user-live-other-label {
+    width: 25px;
+    height: 25px;
+    font-size: 8px;
+  }
+  .user-live-label {
+    font-size: 8px;
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}/*# sourceMappingURL=practice-users.css.map */

@@ -1,0 +1,34 @@
+<div>
+  <div class="poppup-cp-new-overlay align-items-center" style="z-index: 118;">
+    <div class="poppup-cp-container">
+      <div class="email-poppup-cp-new">
+        <div class="security-popup">
+          <div class="security-popup-detail">
+            <form class="form-builder" id="fb-render"></form>
+            <div v-if="type == 'live_session_form' && !is_mandatory"
+              style="justify-content: right;
+            align-items: inherit;
+            display: flex;"
+            >
+              <button @click="saveFormData" class="btn-contained" style="
+    margin-right: 10px;
+">
+                Save
+              </button>
+                <button @click="closePopup" class="close-button">Close</button>
+            </div>
+            <div v-else
+              style="justify-content: center;
+            align-items: center;
+            display: flex;"
+            >
+              <button @click="saveFormData" class="btn-contained">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

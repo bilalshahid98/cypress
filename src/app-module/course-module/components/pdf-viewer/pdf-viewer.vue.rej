@@ -1,0 +1,76 @@
+diff a/src/app-module/course-module/components/vimeo-player/vimeo-player.vue b/src/app-module/course-module/components/vimeo-player/vimeo-player.vue	(rejected hunks)
+@@ -33 +33 @@ export default {
+-    "coursePurchased",
++    "coursePurchased"
+@@ -36 +36 @@ export default {
+-    "app-video-listing": videoListing,
++    "app-video-listing": videoListing
+@@ -39 +39 @@ export default {
+-    ClickOutside,
++    ClickOutside
+@@ -78 +78 @@ export default {
+-      isMobileOrTablet: isMobile || isTablet,
++      isMobileOrTablet: isMobile || isTablet
+@@ -241,2 +241,2 @@ export default {
+-        .then(function (volume) {})
+-        .catch(function (error) {
++        .then(function(volume) {})
++        .catch(function(error) {
+@@ -258,2 +258,2 @@ export default {
+-        .then(function (volume) {})
+-        .catch(function (error) {
++        .then(function(volume) {})
++        .catch(function(error) {
+@@ -363 +363 @@ export default {
+-          name: this.currentCourse.name,
++          name: this.currentCourse.name
+@@ -367 +367 @@ export default {
+-          name: this.selectedModule.name,
++          name: this.selectedModule.name
+@@ -371 +371 @@ export default {
+-          name: this.selectedChapter ? this.selectedChapter.name : null,
++          name: this.selectedChapter ? this.selectedChapter.name : null
+@@ -375 +375 @@ export default {
+-          name: this.selectedVideo.name,
++          name: this.selectedVideo.name
+@@ -380,2 +380,2 @@ export default {
+-          email: user.email,
+-        },
++          email: user.email
++        }
+@@ -418 +418 @@ export default {
+-        courseService.saveVideoStat(obj).then((res) => {});
++        courseService.saveVideoStat(obj).then(res => {});
+@@ -438 +438 @@ export default {
+-          vp_controls.forEach((c) => {
++          vp_controls.forEach(c => {
+@@ -470 +470 @@ export default {
+-        "December",
++        "December"
+@@ -482 +482 @@ export default {
+-        controls: false,
++        controls: false
+@@ -490 +490 @@ export default {
+-      this.video.on("loaded", async (data) => {
++      this.video.on("loaded", async data => {
+@@ -500 +500 @@ export default {
+-            buffered.forEach((buffer) => {
++            buffered.forEach(buffer => {
+@@ -509 +509 @@ export default {
+-      this.video.on("timeupdate", async (data) => {
++      this.video.on("timeupdate", async data => {
+@@ -530 +530 @@ export default {
+-        video.getEnded().then((isEnded) => {
++        video.getEnded().then(isEnded => {
+@@ -544 +544 @@ export default {
+-      this.video.on("play", (data) => {
++      this.video.on("play", data => {
+@@ -547 +547 @@ export default {
+-      this.video.on("pause", (data) => {
++      this.video.on("pause", data => {
+@@ -566 +566 @@ export default {
+-      this.videoPointers.forEach((point) => {
++      this.videoPointers.forEach(point => {
+@@ -684 +684 @@ export default {
+-    selectedVideo: async function (newVal, oldVal) {
++    selectedVideo: async function(newVal, oldVal) {

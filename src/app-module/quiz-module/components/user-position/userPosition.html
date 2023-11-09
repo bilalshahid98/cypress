@@ -1,0 +1,483 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+  <div class="flex-view" v-if="!loading">
+    <div class="flex-view" id="nav-bar">
+      <app-header />
+    </div>
+    <div id="main-body" class="right-side-responsive">
+      <div class="main-body-inner">
+        <!-- User Congratulations start -->
+
+        <div class="user-position-box" v-if="congratsBox">
+          <div class="user-congrats">
+            <h2>Congratulations</h2>
+            <p>
+              You Got <span>{{userPositionString}}</span> Position in This Quiz
+            </p>
+            <div v-if="userpositon < 4">
+              <img
+                class="congrats-img"
+                src="../../../../assets/user-position/animation for 1st 2nd 3rd.gif"
+                alt="#"
+              />
+            </div>
+            <div v-else>
+              <img
+                class="congrats-img"
+                src="../../../../assets/user-position/4th-10th-position-animation.gif"
+                alt="#"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- User Congratulations end -->
+
+        <!-- User positions start -->
+
+        <div class="user-position-box" v-if="!congratsBox && userpositon < 11">
+          <div class="counter-number-wrapper" v-if="!isIntervalCleared" >
+            <p title="Clicking here will stop the timer.">
+            <div class="counter-number" @click="clearTimer()" title="Clicking here will stop the timer.">
+              <div class="counter-close-icon"><img src="../../../../assets/user-position/stop-icon.svg" alt=""></div>
+              <p>{{counter}}</p>
+            </div>
+          </p>
+          </div>
+          <div class="row" style="justify-content: center;">
+            <div class="col-md-12 col-lg-5 text-center big-zindex" v-bind:class="top3.length > 1">
+              <div class="user-position-title">
+                <h3>Congratulations</h3>
+                <p>
+                  You Got <span> {{userPositionString}} </span> Position in This
+                  Quiz
+                </p>
+              </div>
+              <div class="user-position-profile position-animation">
+                <div
+                  class="user-position-avatar "
+                  :class="userpositon == 1 ? 'first' : userpositon == 2 ? 'second'  : userpositon == 3 ? 'third' : ''"
+                >
+                  <span class="user-position">{{userPositionString}}</span>
+                  <img
+                    :src="currentResult.user.image"
+                    alt="user avatar"
+                    v-if="currentResult.user.image"
+                  />
+                  <img
+                    src="../../../../assets/Mask Group 29.svg"
+                    v-else
+                    alt=""
+                  />
+                </div>
+                <div class="user-position-name">
+                  {{currentResult.user.full_name || currentResult.user.name ||
+                  currentResult.user.first_name}}
+                </div>
+                <div class="user-quiz-time">
+                  {{currentResult.correct_percentage}}%
+                  <img
+                    src="../../../../assets/user-position/clock-icon.png"
+                    alt="Clock icon"
+                  />
+                  {{formatTime(currentResult.time_spent)}}
+                </div>
+              </div>
+              <div class="user-certificate-button" v-if="userpositon <= 3">
+                <button class="btn-np outlined" @click="getCertificate(true)">Save your certificate</button>
+              </div>
+              <div class="social-share" v-if="userpositon <= 3">
+                <p>Or share with</p>
+                <ul class="social-icons">
+                  <li>
+                    <ShareNetwork
+                          network="facebook"
+                          title="Certificate"
+                          :description="currentShareTitle"
+                          :quote="currentShareTitle"
+                          :url="currentShareUrl"
+                        >
+                          <img
+                            src="../../../../assets/Facebook Icon.svg"
+                            class="icon-width"
+                          />
+                        </ShareNetwork>
+                        
+                  </li>
+                  <li>
+                    <ShareNetwork
+                          network="Twitter"
+                          :title="currentShareTitle"
+                          :description="currentShareTitle"
+                          :quote="currentShareTitle"
+                          :url="currentShareUrl"
+                          :twitter-user="Nearpeer"
+                        >
+                          <img
+                            src="../../../../assets/Twitter Icon.svg"
+                            class="ml-4 icon-width"
+                          />
+                        </ShareNetwork>
+                        
+                  </li>
+                  <li>
+                    <ShareNetwork
+                          network="WhatsApp"
+                          title="Certificate"
+                          :description="currentShareTitle"
+                          :quote="currentShareTitle"
+                          :url="currentShareUrl"
+                        >
+                          <img
+                            src="../../../../assets/WhatsApp Logo.svg"
+                            class="ml-4 icon-width"
+                          />
+                        </ShareNetwork>
+                  </li>
+                  <li>
+                    <ShareNetwork
+                          network="LinkedIn"
+                          
+                          :description="currentShareTitle"
+                          :quote="currentShareTitle"
+                          :url="currentShareUrl"
+                        >
+                          <img
+                            src="../../../../assets/linkedin icon.png"
+                            style="width: 36px"
+                            class="ml-4 icon-width"
+                          />
+                        </ShareNetwork>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-12 col-lg-7" v-if="results.length > 1">
+              <div class="other-user">
+                <h3 class="text-center">Other Performers</h3>
+                <div class="row mt-5 secondTothird justify-content-center">
+                  <div class="col-md-4 col-6" v-for="(result, index) in top3">
+                    <div class="other-position-profile">
+                      <div
+                        class="user-position-avatar"
+                        :class="{'first': result.rank == 1, 'second': result.rank == 2, 'third': result.rank == 3 }"
+                      >
+                        <span class="user-position">{{result.rank}}</span>
+                        <img
+                          :src="result.user.image"
+                          alt="user avatar"
+                          v-if="result.user.image"
+                        />
+                        <img
+                          src="../../../../assets/Mask Group 29.svg"
+                          v-else
+                          alt=""
+                        />
+                      </div>
+                      <div class="user-position-name">
+                        {{result.user.full_name}}
+                      </div>
+                      <div class="user-quiz-time">
+                        {{result.correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{formatTime(result.time_spent)}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row mt-5 justify-content-center fourTosix">
+                  <div class="col-6 col-md-3 mb-4" v-for="(result, index) in top4to6">
+                    <div class="other-position-profile">
+                      <div class="user-position-avatar">
+                        <img
+                          :src="result.user.image"
+                          alt="user avatar"
+                          v-if="result.user.image"
+                        />
+                        <img
+                          src="../../../../assets/Mask Group 29.svg"
+                          v-else
+                          alt=""
+                        />
+                      </div>
+                      <div class="user-position-name">
+                        {{result.rank}}. {{result.user.full_name}}
+                      </div>
+                      <div class="user-quiz-time">
+                        {{result.correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{formatTime(result.time_spent)}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2 mt-lg-5 sevenToten">
+                  <div
+                    class="col-6 col-md-3 mb-4 mb-md-0 mb-lg-0"
+                    v-for="(result, index) in top6to10"
+                  >
+                    <div class="other-position-profile">
+                      <div class="user-position-avatar">
+                        <img
+                          :src="result.user.image"
+                          alt="user avatar"
+                          v-if="result.user.image"
+                        />
+                        <img
+                          src="../../../../assets/Mask Group 29.svg"
+                          v-else
+                          alt=""
+                        />
+                      </div>
+                      <div class="user-position-name">
+                        {{result.rank}}. {{result.user.full_name}}
+                      </div>
+                      <div class="user-quiz-time">
+                        {{result.correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{formatTime(result.time_spent)}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+          <div class="row user-next-btn postion-next-btn">
+            <div
+              class="col d-flex justify-content-center justify-content-lg-end"
+            >
+              <button class="btn-contained" @click="proceeed()">Go to Result Page</button>
+            </div>
+          </div>
+          <!-- <div class="row mt-1">
+            <div
+              class="col d-flex justify-content-center justify-content-lg-end"
+            >
+              <button class="btn-contained" @click="proceeed()">Go to Result Page</button>
+            </div>
+          </div> -->
+        </div>
+
+        <!-- user position end -->
+
+        <!-- user position ten to fifty start -->
+
+        <div class="user-position-box" v-if="!congratsBox && userpositon > 10">
+          <div class="counter-number-wrapper" v-if="!isIntervalCleared">
+            <div class="counter-number"  @click="clearTimer()">
+              <div class="counter-close-icon"><img src="../../../../assets/user-position/stop-icon.svg" alt=""></div>
+              <span>{{counter}}</span>
+              <!-- <span class="num10">10</span>
+              <span class="num9">9</span>
+              <span class="num8">8</span>
+              <span class="num7">7</span>
+              <span class="num6">6</span>
+              <span class="num5">5</span>
+              <span class="num4">4</span>
+              <span class="num3">3</span>
+              <span class="num2">2</span>
+              <span class="num1">1</span> -->
+            </div>
+          </div>
+          <div class="user-congrats">
+            <h2>Congratulations</h2>
+            <p>
+              You Scored <span> {{userPositionString}}</span> Position in This
+              Exam
+            </p>
+          </div>
+          <div class="tenTofifty">
+            <div
+              class="d-md-block d-lg-flex justify-content-center align-items-center"
+            >
+              <div class="user-main-position">
+                <div class="text-center">
+                  <div class="user-position-profile">
+                    <div class="user-position-avatar">
+                      <img
+                        :src="currentResult.user.image"
+                        alt="user avatar"
+                        v-if="currentResult.user.image"
+                      />
+                      <img
+                        src="../../../../assets/Mask Group 29.svg"
+                        v-else
+                        alt=""
+                      />
+                    </div>
+                    <div class="user-position-name">
+                      {{userPositionString}}. {{currentResult.user.full_name}}
+                    </div>
+                    <div class="user-quiz-time">
+                      {{currentResult.correct_percentage}}%
+                      <img
+                        src="../../../../assets/user-position/clock-icon.png"
+                        alt="Clock icon"
+                      />
+                      {{formatTime(currentResult.time_spent)}}
+                    </div>
+                  </div>
+                  <div class="user-certificate-button" v-if="userpositon <= 3">
+                    <button class="btn-np outlined" @click="getCertificate(true)">Save your certificate</button>
+                  </div>
+                  <div class="social-share" v-if="userpositon <= 3">
+                    <p>Or share with</p>
+                    <ul class="social-icons">
+                      <li>
+                        <ShareNetwork
+                              network="facebook"
+                              title="Certificate"
+                              
+                              :description="currentShareTitle"
+                              :quote="currentShareTitle"
+                              :url="currentShareUrl"
+                            >
+                              <img
+                                src="../../../../assets/Facebook Icon.svg"
+                                class="icon-width"
+                              />
+                            </ShareNetwork>
+                            
+                      </li>
+                      <li>
+                        <ShareNetwork
+                              network="Twitter"
+                              
+                              :description="currentShareTitle"
+                              :quote="currentShareTitle"
+                              :url="currentShareUrl"
+                              :twitter-user="Nearpeer"
+                            >
+                              <img
+                                src="../../../../assets/Twitter Icon.svg"
+                                class="ml-4 icon-width"
+                              />
+                            </ShareNetwork>
+                            
+                      </li>
+                      <li>
+                        <ShareNetwork
+                              network="WhatsApp"
+                              
+                              :description="currentShareTitle"
+                              :quote="currentShareTitle"
+                              :url="currentShareUrl"
+                            >
+                              <img
+                                src="../../../../assets/WhatsApp Logo.svg"
+                                class="ml-4 icon-width"
+                              />
+                            </ShareNetwork>
+                      </li>
+                      <li>
+                        <ShareNetwork
+                              network="LinkedIn"
+                              
+                              :description="currentShareTitle"
+                              :quote="currentShareTitle"
+                              :url="currentShareUrl"
+                            >
+                              <img
+                                src="../../../../assets/linkedin icon.png"
+                                style="width: 36px"
+                                class="ml-4 icon-width"
+                              />
+                            </ShareNetwork>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+                <div class="row fourTosix justify-content-center">
+                  <div class="col-lg-2 col-md-4 col-6 my-3" v-for="(result) in leftRightMerged">
+                    <div class="other-position-profile">
+                      <div class="user-position-avatar">
+                        <img
+                          :src="result.user.image"
+                          alt="user avatar"
+                          v-if="result.user.image"
+                        />
+                        <img
+                          src="../../../../assets/Mask Group 29.svg"
+                          v-else
+                          alt=""
+                        />
+                      </div>
+                      <div class="user-position-name">
+                        {{result.rank}}. {{result.user.full_name.split(" ")[0]}}
+                      </div>
+                      <div class="user-quiz-time">
+                        {{result.correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{formatTime(result.time_spent)}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- <div class="user-sec-position">
+                <div class="d-flex fourTosix justify-content-center">
+                  <div class="" v-for="(result) in right50res">
+                    <div class="other-position-profile">
+                      <div class="user-position-avatar">
+                        <img
+                          :src="result.user.image"
+                          alt="user avatar"
+                          v-if="result.user.image"
+                        />
+                        <img
+                          src="../../../../assets/Mask Group 29.svg"
+                          v-else
+                          alt=""
+                        />
+                      </div>
+                      <div class="user-position-name">
+                        {{result.rank}}. {{result.user.full_name.split(" ")[0]}}
+                      </div>
+                      <div class="user-quiz-time">
+                        {{result.correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{formatTime(result.time_spent)}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+            
+          </div>
+          <div class="row user-next-btn postion-next-btn mt-4">
+            <div
+              class="col d-flex justify-content-center justify-content-lg-end"
+            >
+              <button class="btn-contained" @click="proceeed()">Go to Result Page</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- user position ten to fifty end -->
+      </div>
+    </div>
+  </div>
+</div>

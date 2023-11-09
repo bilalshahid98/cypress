@@ -1,0 +1,180 @@
+.bg-parent{
+  background-image: url(../../assets/wireframes/Welcome-Screen-BG.svg);
+  background-repeat: round;
+}
+.hundred-vh {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.h-parent {
+  max-width: 350px;
+  animation: one-second-animation 1s;
+}
+.img-parent {
+  max-width: 400px;
+  position: relative;
+}
+.img-parent-mob{
+  img{
+    width: 100%;
+    max-height: 200px;
+    animation: anime-scale 1s;
+  }
+}
+.graphic-without-characters {
+  width: 100%;
+  animation: anime-scale 1s;
+}
+.girl-behind-screen {
+  position: absolute;
+  height: 85px;
+  top: -83px;
+  left: 175px;
+  z-index: -1;
+  animation: anime-scale-girl-behind-screen 2s;
+}
+.girls-with-laptop {
+  position: absolute;
+  height: 140px;
+  left: 132px;
+  bottom: -8px;
+  animation: anime-scale-girl-with-laptop 1.5s;
+}
+.boy-holding-pencil {
+  position: absolute;
+  height: 250px;
+  left: -90px;
+  bottom: 0;
+  animation: anime-scale-boy-holding-pencil 2s;
+}
+.h-2{
+  text-transform: capitalize;
+  font-family: Basis Grotesque Pro Regular;
+}
+@media only screen and (min-width: 600px) {
+  .hundred-vh {
+    flex-wrap: wrap;
+  }
+  .break {
+    flex-basis: 100%;
+    height: 0;
+    margin-bottom: 5px;
+  }
+  .img-parent-mob{display: none;}
+}
+@media only screen and (max-width: 600px) {
+  .break{
+    display: none;
+  }
+  .bg-parent[data-v-4965dc13] {
+    background-image: url(../../assets/wireframes/Welcome-Screen-BG.svg);
+    background-repeat: no-repeat!important;
+  }
+  .h-2{
+    font-size: 40px;
+    text-align: center;
+  }
+  .english-btn{
+    font-size: large;
+  }
+  .hundred-vh {
+    padding: 0 20px;
+  }
+  .mb-5 {
+    margin-bottom: 1.5rem !important;
+  }
+  .h-parent {
+    h2 {
+      text-align: center;
+      font: normal normal 22px/27px Basis Grotesque Pro bold;
+    }
+  }
+  .btn-t {
+    display: flex;
+    justify-content: center;
+  }
+  .mt-4 {
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+  }
+  .o-1 {
+    order: 1;
+  }
+  .o-2 {
+    order: 2;
+  }
+  .o-4 {
+    order: 3;
+  }
+  .o-3 {
+    order: 4;
+  }
+  .img-parent{
+    display: none;
+  }
+}
+@keyframes anime-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes anime-scale-girl-behind-screen {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+    top: -35px;
+  }
+  33% {
+    opacity: 0;
+    transform: scale(0.5);
+    top: -35px;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    top: -83px;
+  }
+}
+@keyframes anime-scale-girl-with-laptop {
+  0% {
+    transform: scale(0);
+  }
+  33% {
+    transform: scale(0);
+  }
+  80% {
+    transform: scale(1.2);;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes anime-scale-boy-holding-pencil {
+  0% {
+    opacity: 0;
+    left: -110px;
+    bottom: 0;
+  }
+  50% {
+    opacity: 0;
+    left: -110px;
+    bottom: 0;
+    transform: rotate(0deg);
+  }
+  85% {
+    opacity: 1;
+    left: -90px;
+    bottom: 0;
+    transform: rotate(10deg);
+  }
+  100% {
+    opacity: 1;
+    left: -90px;
+    bottom: 0;
+  }
+}

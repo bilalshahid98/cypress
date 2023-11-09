@@ -1,0 +1,88 @@
+<div class="height-100p flex-view flex-direction-row">
+    <div id="nav-menu" class="side-menu">
+      <app-sidebar />
+    </div>
+    <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+    <div class="flex-view">
+        <div class="flex-view" id="nav-bar">
+            <app-header />
+        </div>
+        <div id="main-body" class="right-side-responsive">
+            <div  class="max-width top-div-com right-inner-width">
+                <div class="noti-main">
+                    <div class="noti-wrapper">
+                        <div class="noti-all">
+                            <div class="noti-all-title">
+                                <h3 class="single-page-title"><!--<a ng-click="goToState('All-Notification')" class="mobileback"><i class="fa fa-arrow-left" aria-hidden="true"></i></a> -->From Notifications</h3>
+                                <router-link to="/Notifications">
+                                    <a class="back-btn">
+                                        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-left" class="svg-inline--fa fa-angle-left fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512">
+                                        <path fill="currentColor" d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"></path>
+                                      </svg>
+                                      Go Back</a>
+                                </router-link>
+                            </div>
+                            <div class="noti-single">
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-8 mb-4 mb-md-4 mb-lg-0">
+                                        <div class="noti-single-image">
+                                            <img src="../../assets/single-image.png" alt="#">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4">
+                                        <div class="noti-single-detail">
+                                            <div class="noti-single-title">
+                                                <h3>20% Off AT MD-CAT</h3>
+                                                <p>limited time offer</p>
+                                            </div>
+                                            <div class="noti-single-desc">
+                                                its very limited time offer for medical students
+                                                if you want good marks in MD-Cat go and
+                                                avail this offer before its ends.
+                                            </div>
+                                            <div class="noti-single-course">
+                                                <ul>
+                                                    <li>1000+ Video Lectures</li>
+                                                    <li>50,000+ Practice Questions</li>
+                                                    <li>24/7 Access to the Instructor</li>
+                                                    <li>Past Papers with Solutions</li>
+                                                    <li> Full Length Papers</li>
+                                                    <li> Books and Notes</li>
+                                                </ul>
+                                                <button class="btn-np btn-contained" data-toggle="modal" data-target="#avail_offer" @click="openPopup">Avail Offer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="avail_offer" tabindex="-1" role="dialog" aria-labelledby="AvailOffer" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content avail_offer">
+        <div class="modal-body pb-0">
+            <h4>You are being redirected.</h4>
+            <p>You are being redirected to another page. Do you want to continue.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-np outlined flex-view justify-content-c" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-np btn-contained"><img src="../../assets/icon-prceed.svg" alt="#"> Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+  
+  
+  
+  

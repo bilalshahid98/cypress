@@ -1,0 +1,16 @@
+.main-body-inner {
+  max-width: 1244px;
+  width: 100%;
+  margin: 100px auto 40px;
+  padding: 0 30px;
+}
+@media (max-width: 1025px) {
+  .main-body-inner {
+    padding: 0 20px;
+  }
+}
+@media (max-width: 767px) {
+  .main-body-inner {
+    padding: 0 10px;
+  }
+}/*# sourceMappingURL=certificate.css.map */

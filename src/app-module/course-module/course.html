@@ -1,0 +1,22 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+  <div class="flex-view">
+    <div class="flex-view" id="nav-bar" v-if="!$store.state.notesIOSFullscreen">
+      <app-header />
+    </div>
+    <div id="main-body" class="right-side-responsive">
+      <app-verification @openSignupPopup="openSignupPopup" :banner="false" :phoneBanner="false" :signupPopUp="signupPopUp" :emailVerification="emailVerification"  :mergeAccount="mergeAccount" :guestUser="guestUser"/>
+      <app-login v-if="verificationNeeded" ref="loginModal"/>
+      <app-custon-form v-if="$store.state.showCustomForm" ref="customFormModal"/>
+      <app-merge  :mergeAccount="mergeAccount" v-if="verificationNeeded" :users="users"/>
+      <div id="course_router"               
+      :class="{'margin-div': verificationNeeded ||  $store.state.mdcatScore > 0}">
+  
+      <router-view />
+    </div>
+    </div>
+  </div>
+</div>

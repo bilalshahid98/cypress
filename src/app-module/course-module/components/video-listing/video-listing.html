@@ -1,0 +1,252 @@
+<div class="videoListing">
+  <div v-if="isPageLoading" class="website-loader">
+    <div>
+      <!-- <img src="../../../../assets/website_loading_animation.gif" /> -->
+    </div>
+  </div>
+
+  <div v-if="!isPageLoading" class="videoListing flex-view flex-direction-col">
+    <div class="module-head">
+      <div class="course-name-holder flex-view flex-direction-col justify-content-b"
+        v-click-outside="moduleListBoxClose">
+        <router-link :title="(currentCourse || {}).name"  v-bind:to="'/course/course-detail/'+currentCourse.index_url+'/'+currentCourse.id">
+          <div v-if="currentCourse" class="course-name body-2 ellipsis font-family-bold" :title="(currentCourse || {}).name">
+            {{(currentCourse || {}).name}}
+          </div>
+        </router-link>
+        <div class="flex-view flex-end flex-direction-row justify-content-b body-2 " @click="moduleListBoxHandler">
+          <p class="ellipsis" :title="($store.getters.getSelectedModule ||
+          {}).name">
+            <b>Module {{($store.getters.getSelectedModule || {}).module_no}}: </b>{{($store.getters.getSelectedModule ||
+            {}).name}}
+          </p>
+          <img class="down-cart" src="../../../../assets/Icon ionic-md-arrow-dropdown.svg" />
+        </div>
+        <div v-if="moduleListBox" class="module-list-box">
+          <label class="subtitle-1" v-if="(module.module_type.free || module.module_type.purchased || (coursePurchased || {}).purchased) && (!module.isComingSoon)"
+            @click="getSelectedModule(module)" v-for="(module , index) in allModules">
+            <b>Module {{index + 1}}: </b> {{module.name}} 11
+          </label>
+        </div>
+      </div>
+      <ul class="mt-4">
+        <li style="display: inline;">
+          <button id="all" class="filter-btn" v-bind:class="(!setVideosOnly && !setQuizzOnly && !setNotesOnly)?'filter-btn-active':''"
+            @click="filter(1)">
+            <p class="subtitle-1 text-transform-none">
+              All
+            </p>
+          </button>
+        </li>
+        <li style="display: inline;">
+          <button id="quizz-only" v-bind:class="(!setVideosOnly && setQuizzOnly && !setNotesOnly)?'filter-btn-active':''"
+            class="filter-btn" @click="filter(2)">
+            <p class="subtitle-1 text-transform-none">
+              Quizzes Only
+            </p>
+
+          </button>
+        </li>
+        <li style="display: inline;">
+          <button id="videos-only" v-bind:class="(setVideosOnly && !setQuizzOnly && !setNotesOnly)?'filter-btn-active':''"
+            class="filter-btn" @click="filter(3)">
+            <p class="subtitle-1 text-transform-none">
+              Videos Only
+            </p>
+
+          </button>
+        </li>
+        <li style="display: inline;">
+          <button id="quizz-only" v-bind:class="(!setVideosOnly && !setQuizzOnly && setNotesOnly)?'filter-btn-active':''"
+            class="filter-btn" @click="filter(4)">
+            <p class="subtitle-1 text-transform-none">
+              Notes Only
+            </p>
+
+          </button>
+        </li>
+      </ul>
+      <div class="line-border"></div>
+    </div>
+    <div class="filter-box" id="videoBody">
+      <div v-if="!isModuleLoading">
+        <div class="chapter-row" v-if="chapters.length != 0 && !(!quizzExists && !setQuizzOnly && setVideosOnly)">
+          <div v-if="ChaptersVideosListBox">
+            <div v-for="chapter in $store.getters.getChapters" class="flex-view flex-direction-row" :id="chapter.id">
+              <div class="flex-view flex-direction-col width-100" @click="videoBodyHandler(chapter.id)">
+                <div @click="getSelectedChapter(chapter)" class="flex-view chapter-box filter-box-item" v-if="chapter.type !== 'notes' && chapter.type !== 'quiz'">
+                  <p  class="body-2 font-family-bold ml-3">
+                    Chapter-{{chapter.name}}
+                  </p>
+                </div>
+                <div
+                  v-if="chapter.type == 'notes'"
+                  @click="getCurrentNotes(chapter, chapter)" class="flex-view flex-direction-row filter-box-item"
+                  :class="{ 'active' : $route.query.chapter == chapter.id }">
+                  <div class="video-unwatch m-3">
+                    <img src="../../../../assets/Notes-Download.svg"/>
+                  </div>
+                  <div class="flex-view flex-direction-col mt-2 ml-1">
+                    <p class="body-2">{{chapter.name}}</p>
+                  </div>
+                </div>
+  
+                <div
+                  v-if="($store.getters.getSelectedModule || {}).content.content == 'chapters' && chapter.chapter_no == (($store.getters || {}).getSelectedChapter || {}).chapter_no">
+                  <div v-for="video in $store.getters.getVideos" :class="{ 'active' : $route.params.videoId == video.id && !$route.query.notes }"
+                    >
+                    <div
+                      v-if="setVideosOnly && (selectedModule.content && video.type != 'quiz' && ((video.url_mpd && video.url_mpd != null && video.url_mpd != '') || (video.vss_id && video.vss_id != null && video.vss_id != '')))"
+                      @click="getCurrentVideo(video)" class="flex-view flex-direction-row filter-box-item">
+                      <div class="video-unwatch m-3">
+                        <img v-if="!((video || {}).trackData || {}).watched" id="uw1" src="../../../../assets/Play.svg" />
+                        <img v-if="!((video || {}).trackData || {}).watched" id="uw2"
+                          src="../../../../assets/Video-Icon.svg" />
+                        <img v-if="((video || {}).trackData || {}).watched" src="../../../../assets/icon-completed-video.svg"
+                          class="m-3" />
+                      </div>
+                      <div class="flex-view flex-direction-col mt-2 ml-1">
+                        <p class="body-2">{{video.name}}</p>
+                        <p class="test-grey subtitle-2" v-if="video.duration">
+                          {{video.duration? Math.round(video.duration/60): 0}} min
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      v-if="setNotesOnly && video.type == 'notes'"
+                      @click="getCurrentNotes(video, video)" class="flex-view flex-direction-row filter-box-item"
+                      :class="{ 'active' : $route.query.notes == video.id }">
+                      <div class="video-unwatch m-3">
+                        <img src="../../../../assets/Notes-Download.svg"/>
+                      </div>
+                      <div class="flex-view flex-direction-col mt-2 ml-1">
+                        <p class="body-2">{{video.name}}</p>
+                      </div>
+                    </div>
+
+                    <div v-if="video.type == 'quiz' && setQuizzOnly" @click="gotoQuiz(video)"
+                      class="flex-view flex-direction-row filter-box-item">
+                      <img
+                        v-if="video.quiz_type === 'daq'"
+                        class="m-3"
+                        src='../../../../assets/daq_icon.svg'
+                      />
+                      <img
+                        v-else
+                        class="m-3"
+                        src='../../../../assets/quiz_icon.svg'
+                      />
+                      <div class="flex-view flex-direction-col ml-1">
+                        <p>
+                          <span class="body-2">{{video.name}}</span>
+                        </p>
+                        <p class="test-grey subtitle-2" v-if="video.duration">
+                          {{video.duration != null ?
+                          Math.round(video.duration/60): 0}} min time limit
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- <p class="empty" v-if="!quizzExists && !setQuizzOnly && setVideosOnly">
+            There is no quiz exists.
+          </p>
+          <p class="empty"
+            v-if="($store.getters.getVideos.length == 0 || !$store.getters.getVideos) && !setVideosOnly && setQuizzOnly">
+            There is no video exists.
+          </p> -->
+        </div>
+        <p class="empty" v-if="!quizzExists && !setQuizzOnly && setVideosOnly && chapters.length > 0">
+          There are no quizzes!
+        </p>
+        <p class="empty"
+          v-if="($store.getters.getVideos.length == 0 || !$store.getters.getVideos) && !setVideosOnly && setQuizzOnly && chapters.length > 0">
+          There are no videos!
+        </p>
+        <div v-if="($store.getters.getSelectedModule || {}).content.content == 'videos'">
+          <div v-for="video in $store.getters.getVideos">
+            <div :class="{ 'active' : $route.params.videoId == video.id && !$route.query.notes }"
+              v-if="setVideosOnly && (selectedModule.content && video.type != 'notes' && video.type != 'quiz' && ((video.url_mpd && video.url_mpd != null && video.url_mpd != '') || (video.vss_id && video.vss_id != null && video.vss_id != '') ))"
+              @click="getCurrentVideo(video)" class="flex-view flex-direction-row filter-box-item">
+              <div class="video-unwatch m-3" v-if="!((video || {}).trackData || {}).watched">
+                <img id="uw1" src="../../../../assets/Play.svg" />
+                <img id="uw2" src="../../../../assets/Video-Icon.svg" />
+              </div>
+              <img class="m-3" v-if="((video || {}).trackData || {}).watched"
+                src="../../../../assets/icon-completed-video.svg" class="m-3" />
+              <div class="flex-view flex-direction-col">
+                <p class="body-2">{{video.name}}</p>
+                <p class="test-grey subtitle-2" v-if="video.duration">
+                  {{video.duration? Math.round(video.duration/60): 0}} min
+                </p>
+              </div>
+            </div>
+
+            <div
+              v-if="setNotesOnly && video.type == 'notes'"
+              @click="getCurrentNotes(video, video)" class="flex-view flex-direction-row filter-box-item"
+              :class="{ 'active' : $route.query.notes == video.id }">
+              <div class="video-unwatch m-3">
+                <img src="../../../../assets/Notes-Download.svg" />
+              </div>
+              
+              <div class="flex-view flex-direction-col mt-2 ml-1">
+                <p class="body-2">{{video.name}}</p>
+              </div>
+            </div>
+
+  
+            <div v-if="video.type == 'quiz' && setQuizzOnly" @click="gotoQuiz(video)" class="flex-view flex-direction-row filter-box-item">
+              <div class="video-unwatch m-3">
+                <img
+                  v-if="video.quiz_type === 'daq'"
+                  src='../../../../assets/daq_icon.svg'
+                />
+                <img
+                  v-else
+                  src='../../../../assets/quiz_icon.svg'
+                />
+              </div>
+              <div class="flex-view flex-direction-col">
+                <p>
+                  <span class="body-2">{{video.name}}</span>
+                </p>
+                <p class="test-grey subtitle-2" v-if="video.duration">
+                  {{video.duration != null ? Math.round(video.duration/60): 0}}
+                  min time limit
+                </p>
+              </div>
+  
+            </div>
+  
+          </div>
+          <p class="empty" v-if="!quizzExists && !setQuizzOnly && setVideosOnly && chapters.length == 0">
+            There are no quizzes!
+          </p>
+          <p class="empty" v-if="((videos && videos.length == 0) || !videos) && !setVideosOnly && setQuizzOnly && chapters.length == 0">
+            There are no videos.
+          </p>
+        </div>
+  
+        <!-- <p class="empty" v-if="!quizzExists && !setQuizzOnly && setVideosOnly && chapters.length == 0">
+          There is no quiz exists.
+        </p>
+        <p class="empty" v-if="(videos.length == 0 || !videos) && !setVideosOnly && setQuizzOnly && chapters.length == 0">
+          There is no video exists.
+        </p> -->
+      </div>
+      <div v-else class="loaderContainer">
+        <img class="loaderGif" src="./../../../../assets/website_loading_animation.gif" />
+      </div>
+      
+    </div>
+
+  </div>
+  <div class="feedback-bg" v-if="moduleListBox"></div>
+</div>
+</div>

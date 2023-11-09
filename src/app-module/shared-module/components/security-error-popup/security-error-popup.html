@@ -1,0 +1,160 @@
+<div v-if="$store.state.showSecurityError">
+  <!-- Mobile responsive detected -->
+  <div
+    class="poppup-cp-new-overlay align-items-center"
+    style="z-index: 116;"
+    v-if="$store.state.devToolOpened"
+  >
+    <div class="poppup-cp-container">
+      <div class="email-poppup-cp-new">
+        <div class="security-popup">
+          <!-- <span
+            class="closeBtn"
+            style="    margin: 10px;
+          "
+            @click="closeAccessPopup"
+          >
+            x
+          </span> -->
+          <div v-if="!isMobileOrTablet" class="security-popup-image">
+            <img src="./../../../../assets/warning-icon.svg" />
+          </div>
+          <div class="security-popup-detail">
+            <h4>
+              Alert!
+            </h4>
+            <p>
+              We don't support responsive view of <span>Web browser</span> at
+              Nearpeer. Please restart your browser to full windows.
+            </p>
+            <button @click="closeBrowser">
+              Restart your browser
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google chrome and App suggestion -->
+  <div
+    class="poppup-cp-new-overlay align-items-center"
+    style="z-index: 115;"
+    v-if="$store.state.unauthorizedBrowser"
+  >
+    <div class="poppup-cp-container">
+      <div class="email-poppup-cp-new">
+        <div class="security-popup">
+          <!-- <span
+            class="closeBtn"
+            style="    margin: 10px;
+          "
+            @click="closeAccessPopup"
+          >
+            x
+          </span> -->
+          <div v-if="!isMobileOrTablet" class="security-popup-image">
+            <img src="./../../../../assets/warning-icon.svg" />
+          </div>
+          <div class="security-popup-detail">
+            <h4>
+              Alert!
+            </h4>
+            <p>
+              Please download the Nearpeer <span>Mobile application</span> or
+              <span>Google Chrome</span> browser in order to continue.
+            </p>
+            <div class="security-popup-appbtn">
+              <button @click="downloadApp">
+                <img src="../../../../assets/playstore-icon.svg" alt="" />
+                Download Nearpeer App
+              </button>
+              <button @click="DownloadApp">
+                <img src="../../../../assets/google-icon.svg" alt="" />
+                Open chrome browser
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDM detected -->
+  <div
+    class="poppup-cp-new-overlay align-items-center"
+    style="z-index: 113;"
+    v-if="$store.state.unauthExtensionFound && $store.state.isAllowWebServing"
+  >
+    <div class="poppup-cp-container">
+      <div class="email-poppup-cp-new">
+        <div class="security-popup">
+          <!-- <span
+            class="closeBtn"
+            style="    margin: 10px;
+          "
+            @click="closeAccessPopup"
+          >
+            x
+          </span> -->
+          <div v-if="!isMobileOrTablet" class="security-popup-image mt-0">
+            <img src="./../../../../assets/firefox-icon.svg" />
+          </div>
+          <div class="security-popup-detail">
+            <h4>
+              Warning!!
+            </h4>
+            <p>
+              <span>IDM or other</span> similar video downloading extensions have been detected. Please disable such extensions to resume your video playback at Nearpeer.
+            </p>
+            <button @click="gotoExtensions">
+              Disable extensions
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nearpeer extension -->
+  <div
+    class="poppup-cp-new-overlay align-items-center"
+    style="z-index: 114;"
+    v-if="$store.state.npExtensionFound === 'NOT_INSTALLED' && $store.state.isAllowWebServing"
+  >
+    <div class="poppup-cp-container">
+      <div class="email-poppup-cp-new">
+        <div class="security-popup">
+          <!-- <span
+            class="closeBtn"
+            style="    margin: 10px;
+          "
+            @click="closeAccessPopup"
+          >
+            x
+          </span> -->
+          <div v-if="!isMobileOrTablet" class="security-popup-image mt-0">
+            <img src="./../../../../assets/np1-icon.svg" />
+          </div>
+          <div class="security-popup-detail">
+            <h4>
+              Nearpeer Extension
+            </h4>
+            <p>
+              For a faster and better streaming on your browser directly, please
+              download and install our new extension:
+            </p>
+            <div class="np-ext-buttons" style="display: flex; flex-direction: column;">
+              <button class="np-ext-button" @click="gotoNpExtensions">
+                Install Extension
+              </button>
+              <button @click="reloadPage" class="btn-outline-reload np-ext-button">
+                  Reload Once Done
+                </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

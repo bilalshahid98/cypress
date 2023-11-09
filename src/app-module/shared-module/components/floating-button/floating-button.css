@@ -1,0 +1,121 @@
+.floating-button-main-container {
+  display: none;
+}
+
+@media only screen and (max-width: 900px) {
+  .floating-button-main-container {
+    display: block;
+    position: relative;
+  }
+}
+.remove-floating-btn .floating-button-main-container {
+  display: none !important;
+}
+
+#floating-menu-container {
+  position: fixed;
+  z-index: 999998;
+  bottom: 160px;
+  right: 40px;
+  height: 50px;
+  width: 50px;
+}
+#floating-menu-container > #floating-menu-content-wrapper {
+  position: absolute;
+  bottom: 60px;
+  left: -230px;
+}
+#floating-menu-container > #floating-menu-content-wrapper > #floating-menu-content {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  border-radius: 90px;
+  background: #fff;
+  padding: 0 1px 0 2em;
+  height: auto;
+}
+#floating-menu-container > #floating-menu-content-wrapper > #floating-menu-content > #floating-menu-info-txt {
+  font-size: 1.2em;
+  margin: 0 25px;
+  font-weight: 700;
+}
+#floating-menu-container > #floating-menu-content-wrapper > #floating-menu-content > #floating-menu-info-txt > a#floating-menu-info-link {
+  display: block;
+  color: rgba(2, 31, 63, 0.6);
+  margin-top: 5px;
+}
+#floating-menu-container > #floating-menu-content-wrapper > #floating-menu-content > #floating-menu-logo {
+  margin-top: 4px;
+}
+
+#floating-menu-logo {
+  cursor: pointer;
+}
+
+#floting-button-image {
+  opacity: 0.7;
+  height: 50px;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0 0 20px grey;
+}
+
+#floating-menu-minimize-icon {
+  cursor: pointer;
+}
+
+.floating-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.parentElement {
+  position: relative;
+}
+
+.practice-walktrough-floating {
+  max-width: 300px;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--line-border);
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+.practice-walktrough-floating::before {
+  position: absolute;
+  bottom: -9px;
+  right: 10px;
+  content: "";
+  width: 0;
+  height: 0;
+  border: 0 solid transparent;
+  border-left-width: 10px;
+  border-right-width: 10px;
+  border-top: 10px solid #fff;
+}
+.practice-walktrough-floating h6 {
+  font-size: 14px;
+  font-weight: bold;
+}
+.practice-walktrough-floating p {
+  font-size: 14px;
+  margin: 10px 0;
+}
+.practice-walktrough-floating button {
+  min-width: 100px;
+  text-align: center;
+}
+.practice-walktrough-floating .btn-np {
+  margin-left: 0;
+}
+
+.practice-wt-wrapper-floating {
+  inset: 0 0 0 auto;
+}/*# sourceMappingURL=floating-button.css.map */

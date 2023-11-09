@@ -1,0 +1,122 @@
+// @import "https://raidboxes.de/fonts/roboto.css";
+$size: 45px;
+
+.floating-button-main-container {
+	display: none;
+}
+
+@media only screen and (max-width: 900px) {
+	.floating-button-main-container {
+		display: block;
+		position: relative;
+	}
+  }
+
+  .remove-floating-btn .floating-button-main-container {
+	display: none !important;
+  }
+
+#floating-menu-container {
+	position: fixed;
+	z-index: 999998;
+	bottom: 160px;
+	right: 40px;
+	height: 50px;
+	width: 50px;
+	> #floating-menu-content-wrapper {
+		position: absolute;
+		bottom: 60px;
+    	left: -230px;
+		> #floating-menu-content {
+			display: flex;
+			flex-wrap: nowrap;
+			align-items: center;
+			border-radius: $size *2;
+			background: #fff;
+			padding: 0 1px 0 2em;
+			height: auto;
+			> #floating-menu-info-txt {
+				font-size: 1.2em;
+				margin: 0 25px;
+				font-weight: 700;
+				> a#floating-menu-info-link {
+					display: block;
+					color: rgba(2, 31, 63, .6);
+				   margin-top: 5px;    
+				}
+			}
+			> #floating-menu-logo {
+				margin-top: 4px;
+			}
+		}
+	}
+}
+#floating-menu-logo {
+	cursor: pointer;
+}
+#floting-button-image {
+	opacity: 0.7;
+	height: 50px;
+	background: white;
+    border-radius: 30px;
+	box-shadow: 0 0 20px grey;
+}
+#floating-menu-minimize-icon {
+	cursor: pointer;
+}
+.floating-bottom-bar{
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	height: 100px;
+	background: rgba(0,0,0,0.4);
+}
+
+.parentElement{
+  position: relative;
+}
+
+.practice-walktrough-floating{
+	max-width: 300px;
+	padding: 15px;
+	background: #fff;
+	box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
+	border: 1px solid var(--line-border);
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+	&::before{
+	  position: absolute;
+	  bottom: -9px;
+	  right: 10px;
+	  content: '';
+	  width: 0;
+	  height: 0;
+	  border: 0 solid transparent;
+	  border-left-width: 10px;
+	  border-right-width: 10px;
+	  border-top: 10px solid #fff;
+	}
+	h6{
+	  font-size: 14px;
+	  font-weight: bold;
+	}
+	p{
+	  font-size: 14px;
+	  margin: 10px 0;
+  
+	}
+	button{
+	  min-width: 100px;
+	  text-align: center;
+	}
+	.btn-np{
+	  margin-left: 0;
+	}
+  }
+  .practice-wt-wrapper-floating{
+	inset: 0 0 0 auto;
+	// background: rgba(0,0,0,0.7);
+  }

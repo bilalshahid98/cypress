@@ -1,0 +1,3 @@
+diff a/src/app-module/router/app-routes.js b/src/app-module/router/app-routes.js	(rejected hunks)
+@@ -139 +138,0 @@ router.beforeEach(async (to, from, next) => {
+-      

@@ -1,0 +1,776 @@
+<div>
+  <div v-if="isPageLoading || $store.state.showSecurityError" class="website-loader flex-view flex-direction-row">
+    <div class="m-2 anima grow-1">
+      <img
+      src="../../../../assets/wireframes/Video Details and comment wireframes.svg"
+      />
+    </div>
+    <div class="break"></div>
+    <div class="m-2 anima">
+      <img src="../../../../assets/wireframes/Playlist Wireframes.svg" />
+    </div>
+  </div>
+  <div v-if="!isPageLoading && !$store.state.showSecurityError" :class="{ OFH: sideMenuOptions }">
+  
+    <div class="container_ ">
+      <div v-if="!$store.state.notesIOSFullscreen" class="breadcrumbs-mobile" style="margin-top: -65px; margin-bottom: -40px;"><bread-crumbs  :crumbs="crumbs" @selected="selected" ></bread-crumbs></div>
+      <!-- v-bind:class=" mobileView ? 'mobile-fix-class':''" -->
+      <div class="flex-view flex-direction-row-col">
+      <div
+        id="video-fixed"
+        class="flex-view flex-direction-col width-100"
+        v-bind:class="{'other-info-display': hideOtherInfo}"
+      >
+        <div
+          class="dots flex-view flex-direction-col align-items-center"
+          v-bind:class="mobileView && !daq ? 'mobile-fix-bar':''"
+        >
+        <div class="flex-view verification-banner align-items-center" style="width: 100%;" v-if="isRecomendationBanner">
+          <div class="flex-view justify-content-between" style="
+           flex-direction: column; align-items: center;width: 100%;">
+            <!-- max-width: 1160px; -->
+            <div class="flex-view align-items-center text-width">
+              <!-- <img src="./../../../../assets/Info hoverable.svg" style=" width: 20px;
+                  position: relative;
+                  right: 15px;
+              " title="PLease Verify Your Email" /> -->
+              <div class="flex-view flex-direction-col">
+                <p class="body-2 font-family-bold text-color banner-font">
+                  Would you recommend Nearpeer to your friends?
+                </p>
+      
+              </div>
+            </div>
+            <div class="flex-view align-items-center banner-buttons-recommendation">
+              <div class="chart-scale">
+                <button class="btn-scale btn-scale-desc-1" @click="saveRecommendation(0)">0</button>
+                <button class="btn-scale btn-scale-desc-1" @click="saveRecommendation(1)">1</button>
+                <button class="btn-scale btn-scale-desc-2" @click="saveRecommendation(2)">2</button>
+                <button class="btn-scale btn-scale-desc-3" @click="saveRecommendation(3)">3</button>
+                <button class="btn-scale btn-scale-desc-4" @click="saveRecommendation(4)">4</button>
+                <button class="btn-scale btn-scale-desc-5" @click="saveRecommendation(5)">5</button>
+                <button class="btn-scale btn-scale-desc-6" @click="saveRecommendation(6)">6</button>
+                <button class="btn-scale btn-scale-desc-7" @click="saveRecommendation(7)">7</button>
+                <button class="btn-scale btn-scale-desc-8" @click="saveRecommendation(8)">8</button>
+                <button class="btn-scale btn-scale-desc-9" @click="saveRecommendation(9)">9</button>
+                <button class="btn-scale btn-scale-desc-10" @click="saveRecommendation(10)">10</button>
+              </div>
+              <div class="recom-score-text-container ">
+                <p class="recom-score-text">Not At All</p>
+                <p class="recom-score-text">Very Much</p>
+              </div>
+            </div>
+          </div>
+        </div>
+          <!-- <div class="cont_breadcrumbs_1">
+            <ul>
+              <li>
+                <router-link
+                  class="t-d-tags subtitle-1"
+                  :title="(currentCourse || {}).name"
+                  to="/course/course-landing"
+                >
+                  <img
+                    src="./../../../../assets/breadcrumbs-home-icon.svg"
+                    class="mr-2"
+                  />Home</router-link
+                >
+              </li>
+              <li>
+                <router-link
+                  class="t-d-tags subtitle-1"
+                  :title="(selectedModule || {}).name"
+                  v-bind:to="{path: '/course/course-detail/'+selectedCourseIndex+'/'+(currentCourse || {}).id}"
+                >
+                  {{(currentCourse || {}).name}}
+                </router-link>
+              </li>
+              <li class="ellipsis">
+                <a class="ellipsis">{{(selectedModule || {}).name}}</a>
+              </li>
+            </ul>
+          </div> -->
+        </div>
+        <!-- v-bind:class=" mobileView ? 'mobile-fix-parent':''" -->
+        <div
+          id="video-parent"
+          :style="isRecomendationBanner ? {marginTop: totalHeight - 28+'px !important'} : {}" 
+          v-bind:class="{'mobile-fix-parent': mobileView && !daq ,'other-info-display': hideOtherInfo}"
+        >
+          <div
+            id="video-center"
+            :style="isRecomendationBanner ? {marginTop: totalHeight - 40 +'px !important'} : {}" 
+            v-bind:class=" mobileView ? 'mobile-fix-class':''"
+            v-if="!$route.query.notes && !daq && (selectedVideo.vss_id == null || selectedVideo.vss_id == undefined) || (selectedVideo && selectedVideo.isSoundBoosted && selectedVideo.vssurls)"
+          >
+            <app-videojs-player
+              @toVideoMain="getDataFromChildren"
+              :updateOdooProgress="updateOdooProgress" 
+              :currentCourse="currentCourse"
+              :selectedVideo="selectedVideo"
+              :selectedModule="selectedModule"
+              :selectedChapter="selectedChapter"
+              :selectedTrackModule="selectedTrackModule"
+              :coursePurchased="coursePurchased"
+              @showvideofeedback="showvideofeedback"
+              ref="videojs"
+            >
+            </app-videojs-player>
+          </div>
+          <div
+            id="video-center"
+            :style="isRecomendationBanner ? {marginTop: totalHeight - 40 +'px !important'} : {}" 
+            v-bind:class=" mobileView ? 'mobile-fix-class':''"
+            class="mb-5"
+            v-if="!$route.query.notes && selectedVideo.vss_id != null && this.selectedVideo.vss_id != undefined && !(selectedVideo && selectedVideo.isSoundBoosted && selectedVideo.vssurls) && !daq"
+          >
+            <app-vimeo-player
+              @toVideoMain="getDataFromChildren"
+              :updateOdooProgress="updateOdooProgress" 
+              :currentCourse="currentCourse"
+              :selectedVideo="selectedVideo"
+              :selectedModule="selectedModule"
+              :selectedChapter="selectedChapter"
+              :selectedTrackModule="selectedTrackModule"
+              :coursePurchased="coursePurchased"
+              @showvideofeedback="showvideofeedback"
+              ref="vimeojs"
+            >
+            </app-vimeo-player>
+          </div>
+
+          <div
+            id="video-center"
+            :style="isRecomendationBanner ? {marginTop: totalHeight - 40 +'px !important'} : {}" 
+            v-bind:class=" mobileView ? 'mobile-fix-class':''"
+            class="mb-5"
+            v-if="$route.query.notes && !daq"
+          >
+           <app-pdf-viewer
+            :selectedNotes="selectedNotes"
+            :currentCourse="currentCourse"
+            :selectedVideo="selectedVideo"
+            :selectedModule="selectedModule"
+            :selectedChapter="selectedChapter"
+            :selectedTrackModule="selectedTrackModule"
+          >
+          </app-pdf-viewer>
+          </div>
+          <div v-if="daq" v-bind:id=" mobileView ? '':'video-center'" :style="isRecomendationBanner ? {marginTop: totalHeight - 40 +'px !important'} : { marginTop: '70px'}"
+           class="mb-5">
+            <app-daq-quiz
+              @daqQuizLoaded="daqQuizLoaded"
+              @gotoNext="gotoNext"
+              @toggleVideoListing="toggleVideoListing"
+              @sendDaqEvent="sendDaqEvent"
+              :selectedNotes="selectedNotes"
+              :currentCourse="currentCourse"
+              :selectedVideo="selectedVideo"
+              :selectedModule="selectedModule"
+              :selectedChapter="selectedChapter"
+              :selectedTrackModule="selectedTrackModule"
+              :daqLeaveConfirmationPopup="daqLeaveConfirmationPopup">
+            </app-daq-quiz>
+          </div>
+          
+          <!-- <div
+          class="feedback-bg flex-view flex-direction-col justify-content-c"
+          style="z-index: 9999999999999;"
+          v-if="daqTimeUp"
+        >
+          <div class="wt-holder">
+            <div style="padding: 10px;">
+              <h5 class="font-family-bold">Report Issue with </h5>
+            </div>
+            <div class="justify-content-end flex-view flex-direction-row">
+              <button class="text-filled btn-np mr-2" @click="cancelReport()">
+                Cancel
+              </button>
+              <button class="btn-contained" @click="postReportVideo()">
+                Report
+              </button>
+            </div>
+          </div>
+        </div> -->
+          <!-- v-bind:class="hideOtherInfo ? 'other-info-display':''"  -->
+          <div
+            class="videos-options-panel"
+            v-bind:class="{'mobile-fix-text': mobileView ,'other-info-display': hideOtherInfo}"
+            v-if="!daq"
+          >
+            <div class="videos-title">
+              <h5>{{$route.query.notes ? (selectedNotes || {}).name : (selectedVideo || {}).name}}</h5>
+            </div>
+            <div
+              class="flex-view flex-direction-row"
+              v-click-outside="hideShareBox"
+              v-bind:class="reactApp ?'full-width':'gap-left'"
+            >
+              <div class="heart">
+                <!-- v-bind:class="reactApp ?'mob-view-app':''" -->
+                <div
+                  v-if="( userExistsInReaction || (((selectedVideo || {}).reaction || {}).count || 0) > 0 ) && !reactApp"
+                  class="heart"
+                  title="Like"
+                  v-bind:class="disableReact ?'disable-div':''"
+                  @click="userExistsInReaction? revertReactVideo(selectedVideo): reactVideo(selectedVideo)"
+                >
+                  <img
+                    v-if="userExistsInReaction"
+                    class="icon-size"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/Like-Selected-State.svg"
+                  />
+                  <img
+                    v-if="!userExistsInReaction"
+                    class="icon-size"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/Like-Normal-State.svg"
+                  />
+                  <label
+                    v-if="(((selectedVideo || {}).reaction || {}).count || 0) == 1"
+                    class="subtitle-2 mr-1 ml-1"
+                    >{{(((selectedVideo || {}).reaction || {}).count || 0) == 1
+                    ? (((selectedVideo || {}).reaction || {}).count || 0): ""}}
+                    Like</label
+                  >
+                  <label
+                    v-if="(((selectedVideo || {}).reaction || {}).count || 0) > 1"
+                    class="subtitle-2 mr-1 ml-1"
+                    >{{(((selectedVideo || {}).reaction || {}).count || 0) > 1 ?
+                    (((selectedVideo || {}).reaction || {}).count || 0): ""}}
+                    Likes</label
+                  >
+                </div>
+                <div
+                  v-if="( userExistsInReaction || (((selectedVideo || {}).reaction || {}).count || 0) ) > 0 && reactApp"
+                  class="heart mob-view-app"
+                  title="Like"
+                  v-bind:class="disableReact ?'disable-div':'' || reactApp ?'mob-view-app':''"
+                  @click="userExistsInReaction? revertReactVideo(selectedVideo): reactVideo(selectedVideo)"
+                >
+                  <img
+                    v-if="userExistsInReaction"
+                    class="icon-size"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/Like-Selected-State.svg"
+                  />
+                  <img
+                    v-if="!userExistsInReaction"
+                    class="icon-size"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/Like-Normal-State.svg"
+                  />
+                  <label
+                    v-if="(((selectedVideo || {}).reaction || {}).count || 0) == 1"
+                    class="subtitle-custom-2 mr-1 ml-1"
+                    >{{(((selectedVideo || {}).reaction || {}).count || 0) == 1
+                    ? (((selectedVideo || {}).reaction || {}).count || 0): ""}}
+                    Like</label
+                  >
+                  <label
+                    v-if="(((selectedVideo || {}).reaction || {}).count || 0) > 1"
+                    class="subtitle-custom-2 mr-1 ml-1"
+                    >{{(((selectedVideo || {}).reaction || {}).count || 0) > 1 ?
+                    (((selectedVideo || {}).reaction || {}).count || 0): ""}}
+                    Likes</label
+                  >
+                </div>
+
+                <div
+                  v-if="(!userExistsInReaction && selectedVideo.reaction == null || selectedVideo.reaction.users.length == 0 || (((selectedVideo || {}).reaction || {}).count || 0) == 0) && !reactApp"
+                  class="heart"
+                  @click="reactVideo(selectedVideo)"
+                  v-bind:class="disableReact ?'disable-div':'' || reactApp ?'mob-view-app':''"
+                >
+                  <img
+                    class="icon-size"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/Like-Normal-State.svg"
+                  />
+                  <label class="subtitle-custom-2 mr-1 ml-1">Like</label>
+                </div>
+
+                <div
+                  v-if="(!userExistsInReaction && selectedVideo.reaction == null || selectedVideo.reaction.users.length == 0 || (((selectedVideo || {}).reaction || {}).count || 0) == 0) && reactApp"
+                  class="heart mob-view-app"
+                  @click="reactVideo(selectedVideo)"
+                  v-bind:class="disableReact ?'disable-div':'' || reactApp ?'mob-view-app':''"
+                >
+                  <img
+                    class="icon-size"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/Like-Normal-State.svg"
+                  />
+                  <label class="subtitle-custom-2 mr-1 ml-1">Like</label>
+                </div>
+              </div>
+              <!-- <div
+                v-if="selectedVideo.reaction != null && selectedVideo.reaction.users.length == 0"
+                @click="reactVideo(selectedVideo)"
+                class="heart"
+              >
+                <img
+                  class="icon-size"
+                  src="../../../../assets/Like-Normal-State.svg"
+                />selectedVideo.description
+                (selectedVideo || {}).name
+                <label class="subtitle-2 mr-1 ml-1">Like</label>
+              </div> -->
+              <div
+                class="share_"
+                style="margin: 0 20px; position: relative;"
+                @click="showShareBox"
+                v-bind:class="reactApp ?'mob-view-app':''"
+              >
+                <img
+                  class="icon-size"
+                  v-bind:class="reactApp ?'app-icons':''"
+                  src="../../../../assets/Share-Normal.svg"
+                />
+                <label class="subtitle-custom-2 mr-1 ml-1" title="Share">Share</label>
+                <div style="width: 120px;" class="module-list-box" v-if="share">
+                  <ul class="ajax">
+                    <li>
+                      <ShareNetwork
+                        network="facebook"
+                        :url="currentUrlLMS"
+                        :title="(selectedVideo || {}).name"
+                        :description="customDescription"
+                        :quote="customDescription"
+                        hashtags="nearpeer,nearpeer.org"
+                      >
+                        <img src="../../../../assets/Facebook Icon.svg" />
+                      </ShareNetwork>
+                    </li>
+                    <li>
+                      <ShareNetwork
+                        network="Twitter"
+                        :url="currentUrlLMS"
+                        :title="customDescription"
+                        :description="customDescription"
+                        :quote="(selectedVideo || {}).name"
+                        hashtags="nearpeer,nearpeer.org"
+                      >
+                        <img src="../../../../assets/Twitter Icon.svg" />
+                      </ShareNetwork>
+                    </li>
+                    <li style="border-bottom: none;">
+                      <ShareNetwork
+                        network="WhatsApp"
+                        :url="currentUrlLMS"
+                        :title="(selectedVideo || {}).name"
+                        :description="customDescription"
+                        :quote="(selectedVideo || {}).name"
+                        hashtags="nearpeer,nearpeer.org"
+                      >
+                        <img src="../../../../assets/WhatsApp Logo.svg" />
+                      </ShareNetwork>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div v-bind:class="reactApp ?'mob-view-app':''">
+                <div>
+                  <img
+                    style="margin-right: 5px;margin-bottom: 3px;"
+                    src="../../../../assets/Download-Notes-Icon.svg"
+                    class="ellipsis"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    title="Download notes available with this lecture!"
+                    @click="zipAttachments()"
+                    v-if="selectedVideo.attachments && selectedVideo.attachments.length > 0"
+                  />
+                </div>
+                <div
+                  class="ellipsis"
+                  title="No lecture notes available with this lecture!"
+                  v-if="!(selectedVideo.attachments && selectedVideo.attachments.length > 0)"
+                >
+                  <img
+                    class="disabled-video-icon"
+                    style="margin-right: 5px;margin-bottom: 3px!important"
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/unavailable-notes.svg"
+                  />
+                </div>
+                <label v-if="reactApp" class="subtitle-custom-2">Notes</label>
+              </div>
+              <div v-if="reactApp" style="width: 85px;">
+                <div
+                  class="flex-view flex-direction-col justify-content-c align-items-center"
+                  v-if="downloadingStatus.downloadIcon && !downloadDisabled && !downloadingStatus.downloadingIcon && !downloadingStatus.downloadedIcon"
+     
+                  @click="downloadVideo()"
+                >
+                  <img
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/download.svg"
+                    class="ellipsis"
+                  />
+                  <label class="subtitle-custom-2">Download</label>
+                </div>
+                <div
+                class="flex-view flex-direction-col justify-content-c align-items-center"
+                v-if="downloadDisabled && !downloadingStatus.downloadedIcon"
+                @click="disabledDownload()"
+              >
+                <img
+                  v-bind:class="reactApp ?'app-icons':''"
+                  src="../../../../assets/disabled_download.svg"
+                  class="ellipsis"
+                />
+                <label class="subtitle-custom-2">Download</label>
+              </div>
+              <!-- v-if="downloadingStatus.downloadingIcon && !downloadingStatus.downloadedIcon && !downloadDisabled" -->
+                <div
+                  class="flex-view flex-direction-col justify-content-c align-items-center"
+                  v-if="downloadingStatus.downloadingIcon && !downloadingStatus.downloadedIcon && !downloadDisabled" 
+                            style="position: relative;"
+                >
+                  <img
+                    v-bind:class="reactApp ?'app-downloading-icon':''"
+                    src="../../../../assets/downloading-svg.svg"
+                    class="ellipsis"
+                  />
+                  <!-- @click="downloadVideo()" -->
+                  <div class="download-loader" ></div>
+                  <label class="subtitle-custom-2">Downloading</label>
+                </div>
+                <div
+                  class="flex-view flex-direction-col justify-content-c align-items-center"
+                  v-if="downloadingStatus.downloadedIcon"
+                >
+                  <img
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/downloaded-svg.svg"
+                    class="ellipsis"
+                  />
+                  <label class="subtitle-custom-2" style="color:black !important"
+                    >Downloaded</label
+                  >
+                </div>
+              </div>
+              <div v-if="reactApp">
+                <div class="flex-view flex-direction-col align-items-center">
+                  <img
+                    v-bind:class="reactApp ?'app-icons':''"
+                    src="../../../../assets/Icon - Report or Flag.svg"
+                    class="ellipsis"
+                    @click="reportVideo"
+                  />
+                  <label class="subtitle-custom-2">Report</label>
+                </div>
+              </div>
+
+              <div
+                class="moreOptions"
+                v-click-outside="hideOptionsBox"
+                v-if="!reactApp"
+              >
+                <img
+                  @click="showOptionsBox"
+                  style="width: 18px;"
+                  src="../../../../assets/Icon - View More.svg"
+                />
+                <div
+                  class="module-list-box"
+                  style="min-width: 210px;"
+                  v-if="moreOptions"
+                >
+                  <p
+                    class="drop-hover"
+                    v-if="currentCourse.whatsapp != null && currentCourse.whatsapp != undefined && currentCourse.whatsapp != '' && coursePurchased"
+                  >
+                    <a :href="currentCourse.whatsapp" target="_blank"
+                      >Join Virtual class room</a
+                    >
+                  </p>
+                  <p @click="reportVideo" class="drop-hover">
+                    <a href="#">
+                      Report {{$route.query.notes ? 'Notes' : 'Video'}}
+                    </a>
+                  </p>
+                  <!-- <p @click="getQuiz">
+                  PopUp Quiz
+                </p> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="comment-responsive display-web" v-if="!daq">
+            <app-comments
+              :currentCourse="currentCourse"
+              :selectedVideo="selectedVideo"
+              :selectedModule="selectedModule"
+              :selectedChapter="selectedChapter"
+            ></app-comments>
+          </div>
+        </div>
+      </div>
+     
+      <div
+        v-if="!daq"
+        class="flex-view flex-direction-col width-100 display-mob"
+        id="mobile-view-video-main"
+        v-bind:class="{'z-index-handle' :hideOtherInfo}"
+      >
+        <!-- 'mobile-fix-text' :hideOtherInfo  -->
+        <div id="video-parent">
+          <!-- class="comment-responsive" -->
+          <div>
+            <app-mobile-comments
+              :currentCourse="currentCourse"
+              :selectedVideo="selectedVideo"
+              :selectedModule="selectedModule"
+              :selectedChapter="selectedChapter"
+              :height="heightFinal"
+              @commentsClicked="handleCommentsPreview"
+              ref="mobileComments"
+            ></app-mobile-comments>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="showVideoListing"
+        class="responsive_container justify-content-b flex-view flex-direction-row-col mt-top"
+        v-bind:class=" hideOtherInfo ? 'other-info-display':''"
+        style="margin-bottom: 20px;"
+        :class="{ overFH: popUp == true, }"
+      >
+        <div class="listing-box" id="right-list">
+          <app-video-listing
+            :currentCourse="currentCourse"
+            :selectedVideo="selectedVideo"
+            :selectedCourseIndex="selectedCourseIndex"
+            :selectedModule="selectedModule"
+            :selectedChapter="selectedChapter"
+            :allModules="allModules"
+            @toVideoMain="getDataFromChildren"
+            @selectNotes="selectNotes"
+            @selectDaq="selectDaq"
+            @setCurrentModToVideoMain="getCurrentMod"
+            @selectedChapterInListing="getChapterFromListing"
+            :selectedTrackModule="selectedTrackModule"
+            :coursePurchased="coursePurchased"
+            @setModuleVideos="setModuleVideos"
+          ></app-video-listing>
+        </div>
+      </div>
+
+      <app-pop-up-quiz
+        v-if="popUp"
+        @closeClick="closePopupQuiz"
+        :isPopQuizSkippable="isPopQuizSkippable"
+        :session="session"
+        :user="user"
+      ></app-pop-up-quiz>
+
+      <div
+        class="feedback-bg flex-view flex-direction-col justify-content-c"
+        v-if="toReportVideo"
+        style="z-index: 9999999999999;"
+      >
+        <div class="wt-holder">
+          <div style="padding: 10px;">
+            <h5 class="font-family-bold">Report Issue with {{$route.query.notes ? 'Notes' : 'Video'}}</h5>
+            <ul class="report-list mt-3">
+              <li class="flex-view align-items-center" v-for="(report, index) in videoReports" v-if="!$route.query.notes">
+                <input
+                  @click="reports(report, $event)"
+                  type="checkbox"
+                />
+                <label class="body-2">{{report}}</label>
+              </li>
+              <li class="flex-view align-items-center" v-for="(report, index) in notesReports" v-if="$route.query.notes">
+                <input
+                  @click="reports(report, $event)"
+                  type="checkbox"
+                />
+                <label class="body-2">{{report}}</label>
+              </li>
+              <li class="flex-view flex-direction-col">
+                <div class="flex-view flex-direction-row align-items-center">
+                  <input @click="reportField = !reportField" type="checkbox" />
+                  <label class="body-2">Other</label>
+                </div>
+                <textarea
+                  v-if="reportField"
+                  v-model="reportVideoDesc"
+                  class="other-text"
+                  placeholder="Type issues here..."
+                ></textarea>
+              </li>
+            </ul>
+          </div>
+          <div class="justify-content-end flex-view flex-direction-row">
+            <button class="text-filled btn-np mr-2" @click="cancelReport()">
+              Cancel
+            </button>
+            <button class="btn-contained" @click="postReportVideo()">
+              Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="feedback-bg flex-view flex-direction-col justify-content-c vid-feed"
+        v-if="videoFinished"
+        style="overflow: auto;"
+      >
+        <div class="wt-holder flex-view flex-direction-col">
+          <div class="flex-view flex-direction-row">
+            <div class="user-experience-emoticons ux-div">
+              <div>
+                <p class="body-2 text-align-center font-family-bold">
+                  How was your experience with us today?
+                </p>
+              </div>
+              <div
+                class="flex-view flex-direction-row justify-content-b height-100 padding-div"
+              >
+                <div
+                  class="flex-view flex-direction-col justify-content-c align-items-center"
+                >
+                  <div
+                    class="experience-div"
+                    :class="{ 'activeE' : poor }"
+                    @click="userExperience('poor')"
+                  >
+                    <img class="img1" src="./../../../../assets/icon-bad.svg" />
+                    <img
+                      class="img2"
+                      src="./../../../../assets/icon-bad-hover.svg"
+                    />
+                  </div>
+                  <div>
+                    <p class="caption">Poor</p>
+                  </div>
+                </div>
+                <div
+                  class="flex-view flex-direction-col justify-content-c align-items-center"
+                >
+                  <div
+                    class="experience-div"
+                    :class="{ 'activeE' : average }"
+                    @click="userExperience('average')"
+                  >
+                    <img
+                      class="img1"
+                      src="./../../../../assets/icon-average.svg"
+                    />
+                    <img
+                      class="img2"
+                      src="./../../../../assets/icon-average-hover.svg"
+                    />
+                  </div>
+                  <div>
+                    <p class="caption">Average</p>
+                  </div>
+                </div>
+                <div
+                  class="flex-view flex-direction-col justify-content-c align-items-center"
+                >
+                  <div
+                    class="experience-div"
+                    :class="{ 'activeE' : good }"
+                    @click="userExperience('good')"
+                  >
+                    <img
+                      class="img1"
+                      src="./../../../../assets/icon-good.svg"
+                    />
+                    <img
+                      class="img2"
+                      src="./../../../../assets/icon-good-hover.svg"
+                    />
+                  </div>
+                  <div>
+                    <p class="caption">Good</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex-view flex-direction-col">
+            <div class="suggestion-box mt-2">
+              <div
+                class="flex-view flex-direction-row justify-content-b align-items-center"
+              >
+                <div>
+                  <p class="caption font-family-bold">
+                    Tell us how we can improve
+                  </p>
+                </div>
+                <div>
+                  <!-- <p class="caption">
+              Max 250 Characters
+            </p> -->
+                </div>
+              </div>
+              <div class="mt-3">
+                <textarea autofocus class="text-area" v-model="data.suggestion">
+                </textarea>
+              </div>
+            </div>
+          </div>
+          <div class="flex-view flex-direction-row justify-content-a">
+            <button class="btn-np text-filled" @click="skipFeedback">
+              Skip
+            </button>
+
+            <button class="btn-contained" :disabled="disableBtn" v-bind:class="{ disabled: disableBtn }" @click="addFeedback">
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="poppup-cp-new-overlay"
+        @click="navMenuShadowHandler"
+        v-if="navMenuShadow"
+      ></div>
+    </div>
+    </div>
+    <div
+      class="white-loader-bg flex-view justify-content-c align-items-center"
+      v-if="popQuizLoader"
+    >
+      <img
+        src="./../../../../assets/website_loading_animation.gif"
+        class="np-loader"
+      />
+    </div>
+    <app-access-denied-popup v-if="accessPopup" :isMobileOrTablet="isMobileOrTablet"></app-access-denied-popup>
+    
+    <div
+      class="feedback-bg flex-view flex-direction-col justify-content-c"
+      v-if="redirect"
+    >
+      <div class="dialog-holder">
+        <h5 class="font-family-bold">Course access denied</h5>
+        <p class="body-2 mt-3">
+          Seems like you don't have access to this course from the logged in account. Please purchase the course for access.
+        </p>
+        <div class="flex-view flex-directin-row-col justify-content-end">
+          <div class="mt-3 align-self-center">
+            <button class="btn-np text-filled mr-3" @click="redirectPage('cancel')">
+              Cancel
+            </button>
+          </div>
+          <div class="mt-3">
+            <button
+              class="btn-contained"
+              @click="redirectPage()"
+            >
+              <img src="./../../../../assets/Icon-external-link.svg" />
+              Proceed
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

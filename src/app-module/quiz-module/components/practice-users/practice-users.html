@@ -1,0 +1,19 @@
+<div class="user-live">
+  <ul style="position: relative;">
+    <div class="user-live-other">
+      <li v-for="(user, index) in firstThreeUsers">
+        <img class="user-live-avatar" :src="user.image ? user.image : 'https://storage.googleapis.com/nps3storage/nearpeer-imagees/default_user.png'" alt="#" />
+        <p class="user-live-label">live</p>
+      </li>
+      <li v-if="liveUsers.length > showUsersCount">
+        <div class="user-live-other-label">{{liveUsers.length - showUsersCount}}+</div>
+      </li>
+      <div class="user-live-other-dd">
+        <div v-for="(user, index) in liveUsers" class="user-live-other-item">
+          <img :src="user.image ? user.image : 'https://storage.googleapis.com/nps3storage/nearpeer-imagees/default_user.png'" alt="#" />
+          <p>{{user.full_name || user.name}}</p>
+        </div>
+      </div>
+    </div>
+  </ul>
+</div>

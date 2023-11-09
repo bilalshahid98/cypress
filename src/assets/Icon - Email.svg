@@ -1,0 +1,7 @@
+<svg id="Icon_Email" data-name="Icon / Email" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="Rectangle_2098" data-name="Rectangle 2098" fill="#e03249" stroke="#707070" stroke-width="1" opacity="0">
+    <rect width="24" height="24" stroke="none"/>
+    <rect x="0.5" y="0.5" width="23" height="23" fill="none"/>
+  </g>
+  <path id="Icon_material-email" data-name="Icon material-email" d="M21,6H5A2,2,0,0,0,3.01,8L3,20a2.006,2.006,0,0,0,2,2H21a2.006,2.006,0,0,0,2-2V8A2.006,2.006,0,0,0,21,6Zm0,4-8,5L5,10V8l8,5,8-5Z" transform="translate(-1 -2)" fill="#e03249"/>
+</svg>

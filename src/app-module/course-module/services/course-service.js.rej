@@ -1,0 +1,4 @@
+diff a/src/app-module/course-module/services/course-service.js b/src/app-module/course-module/services/course-service.js	(rejected hunks)
+@@ -5 +5 @@ class CourseService {
+-    return axios.get("courses/getStudentEnrolledCourses",{
++    return axios.get("courses/getStudentEnrolledCourses", {

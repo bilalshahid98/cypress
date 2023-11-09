@@ -1,0 +1,415 @@
+<!-- <div class="poppup-cp-container">v-if="session.quiz.is_skippable" isPopQuizSkippable -->
+
+<div class="poppup-cp-new-overlay align-items-center">
+  <div class="poppup-up-new">
+    <div v-if="screenNo == 1" class="height-100p flex-view flex-direction-col">
+      <span
+        class="closeButtonImage"
+        @click="closeHandler()"
+        v-if="!mustPass"
+        ><img
+          src="./../../../../assets/Icon-Close-black.svg"
+          class="cross-icon"
+      /></span>
+      <div class="flex-view align-items-center module-card-head-bg welcome-div">
+        <img
+          src="./../../../../assets/pop-quiz-intro-title.svg"
+          class="mr-5 ml-3 mb-3 top-image"
+        />
+        <h3>Pop Quiz!</h3>
+      </div>
+      <div
+        class="flex-direction-col flex-grow-1 flex-view justify-content-a max-width middle-div"
+      >
+        <div class="flex-view flex-direction-row">
+          <p class="body-2 paragraph">
+            Pop quizzes are designed to help you retain concepts while studying.
+            You are advised to watch the videos attentively to perform well in
+            pop quizzes. There will be two types of pop quizzes during lecture
+            videos:
+          </p>
+        </div>
+        <div
+          class="flex-view flex-direction-row-col justify-content-b justify-content-a align-self-center"
+        >
+          <div
+            class="flex-view flex-direction-col align-items-center center-div"
+          >
+            <img
+              src="./../../../../assets/regular-pop-quiz.svg"
+              class="image-size"
+            />
+            <p class="body-1 font-family-bold">Regular Pop Quiz</p>
+            <p class="body-2 text-align-center">
+              You can continue watching the rest of the lecture whether you pass
+              or fail in this quiz.
+            </p>
+          </div>
+          <div
+            class="flex-view flex-direction-col align-items-center center-div"
+          >
+            <img
+              src="./../../../../assets/must-pass-pop-quiz.svg"
+              class="image-size"
+            />
+
+            <p class="body-1 font-family-bold">Must Pass Pop Quiz</p>
+            <p class="body-2 text-align-center">
+              You must pass in this quiz in order to continue watching the
+              lecture.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="line-border"></div>
+      <div
+        class="flex-view justify-content-b flex-direction-row-col bottom-div align-items-center"
+      >
+        <div>
+          <label class="body-2 paragraph text-align-center"
+            >You are about to begin a <b v-if="!mustPass">Regular Pop Quiz</b
+            ><b v-if="mustPass">Must Pass Quiz</b></label
+          >
+        </div>
+        <div class="mt-2">
+          <button @click="screenNo = 2" class="btn-contained showText">
+            <label class="overline paragraph goodLuckText mr-3"
+              >Good Luck!</label
+            >
+            Start Quiz
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="flex-view flex-direction-col responsive-div justify-content-b height-100p"
+      v-if="screenNo == 2"
+    >
+      <span 
+      class="closeButtonImage"
+       @click="closeHandler()"
+       v-if="!mustPass"
+        ><img
+        src="./../../../../assets/Icon-Close-black.svg"
+        class="cross-icon"
+    /></span
+      >
+      <div class="flex-view justify-content-b flex-direction-col question-div">
+        <div
+          class="flex-view flex-direction-row align-items-center headingText justify-content-b"
+        >
+          <div>
+            <p class="overline" v-if="!mustPass">regular pop quiz</p>
+            <p class="overline" v-if="mustPass">must pass pop quiz</p>
+          </div>
+          <div>
+            <button @click="rewatchVideo()" class="text-filled btn-np flex-view">
+             <img src="./../../../../assets/Icon material-replay.svg" class="mr-2"> REWATCH VIDEO
+            </button>
+          </div>
+        </div>
+        <div
+          class="flex-view flex-direction-row-col justify-content-b min-height headingText flex-wrap mt-3"
+        >
+          <div class="flex-view flex-direction-col">
+            <p class="subtitle-1 font-family-bold">Question {{index+1}} of {{questions.length}}</p>
+            <div
+              class="flex-view overflow-auto mt-3"
+              v-if="question.question_and_equation"
+            >
+              <p class="body-2" style="max-width: 320px;">
+                <span class="maths-text-area" :id="`${index}-equation`"
+                  >{{mathCreator(question,`${index}-equation`,question.question_and_equation)}}</span
+                >
+              </p>
+            </div>
+            <div class="overflow-auto mt-3"  v-else>
+              
+              <p
+                v-if="question.equation"
+                class="body-2"
+                style="overflow: scroll;max-width: 320px;"
+              >
+              <p class="body-2" style="overflow: scroll;">
+                {{question.question}}
+              </p>
+                <span class="maths-text-area" :id="`${index}-equation`"
+                  >{{mathCreator(question,`${index}-equation`,
+                  question.equation)}}</span
+                >
+              </p>
+              <div v-else>
+                <div
+                  v-if="isHTML(question.question)"
+                  v-html="span(question.question)"
+                ></div>
+                <p v-else class="body-2" style="overflow: scroll;">
+                  {{question.question}}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <img
+            v-if="question.image_url"
+            v-bind:class="{ image: question.image_url }"
+            :src="question.image_url"
+            @error="imgPlaceholder"
+          />
+        </div>
+      </div>
+      <div class="options-div-p">
+        <div
+          class="flex-grow-1 options-div flex-view justify-content-b flex-direction-row-col flex-wrap"
+        >
+          <div
+            class="option flex-view flex-direction-col"
+            :class="{'option-selected' : option.is_selected===true}"
+            v-for="(option,indx) in question.options"
+            v-if="option.option || option.equation"
+            @click="markTrue(indx)"
+          >
+          <div class="flex-view flex-direction-row">
+            <button
+              v-if="quiz"
+              class="option-number"
+              :class="{'option-yes' : option.is_selected===true}"
+            >
+              {{alphabets[indx]}}
+            </button>
+            <div class="flex-view flex-grow-1 flex-direction-col justify-content-c" style="padding: 15px 0px;">
+              <div v-if="option.equation">
+                <p class="options option-length">
+                  <p class="options option-length">{{option.option}}</p>
+                  <br>
+                  <span class="maths-text-area" :id="`${indx}-option-equation`"
+                    >{{mathCreator(question,`${indx}-option-equation`,option.equation)}}</span
+                  >
+                </p>
+              </div>
+              <div v-else>
+                <p class="options option-length">{{option.option}}</p>
+              </div>
+            </div>
+          </div>
+            <div class="flex-view align-self-center">
+              <img
+                v-if="option.image_url"
+                :src="option.image_url"
+                @error="imgPlaceholder"
+                class="opt-image-padding"
+                v-bind:class="{ image: option.image_url }"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex-view align-items-center justify-content-b flex-direction-row-col lower-div"
+        >
+          <div class="pagination-width mt-3">
+            <base-pagination
+              :page-count="questions.length"
+              v-model="currentPage"
+              ref="paginationss"
+            ></base-pagination>
+          </div>
+          <div class="flex-view flex-direction-row mt-3">
+            <button
+              @click="goToQuestion(index-1, 'prev')"
+              v-if="index !== 0"
+              class="text-filled btn-np mr-3 "
+            >
+              Previous
+            </button>
+
+            <button
+              @click="goToQuestion(index+1, 'next')"
+              v-bind:class="question.checked ? 'btn-contained' : 'btn-np disabled'"
+              :disabled="!question.checked"
+              v-if="index+1 !== questions.length"
+            >
+              Next
+            </button>
+
+            <button
+              @click="submitQuiz"
+              v-if="index+1 === questions.length"
+              v-bind:class="isSubmitable() && question.checked?'btn-contained':'btn-np disabled'"
+              :disabled="!isSubmitable() && !question.checked"
+            >
+              Finish
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- "MUST PASS" QUIZ IN CASE HE/SHE PASSED -->
+    <div class="flex-view height-100p flex-direction-col" v-if="screenNo == 3">
+      <span 
+      class="closeButtonImage"
+       @click="closeHandler()"
+       v-if="!mustPass"
+        ><img
+        src="./../../../../assets/Icon-Close-black.svg"
+        class="cross-icon"
+    /></span
+      >
+      <div class="padding-20-40 m-3">
+        <h3 
+        v-if="mustPass"
+        class="mt-3"
+        v-bind:class="{ 'font-green': greenColor,'font-red': redColor}"
+        >
+          Great Job! You Passed. 
+        </h3>
+        <p class="body-2" v-if="mustPass">
+          
+          {{ result.passedQuestions == result.totalQuestions ? 'You got all questions correct' : `You got ${result.passedQuestions} out of ${result.totalQuestions}  Questions Correct. Let's Review the Questions.`}}
+         
+        </p>
+        <h3 v-if="!mustPass"
+        v-bind:class="{ 'font-green': greenColor,'font-red': redColor}">
+          You got {{result.passedQuestions}} out of {{result.totalQuestions}}
+          Questions Correct. Let's Review the Questions.
+        </h3>
+      </div>
+      <div
+        class="flex-view flex-direction-row-col align-items-center justify-content-b padding-20-40 m-3"
+      >
+        <h3 class="mb-3">Review Questions</h3>
+        <div>
+          <button class="text-filled btn-np ml-4" @click="rewatchVideo()">
+            REWATCH VIDEO
+          </button>
+          <button class="btn-contained mr-4 ml-4" @click="closeHandler(true)" style="    margin-right: 40px;
+          ">
+            Continue
+          </button>
+        </div>
+      </div>
+      <div class="flex-view justify-content-b flex-direction-row padding-20-40">
+        <div class="padding-right-4">
+          <button
+            @click="goToQuestion(index-1)"
+            class="text-filled"
+            :disabled="index == 0"
+          >
+            <img
+              src="./../../../../assets/arrowleft.svg"
+              class="left-right-icons"
+            />
+          </button>
+        </div>
+        <div class="flex-view flex-direction-row max-div-center">
+          <app-single-question-stat
+            :questionNo="index + 1"
+            :question="question"
+            :toThePoint="true"
+            :totalAttempts="result.totalAttempts"
+          ></app-single-question-stat>
+        </div>
+        <div class="padding-left-4">
+          <button
+            @click="goToQuestion(index+1)"
+            class="text-filled"
+            v-if="index+1 !== questions.length"
+          >
+            <img
+              src="./../../../../assets/arrowright.svg"
+              class="left-right-icons"
+            />
+          </button>
+        </div>
+      </div>
+      <div
+        class="padding-20-40 flex-view flex-direction-row justify-content-end"
+      >
+  
+      </div>
+    </div>
+    <!-- "MUST PASS" QUIZ IN CASE HE/SHE FAILED -->
+    <div class="flex-view height-100p flex-direction-col" v-if="screenNo == 4">
+      <span 
+      class="closeButtonImage"
+       @click="closeHandler"
+       v-if="!mustPass"
+        ><img
+        src="./../../../../assets/Icon-Close-black.svg"
+        class="cross-icon"
+    /></span
+      >
+      <div
+        class="padding-20-40 flex-view flex-direction-row-col"
+        style="padding-top: 40px;"
+      >
+        <div class="flex-view flex-direction-col m-3">
+          <h3 v-bind:class="{ 'font-green': greenColor,'font-red': redColor}">
+            Oops! You got only {{result.obtained_marks}} out of
+            {{result.total_marks}} Questions Correct.
+          </h3>
+          <p class="body-2" v-if="mustPass">
+            This is a must pass quiz. You must score at least
+            {{quiz.passing_percentage}}% to continue watching the lecture.
+          </p>
+        </div>
+        <div class="flex-view">
+          <img src="./../../../../assets/graphic-poor-result-sad-guy.svg" />
+        </div>
+      </div>
+
+      <div
+        class="flex-view flex-direction-row justify-content-c"
+        style="padding: 10px 0px;"
+      >
+        <img
+          src="./../../../../assets/pop-result-encouragement.svg"
+          class="fail-image"
+        />
+      </div>
+      <div class="flex-view flex-direction-row justify-content-c padding-20-40">
+        <button class="text-filled btn-np" @click="reattempt()">
+          REATTEMPT QUIZ
+        </button>
+        <button class="btn-contained" @click="rewatchVideo()">
+          REWATCH VIDEO
+        </button>
+      </div>
+    </div>
+    <div class="flex-view height-100p flex-direction-col" v-if="screenNo == 5">
+      <span 
+      class="closeButtonImage"
+       @click="closeHandler()"
+       v-if="!mustPass"
+        ><img
+        src="./../../../../assets/Icon-Close-black.svg"
+        class="cross-icon"
+    /></span
+      >
+      <div class="padding-20-40 flex-direction-col flex-view height-100p">
+        <div>
+          <h3 class="mt-5">
+            Ooops, Something went wrong!
+          </h3>
+        </div>
+        <div class="flex-view justify-content-c align-items-center height-100p">
+          <p class="body-2">
+            <img src="./../../../../assets/quiz-guidelines1.svg" />
+          </p>
+        </div>
+        <div class="flex-view justify-content-c align-items-center">
+          <button class="btn-contained" @click="screenNo = 1">Retry</button>
+        </div>
+      </div>
+    </div>
+    <div
+  class="white-loader-bg flex-view justify-content-c  height-100p align-items-center"
+  v-if="loader"
+>
+  <img src="./../../../../assets/website_loading_animation.gif" class="np-loader"/>
+</div>
+
+  </div>
+</div>
+
+<!-- </div> -->

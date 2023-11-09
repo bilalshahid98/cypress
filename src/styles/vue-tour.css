@@ -1,0 +1,160 @@
+body.v-tour--active {
+  pointer-events: none;
+}
+
+.v-tour {
+  pointer-events: auto;
+}
+
+.v-tour__target--highlighted {
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  z-index: 9999;
+}
+
+.v-tour__target--relative {
+  position: relative;
+}
+
+.v-step {
+  background: white;
+  color: rgba(0, 0, 0, 0.7607843137);
+  max-width: 250px;
+  border-radius: 6px;
+  animation: one-second-animation 0.5s;
+  transition-duration: 0.5s;
+  box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.2509803922);
+  padding: 1.5rem;
+  text-align: left;
+  z-index: 10;
+  font-size: 15px;
+}
+
+.v-step__buttons {
+  text-align: right;
+}
+
+.v-step .v-step__arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  position: absolute;
+  margin: 0.5rem;
+  border-color: var(--theme-bg);
+}
+
+.v-step .v-step__arrow--dark {
+  border-color: var(--theme-bg);
+}
+
+.v-step[x-placement^=top] {
+  margin-bottom: 0.5rem;
+}
+
+.v-step[x-placement^=top] .v-step__arrow {
+  border-width: 0.5rem 0.5rem 0 0.5rem;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  bottom: -0.5rem;
+  left: calc(50% - 1rem);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.v-step[x-placement^=bottom] {
+  margin-top: 0.5rem;
+}
+
+.v-step[x-placement^=bottom] .v-step__arrow {
+  border-width: 0 0.5rem 0.5rem 0.5rem;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  top: -0.5rem;
+  left: calc(50% - 1rem);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.v-step[x-placement^=right] {
+  margin-left: 0.5rem;
+}
+
+.v-step[x-placement^=right] .v-step__arrow {
+  border-width: 0.5rem 0.5rem 0.5rem 0;
+  border-left-color: transparent;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  left: -0.5rem;
+  top: calc(50% - 1rem);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.v-step[x-placement^=left] {
+  margin-right: 0.5rem;
+}
+
+.v-step[x-placement^=left] .v-step__arrow {
+  border-width: 0.5rem 0 0.5rem 0.5rem;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  right: -0.5rem;
+  top: calc(50% - 1rem);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.v-step__header {
+  margin: -1rem -1rem 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--theme-bg);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.v-step__content {
+  margin: 0 0 2rem 0;
+  line-height: 18px;
+}
+
+.v-step__button {
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+  padding: 10px 16px 9px 16px;
+  border-radius: 4px;
+  background: var(--transparent) 0% 0% no-repeat padding-box;
+  color: var(--theme-bg);
+  font-weight: 500;
+  letter-spacing: 1.25px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+.v-step__button:hover {
+  background: var(--theme-bg-light) 0% 0% no-repeat padding-box;
+}
+
+.v-step__button:hover {
+  opacity: 0.9;
+}
+
+@keyframes one-second-animation {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .v-step {
+    transform: translate(0) !important;
+    max-width: 100%;
+    width: 100%;
+    top: 53px !important;
+  }
+}/*# sourceMappingURL=vue-tour.css.map */

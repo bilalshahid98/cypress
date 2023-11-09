@@ -1,0 +1,138 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu" v-if="!queryUserId2">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow" v-if="!queryUserId2"></div>
+  <div class="flex-view"  v-bind:style=" queryUserId2 ? 'width: 100%;' : ''">
+    <div class="flex-view" id="nav-bar" v-if="!queryUserId2">
+      <app-header />
+    </div>
+    <div id="main-body"
+    v-bind:style=" queryUserId2 ? 'width: 100%; display: flex; justify-content: center; align-items: center; position: inherit; background-color: white' : ';' " class="right-side-responsive">
+      <div class="score-predictor">
+        <div class="score-predictor-wrapper" ref="scorePredictor">
+          <h1 class="score-predictor-title">score predictor</h1>
+          <div class="score-predictor-meter">
+            <vue-speedometer
+              :fluidWidth="true"
+              :needleHeightRatio="0.7"
+              :value="$store.state.mdcatScore"
+              :minValue="0"
+              :maxValue="200"
+              :currentValueText="$store.state.mdcatScore"
+              :segments="4"
+              :segmentColors="segmentColors"
+              :ringWidth="60"
+              :needleTransitionDuration="700"
+              needleTransition="easeLinear"
+              needleColor="#000000"
+              textColor="#000"
+            />
+          </div>
+          <div class="score-predictor-detail">
+            <!-- <div class="score-predictor-value">
+              <div>0</div>
+              <div>200</div>
+            </div> -->
+            <div class="score-predictor-predicted">
+              <h5>{{user && $store.state.mdcatScoreUser.id === user.id ? 'Your' : $store.state.mdcatScoreUser.name}} predicted score is <span v-bind:style=" $store.state.mdcatScore >= 160 ? 'color: green' : 'color: #E03249' ">{{$store.state.mdcatScore}}</span></h5>
+              <p v-if="$store.state.mdcatPosition == 1">Congratulations! You are <span class="score-position-no">1st</span> at Nearpeer.🎉🎉🎉 Keep it up, "Doctor" 😉</p>
+              <p v-if="$store.state.mdcatPosition == 2" class="position-count">Congratulations! You've scored <span class="score-position-no">2nd</span> Position at Nearpeer 🎉🎉🎉. Only 1 more to go!</p>
+              <p v-if="$store.state.mdcatPosition == 3" class="position-count">Congratulations! You've scored <span class="score-position-no">3rd</span> Position at Nearpeer 🎉🎉🎉. Let's reach the top!</p>
+              <p v-if="$store.state.mdcatPosition > 3" class="position-count"><span v-bind:style=" $store.state.mdcatScore < 100 ? 'color: green' : 'color: #E03249' " class="score-position-no-4">{{$store.state.mdcatPosition}}</span> students from MDCAT are ahead of you.</p>
+              <div class="position-users-dd">
+                <div v-for="(position, index) in $store.state.mdcatPositionUsers" class="position-user-item">
+                  <img :src="position.user.image ? position.user.image : 'https://storage.googleapis.com/nps3storage/nearpeer-imagees/default_user.png'" alt="#" />
+                  <p>{{position.user.name}}</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <div style="margin-top: 15px">
+          <div class="sharing-option">
+            <p style="font-family: Basis Grotesque Pro bold;">Share your progress via</p>
+          </div>
+          <div class="sharing-option">
+              <div class="sharing-item">
+                <ShareNetwork
+                  network="facebook"
+                  :title="sharing.title"
+                  :description="sharing.title"
+                  :url="$store.state.mdcatScoreLink"
+                  :quote="sharing.title"
+                  hashtags="nearpeer,nearpeerorg"
+                >
+                  <img src="../../assets/practice/social-fb.svg" alt="#" />
+                </ShareNetwork>
+              </div>
+              <div class="sharing-item-wa">
+                <ShareNetwork
+                  network="WhatsApp"
+                  :title="sharing.title"
+                  :url="$store.state.mdcatScoreLink"
+                  :description="sharing.description"
+                  hashtags="sharing.hashtags"
+                > 
+                  <img src="../../assets/practice/social-whatsapp.svg" alt="#" />
+                </ShareNetwork>
+              </div>
+              <div class="sharing-item">
+                <ShareNetwork
+                  network="Twitter"
+                  :url="$store.state.mdcatScoreLink"
+                  :title="sharing.title"
+                  :description="sharing.description"
+                  :quote="''"
+                  hashtags="sharing.hashtags"
+                > 
+                <img src="../../assets/practice/social-twitter.svg" alt="#" />
+              </ShareNetwork>
+              </div>
+              <div class="sharing-item">
+                <ShareNetwork
+                  network="LinkedIn"
+                  :url="$store.state.mdcatScoreLink"
+                  :title="sharing.title"
+                  :description="sharing.description"
+                  :quote="''"
+                  hashtags="sharing.hashtags"
+                > 
+                  <img src="../../assets/practice/social-linkedin.svg" alt="#" />
+                </ShareNetwork>
+              </div>
+              <div class="sharing-item">
+                <div style="cursor: pointer;" @click="copyURL">
+                  <img src="../../assets/copy-icon.svg" style="height: 42px;" alt="#" />
+                </div>
+              </div>
+              <!-- <li><img src="../../../../assets/practice/copy-icon.svg" alt="#" /></li> -->
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; margin-top: 15px" v-if="queryUserId2">
+          <div class="score-login-btn" @click='$router.push("/login")'>Go to Login</div>
+        </div>
+        <div class="score-improve" v-if="!queryUserId2">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="score-improve-title">
+                <h6>How to improve your score?</h6>
+                <p>Just follow these easy steps and make progress</p>
+              </div>
+              <img class="score-improve-img" src="../../assets/predictor/improve-img.svg" alt="">
+            </div>
+            <div class="col-md-6 pt-4">
+              <div class="score-improve-btn green" @click='$router.push("/practices")'>Practice next quiz</div>
+              <div class="score-improve-btn red" v-if="courseVideo.video_id" @click='resumeVideo'>Resume video learning </div>
+              <div class="score-improve-btn blue" @click='$router.push("/practices")'>Create custom quiz </div>
+              <img class="score-improve-el" src="../../assets/predictor/improve-el.svg" alt="">
+            </div>
+          </div>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,91 @@
+.test {
+  color: var(--red) !important;
+}
+
+.main-body {
+  position: relative;
+}
+
+.video-box {
+  width: 640px;
+  padding-right: 30px;
+}
+
+#video-center {
+  height: 100%;
+  width: 100%;
+}
+
+.width-100 {
+  width: 100%;
+}
+
+.full-width {
+  width: 100%;
+  justify-content: space-around;
+}
+
+.container_ {
+  padding-top: 65px;
+}
+
+#video-parent {
+  z-index: 1;
+  margin: 0 auto;
+}
+
+.mobile-fix-class-webview {
+  position: fixed;
+  top: 0px;
+  z-index: 10 !important;
+  width: 100%;
+  left: 0;
+}
+
+@media only screen and (max-width: 1000px) {
+  .website-loader {
+    padding-top: 80px;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap !important;
+  }
+  .flex-direction-row-col {
+    flex-direction: column;
+  }
+}
+@media only screen and (max-width: 600px) and (orientation: portrait) {
+  .display-web {
+    display: none;
+  }
+  .display-mob {
+    display: flex;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .mobile-fix-class-webview {
+    position: fixed;
+    top: 0px;
+    z-index: 10 !important;
+    width: 100%;
+    left: 0;
+  }
+  .mobile-fix-bar {
+    position: fixed !important;
+    top: 127px;
+    background-color: var(--background-gray);
+    z-index: 10;
+    width: 100%;
+  }
+  .mobile-fix-text {
+    margin-top: 275px !important;
+  }
+  .mobile-fix-parent {
+    z-index: 9 !important;
+  }
+  .mobile-fix-bg {
+    background-color: var(--background-gray);
+  }
+  #video-parent {
+    width: 100%;
+  }
+}/*# sourceMappingURL=video-player.css.map */

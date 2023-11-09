@@ -1,0 +1,766 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+  <div class="flex-view">
+    <div id="nav-bar" class="flex-view">
+      <app-header />
+    </div>
+    <div id="main-body" class="right-side-responsive">
+      <div class="parent-div flex-view flex-direction-row">
+        <!-- <div class="max-width loader-image" v-if="loader">
+          <img src="./../../../../assets/website_loading_animation.gif" />
+        </div> -->
+        <div v-if="loader" class="wire-frame" style="width: 100%;">
+          <div
+            class="wire-frame-details-p m-0 Module-Page-Top-Wireframe flex-view justify-content-c"
+          >
+            <img
+              style="margin-top: 50px;"
+              class="holder"
+              src="../../../../assets/wireframes/quiz_wireframes.svg"
+            />
+          </div>
+        </div>
+        
+        <div class="margin-auto quiz-detail-main" v-if="quiz.name">
+          <div style="margin-top: -65px;" v-if="!$store.state.isNewReactNative">
+            <bread-crumbs   :crumbs="crumbs" @selected="selected"  ></bread-crumbs>
+          </div>
+          <div class="d-lg-none"><btn-mdcat-result /></div>
+          <div class="top-three-perfomers quiz-detail-container margin-auto" v-if="topStudents.length > 2">
+            <h5>Top Performers</h5>
+            <div class="flex-view justify-content-center align-items-center">
+              <div class="user-position-profile" v-if="topStudents.length > 1">
+                <div class="user-position-avatar second" v-if="topStudents.length > 1">
+                  <span class="user-position">2nd</span>
+                  <img :src="topStudents[1].user.image" />
+                </div>
+                <div class="user-position-name ellipsis" v-if="topStudents.length > 1">
+                  <!-- <div class="ellipsis" v-if="topStudents[1].user.full_name == position">
+                    you
+                  </div>
+                  <div class="ellipsis" v-else>
+                    {{topStudents[1].user.full_name}}
+                  </div> -->
+                  {{topStudents[1].user.full_name}}
+                </div>
+                <div class="user-clap" v-if="topStudents.length > 1">
+                  <!-- <img src="../../../../assets/user-position/clap-icon.png" alt="#">   -->
+                  <span class="clap-btn"  v-bind:class="{ 'clap-active': clap2 }" @click="clapClick(2)"></span>
+                  <span class="counter-fixed">{{topStudents[1].claps}}</span>
+                  <div id="clicker" class="click-counter" v-bind:class="{ 'active': clap2 }">
+                    <span class="counter">{{topStudents[1].claps}}</span>
+                  </div>
+                  <!-- <span class="user-clap-text">Congrats to {{topStudents[1].user.full_name}}</span> -->
+                </div>
+              </div>
+              <div class="user-position-profile top-perfomer" v-if="topStudents.length > 0">
+                <div class="user-position-avatar first" v-if="topStudents.length > 0">
+                  <span class="user-position">1st</span>
+                  <img :src="topStudents[0].user.image" />
+                </div>
+                <div class="user-position-name ellipsis" v-if="topStudents.length > 0">
+                  <!-- <div class="ellipsis" v-if="topStudents[0].user.full_name == position">
+                    you
+                  </div>
+                  <div class="ellipsis" v-else>
+                    {{topStudents[0].user.full_name}}
+                  </div> -->
+                  {{topStudents[0].user.full_name}}
+
+                </div>
+
+                <div class="user-clap" v-if="topStudents.length > 0">
+                  <!-- <img src="../../../../assets/user-position/clap-icon.png" alt="#"> -->
+                  <span class="clap-btn"  v-bind:class="{ 'clap-active': clap1 }" @click="clapClick(1)"></span>
+                  <span class="counter-fixed">{{topStudents[0].claps}}</span>
+                  <div id="clicker" class="click-counter" v-bind:class="{ 'active': clap1 }">
+                    <span class="counter">{{topStudents[0].claps}}</span>
+                  </div>
+                  <!-- <span class="user-clap-text">Congrats to {{topStudents[0].user.full_name}} </span> -->
+                </div>
+              </div>
+              <div class="user-position-profile" v-if="topStudents.length > 2">
+                <div class="user-position-avatar third" v-if="topStudents.length > 2">
+                  <span class="user-position">3rd</span>
+                  <img :src="topStudents[2].user.image" />
+                </div>
+                <div class="user-position-name ellipsis" v-if="topStudents.length > 2">
+
+                  <!-- <div v-if="topStudents[2].user.full_name == position">
+                    you
+                  </div>
+                  <div v-else>
+                    {{topStudents[2].user.full_name}}
+                  </div> -->
+                  {{topStudents[2].user.full_name}}
+
+                </div>
+                <div class="user-clap">
+                  <!-- <img src="../../../../assets/user-position/clap-icon.png" alt="#"> -->
+                  <span class="clap-btn"  v-bind:class="{ 'clap-active': clap3 }" @click="clapClick(3)"></span>
+                  <span class="counter-fixed">{{topStudents[2].claps}}</span>
+                  <div id="clicker" class="click-counter" v-bind:class="{ 'active': clap3 }">
+                    <span class="counter">{{topStudents[2].claps}}</span>
+                  </div>
+                  <!-- <span class="user-clap-text">Congrats to {{topStudents[2].user.full_name}} </span> -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="quiz-detail-container user-prediction margin-auto d-none" v-if="quiz.course_id">
+            <div v-if="predictionBtn" class="d-flex">
+              <button data-v-39f4e2cd="" @click="userPrediction" class="btn-contained flex-view justify-content-c">
+                <!-- <img class="calc-icon" src="../../../../assets/calculator-icon.png" alt="#"> -->
+                <img src="../../../../assets/calculator-icon-hover.png" alt="#">
+                  Predict your scores
+              </button>
+
+              <!-- <p class="prediction-tooltip" title="Now you can predict your scores for the quiz beforehand. We’ll use your available data, trends, other students’ performance, and machine learning tools to predict your score."> ?</p> -->
+              <span class="practice-content-tooltip">
+                <img src="../../../../assets/practice/tooltip-icon.svg" alt="">
+                <p class="practice-tooltip-text">Now you can predict your scores for the quiz beforehand. We'll use your available data, trends, other students’ performance, and machine learning tools to predict your score.</p>
+              </span>
+            </div>
+            <div class="prediction-score" v-if="userPredictionScore">
+              <h6 v-if="!predictedScoreFalse">Your predicted score is between <span>" {{predictedScore<6 ? 1 : (predictedScore - 5).toFixed(0) }}% -  {{(predictedScore + 5).toFixed(0) }}% " 
+                <span class="practice-content-tooltip">
+                  <img src="../../../../assets/practice/tooltip-icon.svg" alt="">
+                  <p class="practice-tooltip-text">As per our predictive model, you'll score anywhere between this given percentage range. Can you beat the odds by scoring more than the prediction? Let's give it a try!</p>
+                </span>
+                <!-- <sup style="color: #84a9bf; cursor: default;" title="As per our predictive model, you’ll score anywhere between this given percentage range. Can you beat the odds by scoring more than the prediction? Let’s give it a try!">?</sup> -->
+              </span></h6>
+              <h6 v-else>{{predictedScoreFalse}}</h6>
+              <p  @click="gotoQuiz" v-if="isSessionValid"><span>Let's start your quiz<img src="../../../../assets/scroll-down-icon.png" alt=""></span></p>
+            </div>
+          </div>
+          <div v-if="quiz.name" class="quiz-detail-container max-width margin-auto container-btn-fixed-bottom">
+            <div class="upper-div-outline d-flex align-item-center justify-content-between">
+              <div>
+                <label
+                  class="body-2 ellipsis max-width-300"
+                  :title="quiz.course.name"
+                  >{{quiz.course.name}}</label
+                >
+                <h5 class="ellipsis">
+                  {{quiz.module.name}}
+                </h5>
+              </div>
+              <practice-live-users :liveUsers="liveUsers" :page="'quiz-main'"/>
+            </div>
+            <!-- <div class="t-d responsive_container flex-view flex-direction-row">
+              <div class="flex-view align-items-center">
+                <router-link
+                  class="t-d-tags subtitle-1"
+                  :title="quiz.course.name"
+                  to="/course/course-landing"
+                  >{{quiz.course.name}}</router-link
+                >
+                >
+                <router-link
+                  class="t-d-tags subtitle-1"
+                  :title="quiz.module.name"
+                  v-bind:to="{path: '/course/course-detail/' + quiz.course.index_url}"
+                  >{{quiz.module.name}}</router-link
+                >
+                >
+                <label class="t-d-tags subtitle-2">{{quiz.name}}</label>
+              </div>
+            </div> -->
+            <div class="quiz-detail flex-view flex-direction-col justify-content-c justify-content-b max-width-900">
+              <div class="flex-view description-div justify-content-b align-items-center">
+                <div class="flex-view" style="width: 100%;">
+                  <img src="./../../../../assets/quiz_icon.svg" class="mr-2" />
+                  <h3 class="ellipsis">
+                    Quiz: {{quiz.name}}
+                  </h3>
+                </div>
+                <button class="m-o ml-0 text-filled btn-np align-self-baseline" @click="guidelines = true"
+                  title="Quiz Guidelines">
+                  <img src="./../../../../assets/Info Hover.svg">
+                </button>
+              </div>
+              <div>
+                <p class="body-2 quiz-paragraph">
+                  {{quiz.description}}
+                </p>
+              </div>
+            </div>
+            <div class="flex-view flex-direction-col align-items-center table-div">
+              <div class="flex-wrap__ flex-view align-items-center flex-direction-row justify-content-b">
+                <div class="flex-view box-outline">
+                  <div>
+                    <img src="./../../../../assets/icon-total-questions.svg" class="ml-3 mr-3" />
+                    <label class="tag-name body-2">Total Questions</label>
+                  </div>
+                  <div>
+                    <label class="tag-value body-2">{{quiz.questions.length}}</label>
+                  </div>
+                </div>
+
+                <div class="flex-view box-outline">
+                  <div>
+                    <img src="./../../../../assets/Checkbox_pressed.svg" class="ml-3 mr-3" />
+                    <label class="tag-name body-2">Passing Percentage</label>
+                  </div>
+                  <div>
+                    <label class="tag-value body-2">{{quiz.passing_percentage}}%</label>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-wrap__ flex-view align-items-center flex-direction-row justify-content-b">
+                <div class="flex-view box-outline">
+                  <div>
+                    <img src="./../../../../assets/icon-time.svg" class="ml-3 mr-3" />
+                    <label class="tag-name body-2">Time Limit</label>
+                  </div>
+                  <div>
+                    <label class="tag-value body-2">{{calculateQuizTime(quiz.duration)}}</label>
+                  </div>
+                </div>
+
+                <div class="flex-view box-outline">
+                  <div>
+                    <img src="./../../../../assets/Icon-History.svg" class="ml-3 mr-3" />
+                    <label class="tag-name body-2">Your Previous Score</label>
+                  </div>
+                  <div>
+                    <label class="tag-value body-2">{{previousResult ? previousResult.correct_percentage.toFixed(0) :
+                      0}}%</label>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+
+            <div class="mobile-leader-board" v-if="topStudents.length">
+                <h5>Your peers are making progress!</h5>
+                <div style="margin-bottom: 20px;" class="flex-view align-items-center flex-direction-row">
+                  <img src="../../../../assets/Icon - Students.svg" />
+                  <label class="ml-1 subtitle-1">{{totalAttempts}} others recently attempted this quiz.</label>
+                </div>
+                <div class="d-flex justify-content-between pb-2">
+                  <p class="subtitle-1 font-family" style="padding-bottom: 15px;">Top Performers</p>
+                  <div class="current-attempt" @click="attempField" v-if="latestAttemptTopStudents.length">
+                    <img
+                      src="../../../../assets/attempt-filter-icon.png"
+                      alt=""
+                    />
+                    <p>
+                      {{firstAttempt ? "First Attempt": "Latest Attempt"}}
+                    </p>
+                    <img
+                      src="../../../../assets/attempt-filter-dd-icon.png"
+                      alt=""
+                    />
+                    <div
+                      class="current-attempt-dropdown"
+                      v-show="attemptDropDown"
+                    >
+                      <ul>
+                        <li @click="userAttempts('first')">
+                          First Attempt
+                        </li>
+                        <li @click="userAttempts('latest')">
+                          Latest Attempt
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="top-perfomers">
+                  <div v-if="!wireFramesT" v-for="(student, index) in topStudents"
+                    class="stats-board-right-row justify-content-b flex-view flex-direction-row">
+                    <div class="d-flex align-items-center">
+                      <img class="img" :src="student.user.image" />
+                      <div class="stats-board-right-row-unit">
+                        <p class="subtitle-1 font-family">
+                          {{index + 1}}. {{student.user.full_name}}
+                          <!-- <div v-if="student.user.full_name == position">
+                            you
+                          </div>
+                          <div v-else>
+                            {{student.user.full_name}}
+                          </div> -->
+        
+                        </p>
+                        <div class="mt-2 flex-view align-items-center">
+                          <label style="margin-right: 10px;"
+                            class="subtitle-2">{{student ? student.correct_percentage : 0}}%</label>
+                          <label class="subtitle-2 ellipsis" style="
+                        max-width: 100px;
+                        align-items: center;
+                        display: flex;
+                    "><img src="./../../../../assets/Icon-Timer-grey.svg" class="right-icon" />
+                            {{student.time_spent}}</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="user-madle">
+                      <img 
+                        v-if="(student, index == 0)" 
+                        src="../../../../assets/1st-madle.png"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Gold"
+                        alt="#">
+                      <img 
+                        v-if="(student, index == 1)" 
+                        src="../../../../assets/2nd-madle.png"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Silver"
+                        alt="#">
+                      <img 
+                        v-if="(student, index == 2)" 
+                        src="../../../../assets/3rd-madle.png" 
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Bronze"
+                        alt="#">
+                    </div>
+                    <div style="display: flex; align-items: center; flex-direction:column; height: 100%; font-weight: bold;">
+                      <img src="../../../../assets/arrow-upward.png" />
+                      <div v-if="(student, index == 0)">Ist</div>
+                      <div v-if="(student, index == 1)">2nd</div>
+                      <div v-if="(student, index == 2)">3rd</div>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="wireFramesT" class="flex-view width-100">
+                  <img src="./../../../../assets/standard-quiz-intro-wireframes.svg" class="max-width-100 holder" />
+                </div>
+              
+            </div>
+
+            <div class="width-100 flex-view flex-direction-row justify-content-b button-div align-items-baseline btn-fixed-bottom">
+              <p v-if="!isSessionValid" class="align-self-start" v-html="inValidSessionMessage"></p>
+
+              <button v-if="previousResult && previousResult._id"
+                class="m-o text-filled btn-np mt-3 align-self-baseline" @click="viewPreviousResult">
+                Previous Result
+              </button>
+
+              <div v-else>
+
+              </div>
+              <button class="btn-contained showText align-self-end" @click="gotoQuiz" v-if="isSessionValid">
+                <label class="subtitle-2 paragraph goodLuckText mr-3">Good Luck!</label>
+                Start Quiz
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="stats-board-right">
+          <div v-if="topStudents.length">
+            <h5>Your peers are making progress!</h5>
+            <div style="margin-bottom: 20px;" class="flex-view align-items-center flex-direction-row">
+              <img src="../../../../assets/Icon - Students.svg" />
+              <label class="ml-1 subtitle-1">{{totalAttempts}} others recently attempted this quiz.</label>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="subtitle-1 font-family" style="padding-bottom: 15px;">Top Performers</p>
+              <div class="current-attempt" @click="attempField" v-if="latestAttemptTopStudents.length">
+                <img src="../../../../assets/attempt-filter-icon.png" alt="" />
+                <p>
+                  {{firstAttempt ? "First Attempt": "Latest Attempt"}}
+                </p>
+                <img src="../../../../assets/attempt-filter-dd-icon.png" alt="" />
+                <div class="current-attempt-dropdown" v-show="attemptDropDown">
+                  <ul>
+                    <li @click="userAttempts('first')">
+                      First Attempt
+                    </li>
+                    <li @click="userAttempts('latest')">
+                      Latest Attempt
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="top-perfomers" v-bind:class="{ 'fullHeight': !graphShown}">
+              <div v-if="!wireFramesT" v-for="(student, index) in topStudents"
+                class="stats-board-right-row justify-content-b flex-view flex-direction-row">
+                <div class="d-flex align-items-center">
+                  <img class="img" :src="student.user.image" />
+                  <div class="stats-board-right-row-unit">
+                    <p class="subtitle-1 font-family">
+                      {{index + 1}}. {{student.user.full_name}}
+                      <!-- <div v-if="student.user.full_name == position">
+                                you
+                              </div>
+                              <div v-else>
+                                {{student.user.full_name}}
+                              </div> -->
+            
+                    </p>
+                    <div class="mt-2 flex-view align-items-center">
+                      <label style="margin-right: 10px;" class="subtitle-2">{{student ? student.correct_percentage : 0}}%</label>
+                      <label class="subtitle-2 ellipsis" style="
+                            max-width: 100px;
+                            align-items: center;
+                            display: flex;
+                        "><img src="./../../../../assets/Icon-Timer-grey.svg" class="right-icon" />
+                        {{student.time_spent}}</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="user-madle">
+                  <img v-if="(student, index == 0)" src="../../../../assets/1st-madle.png" data-toggle="tooltip"
+                    data-placement="top" title="Gold" alt="#">
+                  <img v-if="(student, index == 1)" src="../../../../assets/2nd-madle.png" data-toggle="tooltip"
+                    data-placement="top" title="Silver" alt="#">
+                  <img v-if="(student, index == 2)" src="../../../../assets/3rd-madle.png" data-toggle="tooltip"
+                    data-placement="top" title="Bronze" alt="#">
+                </div>
+                <div style="display: flex; align-items: center; flex-direction:column; height: 100%; font-weight: bold;">
+                  <img src="../../../../assets/arrow-upward.png" />
+                  <div v-if="(student, index == 0)">Ist</div>
+                  <div v-if="(student, index == 1)">2nd</div>
+                  <div v-if="(student, index == 2)">3rd</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="wireFramesT" class="flex-view width-100">
+            <img src="./../../../../assets/standard-quiz-intro-wireframes.svg" class="max-width-100 holder" />
+          </div>
+         <div v-if="studentPerformance[0] && studentPerformance[0].data && studentPerformance[0].data.length">
+         <label style="margin: 20px 0 10px 0;" class="subtitle-1 font-family">Your Previous Attempts:</label>
+         <div v-if="!wireFrames" class="flex-view on-left">
+           <p class="subtitle-1 font-family-bold">
+             Score %
+           </p>
+         </div>
+         <div v-if="!wireFrames">
+           <app-bars style="margin-bottom: 10px; height: 200px;" :data="studentPerformance" :labels="studentAttempts">
+           </app-bars>
+         </div>
+
+         <div v-if="!wireFrames" class="flex-view justify-content-c">
+           <p class="subtitle-1 font-family-bold">
+             Attempts
+           </p>
+         </div>
+
+         <div v-if="wireFrames" class="flex-view width-100">
+           <img src="./../../../../assets/standard-quiz-intro-wireframes.svg" class="max-width-100 holder" />
+         </div>
+         <div v-if="averageScore" class="text-center"><small> <span class="text-secondary ml-2"> Your Average :</span>
+             {{averageScore}} % </small></div>
+       </div>
+      </div>
+      </div>
+      <div class="guidelines-bg" v-if="guidelines">
+        <div class="guidelines-holder flex-view flex-direction-col">
+          <span class="closeBtnBlack" @click="guidelines = false">x</span>
+          <div class="flex-view grow-1 flex-direction-col justify-content-b align-items-center">
+            <div>
+              <p class="overline mt-2 mb-2 font-family-bold">Quiz Guidelines</p>
+              <div class="flex-view flex-direction-row-col mb-4 mt-4 align-items-center upper-line">
+                <p class="subtitle-2 mr-3" @click="guideline = 1" v-bind:class="{ 'subtitle-1': guideline == '1' }">
+                  Time Allocation
+                </p>
+                <p class="subtitle-2 mr-3">
+                  |
+                </p>
+                <p class="subtitle-2 mr-3" @click="guideline = 2" v-bind:class="{ 'subtitle-1': guideline == '2' }">
+                  If You Quit
+                </p>
+                <p class="subtitle-2 mr-3">
+                  |
+                </p>
+
+                <p class="subtitle-2 mr-3" @click="guideline = 3" v-bind:class="{ 'subtitle-1': guideline == '3' }">
+                  If You Get Disconnected
+                </p>
+                <p class="subtitle-2 mr-3">
+                  |
+                </p>
+                <p class="subtitle-2" @click="guideline = 4" v-bind:class="{ 'subtitle-1': guideline == '4' }">
+                  After Submitting Quiz
+                </p>
+              </div>
+            </div>
+            <div class="flex-view flex-direction-col align-items-center" v-if="guideline == 1">
+              <div class="flex-view flex-direction-row m-3">
+                <img src="./../../../../assets/quiz-guidelines4.svg" class="max-image-height" />
+              </div>
+              <div class="flex-view flex-direction-col align-items-center mb-2 mt-2">
+                <h5 class="font-family-bold">Time allocation for this quiz:</h5>
+                <div class="flex-view flex-direction-col align-items-center mb-2 mt-2">
+                  <p class="body-2 text-align-center">
+                    You are allotted <b>{{formatTime(quiz.duration)}}</b> for this quiz. This quiz
+                    has <b>{{quiz.questions.length}} questions.</b>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="flex-view flex-direction-col align-items-center" v-if="guideline == 2">
+              <div class="flex-view flex-direction-row m-3">
+                <img src="./../../../../assets/quit-quiz.svg" class="max-image-height" />
+              </div>
+              <div class="flex-view flex-direction-col align-items-center mb-2 mt-2">
+                <h5 class="font-family-bold">If you quit the quiz:</h5>
+                <div class="flex-view flex-direction-col align-items-center mb-2 mt-2">
+                  <p class="body-2 text-align-center">
+                    If you quit the quiz, your remaining questions will be marked
+                    as skipped.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="flex-view flex-direction-col align-items-center" v-if="guideline == 3">
+              <div class="flex-view flex-direction-row m-3">
+                <img src="./../../../../assets/quiz-guidelines1.svg" class="max-image-height" />
+              </div>
+              <div class="flex-view flex-direction-col align-items-center mb-2 mt-2">
+                <h5 class="font-family-bold">If you get disconnected:</h5>
+                <div class="flex-view flex-direction-col align-items-center max-width-div mb-2 mt-2">
+                  <p class="body-2 text-align-center">
+                    If you get disconnected or your system shuts down, we will
+                    save your progress and you will continue from where you
+                    left.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="flex-view flex-direction-col align-items-center" v-if="guideline == 4">
+              <div class="flex-view flex-direction-row m-3">
+                <img src="./../../../../assets/after-submitting.svg" class="max-image-height" />
+              </div>
+              <div class="flex-view flex-direction-col align-items-center mb-2 mt-2">
+                <h5 class="font-family-bold">After submitting the quiz:</h5>
+                <div class="flex-view flex-direction-col align-items-center max-width-div mb-2 mt-2">
+                  <p class="body-2 text-align-center">
+                    After you attempt this quiz, your result will be available <span v-if="delayedResult">in</span>
+                    <b v-if="delayedResult">{{formatTime(resultDelayTime*3600)}}</b> <b
+                      v-if="immediateResult">Immediately</b> <span v-if="immediateResult">, you can retake the quiz
+                      anytime.</span> <span v-if="delayedResult">after which you can retake the quiz meanwhile the
+                      quiz will remain unavailable to attempt.</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="width-100">
+              <div class="flex-view flex-direction-row-col justify-content-c align-items-center width-100">
+                <ul class="flex-view justify-content-b mt-3 mr-5" style="width: 105px;">
+                  <l1 class="circle" v-bind:class="{ 'circle-active' : guideline == '1' }"></l1>
+                  <l1 class="circle" v-bind:class="{ 'circle-active' : guideline == '2' }"></l1>
+                  <l1 class="circle" v-bind:class="{ 'circle-active' : guideline == '3' }"></l1>
+                  <l1 class="circle" v-bind:class="{ 'circle-active' : guideline == '4' }"></l1>
+                </ul>
+              </div>
+              <div
+                class="flex-view flex-direction-row-col justify-content-c justify-content-b align-items-center width-100">
+                <div style="width: 100px;">
+                  <button v-if="guideline != 1" class="btn-np text-filled flex-view align-items-center back-color"
+                    @click="guideline = guideline - 1">
+                    <img src="./../../../../assets/Keyboard-Arrow-Left-Filled.svg" />
+                    Back
+                  </button>
+                </div>
+
+                <div>
+                  <router-link v-if="quiz.questions.length" :to="{ name: 'app-standard-quiz', query:{uid: user.id, sessionId},
+                   params: { user, quiz}}">
+                    <button class="btn-np text-filled">Skip</button>
+                  </router-link>
+                  <button class="btn-contained" v-if="guideline != 4" @click="guideline = guideline + 1">
+                    Next
+                  </button>
+                  <router-link v-if="guideline == 4" :to="{ name: 'app-standard-quiz', query:{uid: user.id, sessionId},
+                 params: { user, quiz}}">
+                    <button class="btn-contained" v-if="guideline == 4">
+                      Start
+                    </button>
+                  </router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prediction-loader" v-if="userPredictionPopup">
+        <div class="prediction-loader-box">
+          <div
+            class="flex-view justify-content-c align-items-center"
+            style="background-color: white !important;"
+          >
+            <!-- <img src="./../../../../assets/website_loading_animation.gif" /> -->
+            <!-- <section> -->
+            <div class="flex-view flex-direction-col align-items-center">
+              <!-- <h4>Calculating Quiz Result</h4> -->
+              <div class="mt-4" style="position: relative;">
+                <img src="./../../../../assets/results-loader.svg" />
+                <div
+                  class="loader-bars loader-7"
+                  style="    position: absolute;
+                  top: 55px;
+                  bottom: 0px;
+                  left: 190px;
+                  right: 0px;"
+                >
+                  <div class="line line1"></div>
+                  <div class="line line2"></div>
+                  <div class="line line3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="loading-text" v-html="message""></p>
+        </div>
+      </div>
+
+      <!-- invite friend popup -->
+
+      <div class="practice-popup" v-if="practicePopup">
+        <div class="practice-popup-wrapper">
+          <div class="practice-popup-header">
+            <div class="practice-popup-back" >
+              <!-- <img v-if="!startWithOutFriend" @click="startWithOutFriend= false;" style="cursor: pointer;"  src="../../../../assets/practice/popup-back-icon.svg" alt=""> -->
+            </div>
+            <h4 v-if="startWithOutFriend">Invite Your Friends To Compete With You</h4>
+            <h4 v-if="!startWithOutFriend">Your Invites Friends Ready To Compete With You</h4>
+            <div class="practice-popup-next">
+              <img @click = "practicePopup = false; startWithOutFriend= false;" style="cursor: pointer;" src="../../../../assets/practice/popup-close-icon.svg" alt="#" />
+            </div>
+          </div>
+          <div class="practice-popup-content" v-if="startWithOutFriend">
+            <div class="practice-challange">
+              <video autoplay muted loop>
+                <source src="../../../../assets/practice/challange-video.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div>
+              <div class="text-center invite-btns">
+                <button @click="gotoQuiz" class="btn-np">Start without Friends</button>
+                <ShareNetwork
+                network="WhatsApp"
+                :title="' Hey, I am challenging you to compete with me on the following quiz at Nearpeer'"
+                :url="sharing.url"
+                :description="`Let's see if you can beat me.`"
+                :class="btn-np"
+                hashtags="sharing.hashtags"
+              > 
+                <img src="../../../../assets/practice/icon-whatsapp.svg" alt="#"> Invite Friends 
+              </ShareNetwork>
+            </div>
+              <h5>Let’s make Practice fun now. Invite your friends to your quiz and compete with them!</h5>
+  
+      
+              <ul>
+                
+                <li>
+                  <ShareNetwork
+                    network="facebook"
+                    :url="sharing.url"
+                    :quote="sharing.quote"
+                    hashtags="sharing.hashtags"
+                  >
+                    <img src="../../../../assets/practice/social-fb.svg" alt="#" />
+                  </ShareNetwork>
+                </li>
+                <li class="whatsapp-icon">
+                  <ShareNetwork
+                    network="WhatsApp"
+                    :title="' Hey, I am challenging you to compete with me on the following quiz at Nearpeer'"
+                    :url="sharing.url"
+                    :description="`Let's see if you can beat me.`"
+                    hashtags="sharing.hashtags"
+                  > 
+                    <img src="../../../../assets/practice/social-whatsapp.svg" alt="#" />
+                  </ShareNetwork>
+                </li>
+                <li>
+                  <ShareNetwork
+                    network="Twitter"
+                    :url="sharing.url"
+                    :title="sharing.title"
+                    :description="sharing.description"
+                    :quote="''"
+                    hashtags="sharing.hashtags"
+                  > 
+                    <img src="../../../../assets/practice/social-twitter.svg" alt="#" />
+                  </ShareNetwork>
+                </li>
+                <li>
+                  <ShareNetwork
+                    network="LinkedIn"
+                    :url="sharing.url"
+                    :title="sharing.title"
+                    :description="sharing.description"
+                    :quote="''"
+                    hashtags="sharing.hashtags"
+                  > 
+                    <img src="../../../../assets/practice/social-linkedin.svg" alt="#" />
+                  </ShareNetwork>
+                </li>
+                <!-- <li><img src="../../../../assets/practice/copy-icon.svg" alt="#" /></li> -->
+              </ul>
+      
+              <div class="practice-link">
+                <a class="text-dark" >{{quizLink}}</a>
+                <button class="btn-contained" @click="copyURL"  :class="coppied ? 'coppied' : 'copy'" style="cursor: pointer;">{{coppied ? 'Link Copied!' : 'Copy Link'}}</button>
+              </div>
+              
+              
+            </div>
+          </div>
+          <div class="practice-popup-content" v-if="!startWithOutFriend">
+              <div class="practice-user">
+                  <img :src="user.image ? user.image : 'https://storage.googleapis.com/nps3storage/nearpeer-imagees/default_user.png'" alt="#" />
+                  <p>{{user.full_name || user.name}}</p>
+              </div>
+              <div class="practice-compitator">
+                V/S
+              </div>
+
+            <ul class="practice-invite">
+              <li v-for="(user, index) in showLiveUsers">
+                <div class="practice-invite-user">
+                  <img class="practice-invite-avatar one" :src="user.image ? user.image : 'https://storage.googleapis.com/nps3storage/nearpeer-imagees/default_user.png'" alt="#" />
+                  <p>{{user.full_name || user.name}}</p>
+                </div>
+              </li>
+              <li v-if="liveUsers.length > showLiveUsersCount">
+                <div class="practice-invite-user">
+                  <div class="practice-invite-avatar one">
+                    {{liveUsers.length - showLiveUsersCount}}+
+                  </div>
+                  <p>Others</p>
+                  <div class="practice-invite-user-dd">
+                    <div class="practice-invite-user-dd-item" v-for="(user, index) in notShowingLiveUsers">
+                      <img :src="user.image ? user.image : 'https://storage.googleapis.com/nps3storage/nearpeer-imagees/default_user.png'" alt="">
+                      <p>{{user.full_name || user.name}}</p>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              
+              <!-- <li><img src="../../../../assets/practice/copy-icon.svg" alt="#" /></li> -->
+            </ul>
+            
+            <div class="text-center mt-5"><button @click="gotoQuiz" class="btn-contained">Start</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- invite friend notification -->
+      <div class="practice-noti" v-if="practiceInviteNoti">
+        <div class="practice-noti-avatar">
+          <img src="../../../../assets/practice/profile-img.png" alt="#" />
+        </div>
+        <div class="practice-noti-detail">
+          <p>Ali Yousaf join in Quiz.</p>
+          <span>Febraury 28 at 10:34 pm</span>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

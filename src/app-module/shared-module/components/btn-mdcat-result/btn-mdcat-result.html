@@ -1,0 +1,8 @@
+<div>
+     <div class="d-flex align-items-center justify-content-center mt-md-4 pb-4 mdcat-predictor">
+        <button class="btn-np outlined btn-predictor" id="verification" v-if="isMDCATEnrolled && $store.state.mdcatScore > 0" @click='$router.push("/score-predictor")'>
+        <img class="mr-2" src="../../../../assets/meter.svg" style="width:35px" />
+        <p>Your <span>MDCAT</span> predicted score: <span>{{$store.state.mdcatScore}}</span></p>
+        </button>
+    </div>
+</div>

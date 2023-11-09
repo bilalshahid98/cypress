@@ -1,0 +1,207 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+  <div class="flex-view">
+    <div class="flex-view" id="nav-bar">
+      <app-header />
+    </div>
+    <div id="main-body" class="right-side-responsive">
+      <div class="bg-parent">
+          <div class="max-width top-div-com right-inner-width">
+              <div v-if="isPageLoading" class="website-loader">
+                  <div>
+                      <img src="../../assets/website_loading_animation.gif" />
+                  </div>
+              </div>
+              <div class="rescheduled-banner d-flex align-items-center justify-content-between" v-if="session.status !== 'STARTED' && session.status !== 'ENDED' && (session.status === 'RESCHEDULED' || Math.floor((Date.parse(session.time) - Date.now())) < 0)" :id="`reschedule_banner_${session.id}`">
+                <div></div>
+                <p v-if="session.status === 'RESCHEDULED' && Math.floor((Date.parse(session.time) - Date.now())) >= 0">
+                    <img src="../../assets/live-chat/caution.svg" alt="">
+                    This live session has been rescheduled from 
+                    {{ new Date(session.ex_time).toLocaleDateString("en-US", { day: "numeric", month: "short", hour: "numeric", minute: "numeric", hour12: true }) }}
+                    to
+                    <span class="font-family-bold">
+                      {{ new Date(session.time).toLocaleDateString("en-US", { day: "numeric", month: "short", hour: "numeric", minute: "numeric", hour12: true }) }}
+                    </span>
+                </p>
+                <p v-else-if="Math.floor((Date.parse(session.time) - Date.now())) < 0">
+                  Waiting for instructor to start this meeting...
+                </p>
+                <div @click="rescheduleBannerClose(session.id)" class="cursor">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.90597 8.03348L6.87585 4.99985L9.90883 1.96622C9.96722 1.90747 10 1.82799 10 1.74515C10 1.6623 9.96722 1.58283 9.90883 1.52407L8.4734 0.0911896C8.41466 0.0327833 8.33519 0 8.25237 0C8.16954 0 8.09008 0.0327833 8.03134 0.0911896L4.99836 3.12267L1.96538 0.0911896C1.90664 0.0327833 1.82718 0 1.74436 0C1.66153 0 1.58207 0.0327833 1.52333 0.0911896L0.091464 1.52407C0.0330703 1.58283 0.000294049 1.6623 0.000294049 1.74515C0.000294049 1.82799 0.0330703 1.90747 0.091464 1.96622L3.12373 4.99985L0.091464 8.03348C0.0328963 8.09214 0 8.17165 0 8.25456C0 8.33746 0.0328963 8.41697 0.091464 8.47563L1.51976 9.90852C1.5785 9.96692 1.65796 9.99971 1.74078 9.99971C1.82361 9.99971 1.90307 9.96692 1.96181 9.90852L4.99479 6.87489L8.03134 9.90852C8.08999 9.9671 8.16948 10 8.25237 10C8.33525 10 8.41475 9.9671 8.4734 9.90852L9.90597 8.47563C9.96454 8.41697 9.99744 8.33746 9.99744 8.25456C9.99744 8.17165 9.96454 8.09214 9.90597 8.03348Z" fill="#B3B3B3"/>
+                    </svg> 
+                </div>
+              </div>
+              <div class="item">
+                <div class="ls-card">
+                  <div class="row">
+                    <div class="col-lg-5">
+                      <div class="ls-thumbnail">
+                        <img v-if="session.thumbnail" :src="session.thumbnail" alt="Instructor Profile Picture" />
+                        <img style="object-fit: contain; object-position: center; padding: 20px; background: #dedede;" v-else src="../../assets/Group 2217.svg" alt="Instructor Profile Picture" />
+                      </div>
+                    </div>
+                    <div class="col-lg-7">
+                      <div class="d-flex align-items-center justify-content-between py-3">
+                        <p class="ls-course font-family-bold">{{session.course?.name ? session.course.name : ""}}</p>
+                       <div class="d-flex">
+                        <div class="ls-time-remain flex-view align-items-center justify-content-between" v-if="session.status !== 'STARTED' && session.status !== 'ENDED' && Math.floor((Date.parse(session.time) - Date.now())) >= 0">
+                          <img src="./../../assets/live-chat/time.svg" alt="#" />
+                          <div class="clock">
+                          <h4>{{ Math.floor((Date.parse(session.time) - Date.now())/ (1000 * 60 * 60 * 24)) > 0 ? Math.floor((Date.parse(session.time) - Date.now())/ (1000 * 60 * 60 * 24)) : 0 }}</h4>
+                            <span>days</span>
+                          </div>
+                          <div class="clock">
+                          <h4>{{ Math.floor(((Date.parse(session.time) - Date.now()) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) > 0 ? Math.floor(((Date.parse(session.time) - Date.now()) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) : 0 }}</h4>
+                            <span>Hrs</span>
+                          </div>
+                          <div class="clock">
+                            <h4>{{ Math.floor(((Date.parse(session.time) - Date.now()) % (1000 * 60 * 60)) / (1000 * 60)) > 0 ? Math.floor(((Date.parse(session.time) - Date.now()) % (1000 * 60 * 60)) / (1000 * 60)) : 0 }}</h4>
+                            <span>Mins</span>
+                          </div>
+                        </div>
+                          <!-- <div class="act-dot cursor">
+                            <img class="" src="./../../assets/live-chat/share_black_24dp 1.svg"  @click="openShareModal(session)" alt="#" />
+                          </div> -->
+                          <div class="dropdown z-index-2 cursor">
+                            <div class="act-dot cursor" data-toggle="dropdown"><img class="cursor" src="../../assets/live-chat/dots.svg" class="dropdown-toggle" data-toggle="dropdown"></div>
+                            <div class="dropdown-menu dropdown-menu-right">
+                              <a class="dropdown-item" href="#" @click="openReportModal(session.id)">Report</a>
+                            </div>
+                          </div>
+                       </div>
+    
+                      </div>
+                      <div>
+                        <div class="d-flex align-items-center">
+                          <h5 class="ls-title font-family-bold">{{ session.name }}</h5>
+                            <span class="live-badge font-family-bold" v-if="session.status === 'STARTED'">&#9679; Live</span>
+                        </div>
+                        <div class="ls-desc popup-desc">{{ session.description }}</div>
+                        <div class="flex-view ls-professer-detail align-items-center">
+                          <div class="ls-professor-avatar">
+                              <img :src="session.instructor_pic" alt="Instructor Profile Picture">
+                          </div>
+                          <div class="professer-detail">
+                              <div class="ls-professer-name font-family-bold">{{ session.instructor_name }}</div>
+                              <div class="ls-professer-exp">
+                                  {{ session.instructor_profile }}
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex-view justify-content-end pt-3 pt-lg-0 my-button" v-if="session.status !== 'ENDED'">
+                        <button class="btn-np outlined button-height ml-0 mr-2" style="min-width: auto;"  @click="openShareModal(session)"><img src="./../../assets/live-chat/share_black_24dp 1.svg" alt="#"></button>
+                        <button @click="addToCalender(session)" class="btn-np outlined button-height ml-0 text-truncate" target="_blank"><img class="mr-2" src="./../../assets/live-chat/fi_2838764.svg" alt="#"> ADD TO CALENDAR</button>
+                        <a v-if="session.purchased !== undefined && !session.purchased" :href="createBuyNowLink(session)" class="btn-np btn-contained button-height text-uppercase" >Buy Now</a>
+                        <router-link v-else-if="session.status === 'STARTED' && session.url_type == 'NEARPEER'" class="btn-np btn-contained button-height text-uppercase" v-bind:to="{path: '/live-chat/'+session.id}" target="_blank">
+                            Join Session
+                        </router-link>
+                        <a v-else-if="session.status === 'STARTED' && session.url_type != 'NEARPEER'" :href="session.url" class="btn-np btn-contained button-height text-uppercase" target="_blank">Join Session</a>
+                          <div v-else class="btn-group dropup">
+                              <button type="button" class="btn-np outlined dropdown-toggle d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <img
+                                          :src="session.interested_users.find(user => user.user_id === uid)?.is_interested || false ? filled_start : outlined_start"
+                                          alt=""
+                                  />
+                                  <p class="mx-2">
+                                      {{ session.interested_users.find(user => user.user_id === uid)?.is_interested || false ? "Interested" : "Not Interested" }}
+                                  </p>
+                              </button>
+                              <div class="dropdown-menu">
+                                  <a class="dropdown-item" href="javascript:void(0)" @click="interested(session.id, 'interested')">Interested</a>
+                                  <a class="dropdown-item" href="javascript:void(0)" @click="interested(session.id, 'notInterested')">Not Interested</a>
+                              </div>
+                          </div>
+                        <!--                        <a :href="ongoingSession.url" target="_blank" class="btn-np outlined button-height"> JOIN</a>-->
+                        <!-- <a :href="ongoingSession.url" target="_blank" class="btn-np outlined button-height" data-toggle="modal" data-target="#join_session"> JOIN</a> -->
+                    </div>
+                    <div v-else class="d-flex justify-content-end">
+                        <router-link v-if="session.videos.length" class="btn-np btn-contained button-height text-uppercase" v-bind:to="{path: `/course/${session.videos[0].module?.index_url}/${session.videos[0].module_id}/${session.videos[0].id}?courseIndexUrl=${session.videos[0].module?.course?.index_url}`}">
+                            GO TO VIDEO
+                        </router-link>
+                        <p v-else>Video not uploaded yet</p>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal ls-modal backdrop" id="ls_share" tabindex="-1" aria-labelledby="ls_share_Label" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                  <div class="modal-content ls-modal-content">
+                    <div class="modal-header ls-modal-header">
+                      <div>
+                        <h5 class="modal-title font-family-bold" id="ls_share_Label">Share Session</h5>
+                        <p>Share this live session with your friends.</p>
+                      </div>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <img src="../../assets/live-chat/close-icon.svg" alt="#" />
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="ls-social-share">
+                        <a href="#" class="ls-social-card">
+                            <ShareNetwork network="facebook" :url="linkToCopy" :title="shareSession?.name || ''"
+                                          :description="shareSession?.description || ''" :quote="shareSession?.description || ''" hashtags="nearpeer,nearpeerorg">
+                                <img style="margin: 0 10px;" src="../../assets/Facebook Icon.svg" class="mob-icons" />
+                            </ShareNetwork>
+                          Facebook
+                        </a>
+                        <a href="#" class="ls-social-card">
+                            <ShareNetwork network="Twitter" :url="linkToCopy" :title="shareSession?.name || ''" :description="shareSession?.description || ''"
+                                          :quote="shareSession?.name || ''" hashtags="nearpeer,nearpeerorg" :twitter-user="Nearpeer">
+                                <img style="margin: 0 10px;" src="../../assets/live-chat/twitter.svg" class="mob-icons" />
+                            </ShareNetwork>
+                          Twitter (X)
+                        </a>
+                        <a href="#" class="ls-social-card">
+                            <ShareNetwork network="WhatsApp" :url="linkToCopy" :title="shareSession?.name || ''"
+                                          :description="shareSession?.description || ''" :quote="shareSession?.name || ''" hashtags="nearpeer,nearpeer.org">
+                                <img style="margin: 0 10px;" src="../../assets/live-chat/whatsapp.svg" class="mob-icons" />
+                            </ShareNetwork>
+                          Whatsapp
+                        </a>
+                        <a href="#" @click="copyURL" class="ls-social-card">
+                          <img src="../../assets/live-chat/copy.svg" alt="">
+                            {{ coppied ? 'Coppied': 'Copy Link' }}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal ls-modal backdrop" id="report_an_issue" tabindex="-1" aria-labelledby="report_an_issue_Label" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                  <div class="modal-content ls-modal-content">
+                    <div class="modal-header ls-modal-header">
+                      <div>
+                        <h5 class="modal-title font-family-bold" id="report_an_issue_Label">Report Live Session</h5>
+                        <p>You can report the live session, if you feel something not good.</p>
+                      </div>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <img src="../../assets/live-chat/close-icon.svg" alt="#" />
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form action="#" class="report-issue-form">
+                          <label for="reportAnIssue">Please share your valuable feedback with us so that we can enhance your experience.</label>
+                          <textarea class="form-control" id="reportAnIssue" placeholder="Max 250 Characters" required maxlength="250" placeholder="Type here anything...."></textarea>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn-np outlined button-height" data-dismiss="modal">Cancel</button>
+                      <button type="button" class="btn-np btn-contained hy button-height" @click="submitReport()">Submit</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

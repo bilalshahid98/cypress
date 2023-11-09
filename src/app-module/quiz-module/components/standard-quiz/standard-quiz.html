@@ -1,0 +1,733 @@
+<div class="parent-div" :class="{'overFH':proWalkThrough}">
+  <!-- <div
+    v-if="loader"
+    style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;background-color: rgba(116, 110, 110, 0.486);"
+  >
+    <div
+      style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);"
+    >
+      <vue-ellipse-progress
+        :progress="submitProgress"
+        :angle="-90"
+        color="blue"
+        :size="loaderSize"
+        :legend="true"
+        :legendValue="progress"
+        legendClass="legend-custom-style"
+        dash="60 0.9"
+        animation="reverse 100 10"
+        :noData="false"
+        :loading="false"
+        fontColor="#e94058"
+        :half="false"
+        color="#e94058"
+        dot="10 red"
+        fontSize="5rem"
+      >
+        <span slot="legend-value"></span>
+      </vue-ellipse-progress>
+    </div>
+  </div> -->
+  <div
+    style="width: 100%;"
+    class="flex-view flex-wrap__ align-items-center justify-content-a flex-direction-row"
+    id="nav-bar"
+  >
+    <img
+      src="./../../../../assets/np-red.svg"
+      class="np-logo select-tags-mobile"
+      @click="leaveQuiz = true"
+    />
+    <img
+      class="hidden-logo"
+      @click="leaveQuiz = true"
+      src="./../../../../assets/NearpeerLogo-NPonly-Mobile.svg"
+    />
+
+    <label class="p-status-t mt-1 subtitle-1"
+      >Question:{{attemptedQuestions.length}}/{{questions.length}}</label
+    >
+    <div class="c-0 flex-view flex-direction-row timer-width">
+      <img
+        style="margin: -4px 5px;
+      width: 20px;"
+        src="../../../../assets/Icon - Timer.svg"
+      />
+      <p class="subtitle-1" id="timer">00:00</p>
+    </div>
+    <practice-live-users :liveUsers="liveUsers" :page="'quiz-attempt'"/>
+    <img
+      class="c-4"
+      @click="quizSummary = !quizSummary"
+      src="../../../../assets/icon-total-questions.svg"
+    />
+    <div class="break"></div>
+    <div class="c-2 t-b-min-w flex-view flex-direction-row select-tags-mobile">
+      <img
+        @click="prevSkipped"
+        class="m-0-10-20"
+        style="transform: rotate(270deg);"
+        src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+      />
+      <img src="../../../../assets/Icon - Skipped Question.svg" />
+      <label class="skipped-class subtitle-2">Skipped</label>
+      <select
+        v-if="skippedQuestions"
+        id="selectSkipped"
+        class="subtitle-2"
+        @change="goToQuestion(parseInt($event.target.value))"
+      >
+        <option value="" disabled selected>Select</option>
+        <option
+          v-for="(ques,ind) in skippedQuestions"
+          :value="ques.index"
+          :key="skipKey"
+          >{{ques.index+1}}</option
+        >
+      </select>
+      <img
+        @click="nextSkipped"
+        class="m-0-10-20"
+        style="transform: rotate(90deg);"
+        src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+      />
+    </div>
+    <div class="c-3 t-b-min-w flex-view flex-direction-row select-tags-mobile">
+      <img
+        @click="prevMarked"
+        class="m-0-10-20"
+        style="transform: rotate(270deg);"
+        src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+      />
+      <img
+        v-if="markedQuestions.length > 0"
+        src="../../../../assets/Icon - Marked Question.svg"
+      />
+      <img
+        v-else
+        src="../../../../assets/Icon - Unmarked Question.svg"
+      />
+      <label class="skipped-class subtitle-2">Marked ({{markedQuestions.length}})</label>
+      <select
+        v-if="markedQuestions"
+        id="selectMarked"
+        class="subtitle-2"
+        @change="goToQuestion(parseInt($event.target.value))"
+      >
+        <option value="" disabled selected>Select</option>
+        <option
+          style="background-color: var(--background-gray);width: 50px;"
+          v-for="(ques,ind) in markedQuestions"
+          :value="ques.index"
+          :key="skipKey"
+          >{{ques.index+1}}</option
+        >
+      </select>
+      <img
+        @click="nextMarked"
+        class="m-0-10-20"
+        style="transform: rotate(90deg);"
+        src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+      />
+    </div>
+    <div class="break"></div>
+    <div class="c-1 flex-view flex-direction-col">
+      <div class="progress">
+        <div
+          class="progress-bar bg-color"
+          id="progress-bar"
+          role="progressbar"
+          style="width: 0%;"
+          aria-valuenow="60"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      <div class="p-status flex-view justify-content-b flex-direction-row">
+        <label class="mt-1 subtitle-1">{{attemptedPercentage}}% Complete</label>
+        <label class="mt-1 subtitle-1">
+          Question:{{attemptedQuestions.length}}/{{questions.length}}</label
+        >
+      </div>
+    </div>
+    <!-- <practice-live-users :liveUsers="liveUsers"/> -->
+  </div>
+  <div v-if="isPageLoading" class="website-loader">
+    <div>
+      <img src="../../../../assets/Loading-elements-logo.gif" />
+    </div>
+  </div>
+  <div v-else class="body" id="test">
+    <div
+      style="background-color: var(--background-gray); border-bottom: 1px solid var(--course-landing-bg);"
+    >
+      <div class="question flex-view flex-direction-col">
+        <div
+          class="top flex-view align-items-center justify-content-b flex-direction-row"
+        >
+          <div class="flex-view align-items-center flex-direction-row">
+            <h3>
+              {{index+1}}.
+            </h3>
+            <button class="mark-btn" @click="markQuestion">
+              <img
+                v-if="question.is_marked"
+                src="../../../../assets/Icon - Marked Question.svg"
+              />
+              <img
+                v-else
+                src="../../../../assets/Icon - Unmarked Question.svg"
+              />
+              <label
+                class="subtitle-2 text-transform-none"
+                v-if="question.is_marked"
+                >Unmark</label
+              >
+              <label
+                class="subtitle-2 text-transform-none"
+                v-if="!question.is_marked"
+                >Mark for Review</label
+              >
+            </button>
+          </div>
+        </div>
+        <div class="question-field responsive">
+          <div v-if="question.question && question.equation">
+            <div>
+              <p class="body-2"><span v-html="question.question"></span></p>
+              <p class="body-2">
+                <span class="maths-text-area" :id="`${index}-equation`"
+                  >{{mathCreator(question,`${index}-equation`,question.equation)}}</span
+                >
+              </p>
+            </div>
+            <!-- <div v-else>
+              <p class="body-2">{{question.question}}</p>
+            </div> -->
+          </div>
+          <div v-else>
+            <p v-if="question.equation" class="body-2">
+              <span class="maths-text-area" :id="`${index}-equation`"
+                >{{mathCreator(question,`${index}-equation`,
+                question.equation)}}</span
+              >
+            </p>
+            <div v-else>
+              <div
+                v-if="isHTML(question.question)"
+                v-html="span(question.question)"
+              ></div>
+              <p class="body-2" v-else>{{question.question}}</p>
+            </div>
+          </div>
+        </div>
+        <img
+          v-if="question.image_url"
+          :src="question.image_url"
+          @error="imgPlaceholder"
+          class="align-self-end question-image"
+        />
+      </div>
+    </div>
+    <div class="options-panel">
+      <div
+        class="option flex-view flex-direction-col align-items-baseline"
+        v-for="(option,indx) in question.options"
+        v-if="option.option || option.equation"
+        @click="markTrue(indx)"
+        :class="{'option-active' : option.is_selected===true}"
+      >
+        <div class="flex-view flex-direction-row width-100">
+          <div>
+            <div
+              v-if="quiz"
+              class="option-no"
+              :class="{'option-yes' : option.is_selected===true}"
+            >
+              {{alphabets[indx]}}
+            </div>
+          </div>
+          <div class="flex-view flex-direction-col option-field width-100">
+            <div
+              class="op-width"
+              style="
+            overflow: auto;"
+              v-if="option.equation"
+            >
+              <p class="body-2">{{option.option}}</p>
+              <p class="body-2 math-scroll">
+                <span class="maths-text-area" :id="`${indx}-option-equation`"
+                  >{{mathCreator(question,`${indx}-option-equation`,option.equation)}}</span
+                >
+              </p>
+            </div>
+            <p class="body-2" v-else>{{option.option}}</p>
+          </div>
+        </div>
+        <img
+          v-if="option.image_url"
+          :src="option.image_url"
+          @error="imgPlaceholder"
+          class="image-div align-self-center"
+        />
+      </div>
+    </div>
+    <div class="bottom-bar flex-wrap__ jus-flex-end">
+      <div
+        class="f-c-1 flex-view flex-wrap__ flex-direction-row align-items-center"
+      >
+        <button
+          v-if="index !== 0"
+          @click="goToQuestion(index-1, 'prev')"
+          class="btn-contained-light mr-3"
+        >
+          Previous
+        </button>
+
+        <button
+          v-if="index+1 !== questions.length"
+          @click="goToQuestion(index+1, 'next')"
+          class="btn-contained"
+        >
+          Next
+        </button>
+
+        <button
+          v-if="index+1 === questions.length"
+          @click="showSubmitBox"
+          class="btn-contained"
+        >
+          Finish
+        </button>
+      </div>
+      <button @click="reportProblem" class="text-filled mb-3 mt-3" v-if="user && user.id">
+        <img
+          src="./../../../../assets/Icon - Report or Flag.svg"
+          class="mr-2"
+        />
+        <label class="subtitle-2 text-transform-none">Report a Problem</label>
+      </button>
+      <div v-else></div>
+
+      <div class="f-c-0 mt-3 mb-3">
+        <base-pagination
+          :page-count="questions.length"
+          v-model="currentPage"
+          ref="paginationss"
+        ></base-pagination>
+      </div>
+    </div>
+    <div>
+      <div v-if="walkThrough" class="walk-through-bg_">
+        
+      </div>
+      <v-tour
+        name="myTour"
+        :steps="steps"
+        :options="myOptions"
+        :callbacks="myCallbacks"
+      ></v-tour>
+    </div>
+  </div>
+  <div class="walk-through-bg" v-if="proWalkThrough">
+    <div class="wt-holder">
+      <div>
+        <h1>
+          Welcome to your first Nearpeer Quiz
+        </h1>
+        Take a quick tour to learn how to attempt the quiz.
+        <br />
+      </div>
+      <div class="mt-4">
+        <button class="btn-np text-filled" @click="finishWalkThrough">
+          SKIP TOUR
+        </button>
+        <button class="btn-contained" @click="startWalkThrough">
+          BEGIN TOUR
+        </button>
+      </div>
+    </div>
+  </div>
+ <div
+    class="white-loader-bg flex-view justify-content-c align-items-center"
+    style="background-color: white !important;"
+    v-if="loader"
+  >
+    <!-- <img src="./../../../../assets/website_loading_animation.gif" /> -->
+    <!-- <section> -->
+    <div class="flex-view flex-direction-col align-items-center quiz-calculating-loader">
+      <h4>Calculating Quiz Result</h4>
+      <div class="mt-4" style="position: relative;">
+        <img src="./../../../../assets/results-loader.svg" />
+        <div
+          class="loader-bars loader-7"
+          style="    position: absolute;
+          top: 55px;
+          bottom: 0px;
+          left: 190px;
+          right: 0px;"
+        >
+          <div class="line line1"></div>
+          <div class="line line2"></div>
+          <div class="line line3"></div>
+        </div>
+      </div>
+      <div class="mt-4 progress" style="width:300px;">
+        <div
+          class="progress-bar bg-color"
+          id="progress-bar"
+          role="progressbar"
+          :style="{ 'width': submitProgress +'%'}"
+          aria-valuenow="60"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="delete-bg flex-view flex-direction-col justify-content-c"
+    v-if="submitQuizBox"
+  >
+    <div class="wt-holder">
+      <h5 class="font-family-bold">Submit Quiz</h5>
+      <p class="body-2 mt-3" v-if="skippedQuestions.length > 0">
+        You have skipped <b>{{skippedQuestions.length}}</b> questions. Are you
+        sure you want to submit your quiz?
+      </p>
+      <p v-if="skippedQuestions.length == 0">Are you sure you want to submit the quiz?</p>
+      <div class="flex-view flex-directin-row justify-content-b">
+        <div class="mt-3 align-self-center">
+          <button class="text-filled" @click="submitQuizBox = false">
+            Cancel
+          </button>
+        </div>
+        <div class="mt-3">
+          <button class="btn-contained" @click="submitQuiz">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="delete-bg flex-view flex-direction-col justify-content-c"
+    v-if="submitQuizBoxTest"
+  >
+    <div class="wt-holder">
+      <h5 class="font-family-bold">Re-Submit Quiz</h5>
+      <p class="body-2 mt-3">
+        Something went wrong!
+      </p>
+      <div class="flex-view flex-directin-row justify-content-b">
+        <div class="mt-3 align-self-center">
+          <button class="text-filled" @click="submitQuizBoxTest = false">
+            Cancel
+          </button>
+        </div>
+        <div class="mt-3">
+          <button class="btn-contained" @click="submitQuiz">
+            Re - Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="delete-bg flex-view flex-direction-col justify-content-c"
+    v-if="resumeBox"
+  >
+    <div class="wt-holder">
+      <h5 class="font-family-bold">Resume Quiz</h5>
+      <p class="body-2">
+        Seems like you encountered a problem while attempting your quiz.Don't
+        worry,we have saved your progress and you can resume from where you left
+        off.
+      </p>
+      <div class="flex-view flex-directin-row justify-content-b">
+        <div class="mt-3 align-self-end"></div>
+        <div class="mt-3">
+          <button class="btn-contained" @click="resumeBox = false">
+            Resume
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="delete-bg flex-view flex-direction-col justify-content-c"
+    v-if="timeUpBox"
+  >
+    <div class="wt-holder">
+      <h5 class="font-family-bold">Time Up!</h5>
+      <p class="body-2">You ran out of time.</p>
+      <div class="flex-view flex-directin-row justify-content-b">
+        <div class="mt-3 align-self-end">
+          <button class="btn-contained" @click="submitQuiz">
+            <img src="./../../../../assets/Icon-external-link.svg" />
+            Proceed
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="delete-bg flex-view flex-direction-col justify-content-c"
+    v-if="leaveQuiz"
+  >
+    <div class="wt-holder">
+      <h5 class="font-family-bold">Leave Quiz</h5>
+      <h6 class="mt-3">Are you sure you want to leave your quiz?</h6>
+      <div class="flex-view flex-directin-row justify-content-b">
+        <div class="mt-3 align-self-center">
+          <button class="text-filled btn-np" @click="leaveQuiz = false">
+            Cancel
+          </button>
+        </div>
+        <div class="mt-3">
+          <div to="/course/course-landing">
+            <button class="btn-contained" @click="mainlogoClick">
+              Leave
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="quizSummary" class="poppup-cp-new-overlay"></div>
+  <div class="quizSum" v-if="quizSummary">
+    <div class="top-container flex-view flex-direction-col">
+      <div
+        class="illuminated justify-content-c c-2 t-b-min-w flex-view flex-direction-row hidden-logo"
+      >
+        <img
+          @click="prevSkipped"
+          class="m-0-10-20"
+          style="transform: rotate(270deg);width: 15px;"
+          src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+        />
+        <img src="../../../../assets/Icon - Skipped Question.svg" />
+        <label class="skipped-class subtitle-2">Skipped</label>
+        <select
+          v-if="skippedQuestions"
+          id="selectSkipped"
+          class="subtitle-2"
+          @change="goToQuestion(parseInt($event.target.value))"
+        >
+          <option value="" disabled selected>Select</option>
+          <option
+            v-for="(ques,ind) in skippedQuestions"
+            :value="ques.index"
+            :key="skipKey"
+            >{{ques.index+1}}</option
+          >
+        </select>
+        <img
+          @click="nextSkipped"
+          class="m-0-10-20"
+          style="transform: rotate(90deg);width: 15px;"
+          src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+        />
+      </div>
+      <div
+        class="mt-2 illuminated justify-content-c c-3 t-b-min-w flex-view flex-direction-row hidden-logo"
+      >
+        <img
+          @click="prevMarked"
+          class="m-0-10-20"
+          style="transform: rotate(270deg);width: 15px;"
+          src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+        />
+        <img src="../../../../assets/Icon - Marked Question.svg" />
+        <label class="skipped-class subtitle-2">Marked</label>
+        <select
+          v-if="markedQuestions"
+          id="selectMarked"
+          class="subtitle-2"
+          @change="goToQuestion(parseInt($event.target.value))"
+        >
+          <!-- <option value="" disabled selected>Select</option> -->
+          <option
+            style="background-color: var(--background-gray);width: 50px;"
+            v-for="(ques,ind) in markedQuestions"
+            :value="ques.index"
+            :key="skipKey"
+            >{{ques.index+1}}</option
+          >
+        </select>
+        <img
+          @click="nextMarked"
+          class="m-0-10-20"
+          style="transform: rotate(90deg);width: 15px;"
+          src="../../../../assets/Icon-KeyboardArrow-Up-Dark.svg"
+        />
+      </div>
+      <div class="illuminated mt-2">
+        <div class="top-bar ellipsis">
+          <h5 class="body-2 font-family-bold">
+            {{quiz.name}}
+          </h5>
+        </div>
+      </div>
+      <div class="shadow_ flex-view flex-direction-col">
+        <div class="section">
+          <div
+            class="row-1 ellipsis"
+            v-for="(quest,ind) in questions"
+            @click="goToQuestion(ind)"
+          >
+            <div
+              class="box flex-view align-items-center justify-content-b flex-direction-row"
+              style="width: 100%;"
+            >
+              <div
+                style="width: 100%;"
+                class="flex-view flex-direction-row align-items-center ellipsis"
+              >
+                <label class="count">{{ind+1}}</label>
+                <div v-if="quest.question_and_equation">
+                  <p class="body-2">
+                    <span
+                      class="maths-text-area-summary"
+                      :id="`${ind}-equation`"
+                      >{{mathCreator(quest,`${ind}-equation`,quest.question_and_equation)}}</span
+                    >
+                  </p>
+                </div>
+                <div v-else>
+                  <div class="body-2 flex-view" v-if="quest.equation">
+                    <div
+                      class="flex-view align-items-center"
+                      v-if="quest.question"
+                    >
+                      <div
+                        v-if="isHTML(quest.question)"
+                        v-html="span(quest.question)"
+                      ></div>
+                      <p class="body-2" v-else>{{quest.question}}</p>
+                    </div>
+                    <div v-else>
+                      <span
+                        class="maths-text-area-summary"
+                        :id="`${ind}-equation`"
+                        >{{mathCreator(quest,`${ind}-equation`,
+                        quest.equation)}}</span
+                      >
+                    </div>
+                  </div>
+                  <div v-else>
+                    <div
+                      v-if="isHTML(quest.question)"
+                      v-html="span(quest.question)"
+                    ></div>
+                    <p class="body-2" v-else>{{quest.question}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex-view flex-direction-row align-items-center">
+                <img
+                  title="Marked Question"
+                  v-if="quest.is_marked"
+                  src="../../../../assets/Icon - Marked Question.svg"
+                />
+                <img
+                  title="Skipped Question"
+                  v-if="quest.is_skipped"
+                  src="../../../../assets/Icon - Skipped Question.svg"
+                />
+                <img
+                  title="Solved Question"
+                  v-if="quest.is_solved"
+                  src="../../../../assets/Icon - Attempted-Blue.svg"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="feedback-bg flex-view flex-direction-col justify-content-c"
+    v-if="reportQuiz"
+  >
+    <div class="wt-holder">
+      <div class="flex-view flex-direction-col align-items-baseline">
+        <h5 class="font-family-bold">Report Question</h5>
+        <ul
+          class="report-list flex-view flex-direction-col align-items-baseline"
+        >
+          <li>
+            <input
+              @click="reportQuizDescArr.push('Topic in lecture heading is not covered')"
+              type="checkbox"
+              class="mr-2"
+            />
+            <label class="body-2">Topic is not covered</label>
+          </li>
+          <li>
+            <input
+              @click="reportQuizDescArr.push('Content Improvement')"
+              type="checkbox"
+              class="mr-2"
+            />
+            <label class="body-2">Spelling Mistake</label>
+          </li>
+          <li>
+            <input
+              @click="reportQuizDescArr.push('Question is unclear')"
+              type="checkbox"
+              class="mr-2"
+            />
+            <label class="body-2">Question is unclear</label>
+          </li>
+          <li>
+            <input
+              @click="reportQuizDescArr.push('Options are unclear or repeated')"
+              type="checkbox"
+              class="mr-2"
+            />
+            <label class="body-2">Options are unclear</label>
+          </li>
+
+          <li class="flex-view flex-direction-col">
+            <div class="flex-view flex-direction-row align-items-center">
+              <input
+                @click="reportField = !reportField"
+                v-if="!reportField"
+                type="checkbox"
+                class="mr-2"
+              />
+              <label class="body-2">Other</label>
+            </div>
+            <textarea
+              v-if="reportField"
+              v-model="reportQuizDesc"
+              class="other-text"
+              placeholder="Type issues here..."
+            ></textarea>
+          </li>
+        </ul>
+      </div>
+      <div class="justify-content-end flex-view flex-direction-row">
+        <button class="btn-np text-filled" @click="cancelReportQuiz()">
+          Cancel
+        </button>
+        <button class="btn-np btn-contained" @click="postReportQuiz()">
+          Report
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="practice-result" v-if="practiceResult">
+    <div class="text-center">
+      <img src="../../../../assets/practice/ready-result.gif" alt="">
+      <h3>Your result is ready but...</h3>
+      <p>Let's wait for your friends to submit the quiz too.</p>
+      <button class="btn-contained" @click="practiceResultPage">Check result without friends</button>
+    </div>
+  </div>
+  <app-login ref="loginModal" :type="'quizSubmit'" @onLogin="submitQuiz"/>
+</div>

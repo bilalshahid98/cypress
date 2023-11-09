@@ -1,0 +1,251 @@
+<div style="width: 100%;">
+  <desktop-app-header v-if="isDesktopApp"/>
+  <div class="right-inner-width flex-view flex-direction-row justify-content-b">
+    <div
+      class="flex-view flex-direction-row align-items-center justify-content-b burger"
+    >
+      <img
+        v-if="!$store.state.isNewReactNative"
+        id="hamburger"
+        @click="sideBarHandler"
+        class="cursor"
+        src="../../../../assets/Hamburger.svg"
+      />
+      <div @click="mainlogoClick">
+        <img src="../../../../assets/Group 2217.svg" alt="nearpeer" />
+      </div>
+    </div>
+    <div
+      v-if="!$store.state.isNewReactNative"
+      class="flex-view flex-direction-row align-items-center justify-content-a"
+    >
+    <div class="d-none d-lg-block"><btn-mdcat-result /></div>
+    <div v-if="ongoingSessions?.length" class="live-session" v-click-outside="closeLiveSessionDD">
+      <div class="live-session-btn font-family-bold cursor" @click="liveSessionDDOpen()">
+        <picture>
+          <source srcset="../../../../assets/live-icon.svg"
+                  media="(min-width: 800px)">
+          <img src="../../../../assets/live-ico.svg" alt="live session" />
+        </picture>
+      
+        <!-- <img src="../../../../assets/live-icon.svg" alt="live session" /> -->
+        <p> {{ ongoingSessions.length }} Live <span>Session</span></p>
+      </div>
+      
+      <div class="live-session-dd" v-show="liveSessionDD"  :class="{active: liveSessionDD}">
+        <div class="live-session-dd-close cursor font-family-bold text-align-center sticky-top">
+          <div class="font-family-bold">{{ ongoingSessions.length }} Session Live Now</div>
+          <div class="position-absolute" style="top: 25%; right: 0;" @click="closeLiveSessionDD()"><img src="../../../../assets/IC_cross.svg" alt=""></div>
+        </div>
+        <div class="live-session-list">
+          <div class="live-session-item" v-for="ongoingSession in ongoingSessions">
+            <img class="live-session-avatar" :src="ongoingSession.instructor_pic" alt="">
+            <div class="live-session-detail" @click="joinLiveSession(ongoingSession)">
+              <p class="font-family-bold text-truncate">{{ ongoingSession.name }}</p>
+              <span class="d-inline-block w-100 text-truncate">{{ ongoingSession.description }}</span>
+              <div class="live-session-user">
+                <div class="live-session-content">
+                  <ul class="live-session-user-list">
+                    <li v-for="user in ongoingSession.users.slice(0, 5)" :class="user.image ? '' : 'name'">
+                        <a href="#" v-if="user.image"><img :src="user.image" alt=""></a>
+                        <a href="#" v-else>{{ getNameInitials(user.full_name ?? "Guest User") }}</a>
+                    </li>
+                  </ul>
+                <div class="live-session-user-text" v-if="ongoingSessions.length">
+                    <span v-if="ongoingSession.users.length > 5">+ {{ ongoingSession.users.length - 5 }}</span> Live right Now
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div class="live-session-overlay" v-if="liveSessionDD"></div>
+    <a href="tel:0311 1444 734" class="btn-np outlined" @click="callHelpLine()">
+      <img class="mr-2" src="../../../../assets/Icon material-call.svg" />
+      <span>
+        0311 1444 734
+      </span>
+    </a>
+    <button class="btn-contained" style="padding: 9px 16px;" v-if="!currentUser" @click="loginRedirect">
+        join us
+    </button>
+     <div class="noti-panel" v-click-outside="closeNotiDropDown" v-if="currentUser">
+        <div class="noti-icon new-noti" @click="openNotification">
+          <div v-if="unreadNotification > 0" class="unread-count"><p style="font-size: 12px; color: white;">{{unreadNotification > 9 ? '9+' : unreadNotification}}</p></div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22.36" height="26.064" viewBox="0 0 22.36 26.064">
+            <g id="notifications" transform="translate(-4.488 -2.25)">
+              <path id="Path_6052" data-name="Path 6052" d="M26.378,20.245l-.285-.345c-1.28-1.548-2.055-2.482-2.055-6.865a8.89,8.89,0,0,0-1.613-5.527,7.585,7.585,0,0,0-3.261-2.392.175.175,0,0,1-.048-.039A3.716,3.716,0,0,0,15.668,2.25,3.717,3.717,0,0,0,12.22,5.075a.182.182,0,0,1-.047.038C8.892,6.463,7.3,9.054,7.3,13.033c0,4.385-.773,5.319-2.055,6.865l-.285.345a2.045,2.045,0,0,0-.271,2.189,2.174,2.174,0,0,0,2,1.225H24.657a2.171,2.171,0,0,0,1.989-1.222,2.046,2.046,0,0,0-.268-2.191Z" transform="translate(0 0)"/>
+              <path id="Path_6053" data-name="Path 6053" d="M16.771,32.918A4.242,4.242,0,0,0,20.5,30.686a.212.212,0,0,0-.188-.311H13.227a.212.212,0,0,0-.188.311A4.242,4.242,0,0,0,16.771,32.918Z" transform="translate(-1.103 -4.604)" />
+            </g>
+          </svg>
+        </div>
+        <div>
+          <div v-if="notiDropDown" class="noti-dropdown">
+            <div class="noti-header">
+              <h6>Notification</h6>
+              <router-link to="/notifications" class="see-all">
+                See All
+              </router-link>
+              <a @click="closeNotiDropDown" class="noti-close">
+                <img src="../../../../assets/cross-icon.svg" />
+              </a>
+            </div>
+            <ul class="noti-list">
+              
+              <li v-for="(notification, index) in notifications" :class="notification.is_clicked ? 'read' : ''" @click="clickNotification(notification)">
+                <div class="noti-date" v-if="showDate(notification, index)">
+                  {{showDate(notification, index)}}
+                </div>
+                <div>
+                  <a href="#" class="noti-item important">
+                    <div class="noti-thumb">
+                      <img v-if="notification.notifications.thumbnail_url" :src="notification.notifications.thumbnail_url" alt="#">
+                      <img v-else src="../../../../assets/np-notification.jpeg" alt="#">
+                    </div>
+                    <div class="noti-detail">
+                      <div class="noti-title">
+                        {{notification.notifications.title}}
+                      </div>
+                      <div class="noti-shrtdetail">
+                        {{notification.notifications.description}}
+                      </div>
+                      <div class="noti-time">
+                        <span>{{showTime(notification)}}</span>
+                        <div class="noti-important">
+                          <i class="fa fa-star" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <div v-if="!isLoading && notifications.length === 0" class="d-flex justify-content-center" style="padding: 20px;">
+              <p>No recent notification</p>
+            </div>
+            <div v-if="isLoading" class="d-flex justify-content-center" style="padding: 20px;">
+              <div class="red-loader"> </div>
+            </div>
+          </div>
+        </div>  
+     </div>
+
+      <div v-click-outside="closeIt" class="profile" v-if="currentUser">
+        <img
+          class="img_p"
+          title="View Details"
+          @click="openIt"
+          v-if="!(currentUser || {}).image"
+          src="../../../../assets/Mask Group 29.svg"
+        />
+        <img
+          class="img_p"
+          title="View Details"
+          @click="openIt"
+          v-if="(currentUser || {}).image"
+          :src="(currentUser || {}).image"
+        />
+        <div>
+          <div v-if="profile" class="profile-detail">
+            <div class="width-100">
+              <div class="dp flex-view flex-direction-col">
+                <div class="dp-bg"></div>
+                <label class="custom-file-upload">
+                  <input
+                    type="file"
+                    style="display: none;"
+                    @change="onImageSelected($event)"
+                    accept="image/*"
+                  />
+                  <img src="../../../../assets/metro-camera.png" v-if="!loader"/>
+                  <div class="blue-loader" v-if="loader">
+  
+                  </div>
+                </label>
+                <div class="image-circle">
+                  <img
+                  class="img_"
+                  v-if="!(currentUser || {}).image"
+                  src="../../../../assets/Mask Group 29.svg"
+                  
+                />
+                <img
+                  class="img_"
+                  v-if="(currentUser || {}).image"
+                  :src="currentUser.image"
+                 
+                />
+                </div>
+      
+              </div>
+  
+              <div
+                class="flex-view flex-direction-col bottom-text padding-left-25 align-self-lg-start"
+              >
+                <h4 class="flex-view">
+                  {{(currentUser || {}).full_name}}
+                </h4>
+                <label v-if="(currentUser || {}).id" class="subtitle-2 margin-top-10"
+                  >NP-{{(currentUser || {}).id}}</label
+                >
+                <label v-if="(currentUser || {}).email" class="subtitle-2 margin-top-5 email"
+                  >{{(currentUser || {}).email}}</label
+                >
+                <label v-if="(currentUser || {}).phone" class="subtitle-2 margin-top-5"
+                  >{{(currentUser || {}).phone}}</label
+                >
+                <label v-if="(currentUser || {}).joiningDate" class="subtitle-2 margin-top-5"
+                  >Joined at: {{(currentUser || {}).joiningDate}}</label
+                >
+                <label v-if="(currentUser || {}).provider" class="subtitle-2 margin-top-5 mb-2"
+                  >Joined through:
+                  <label v-if="apple"
+                    ><img
+                      src="./../../../../assets/apple-black.svg"
+                      class="logo-width"
+                  /></label>
+                  <label v-if="facebook"
+                    ><img
+                      src="./../../../../assets/Facebook Icon.svg"
+                      class="logo-width"
+                  /></label>
+                  <label v-if="google"
+                    ><img
+                      src="./../../../../assets/Mask Group 82.svg"
+                      class="logo-width"
+                  /></label>
+                  <label v-if="nearpeer"
+                    ><img src="./../../../../assets/np-icon.svg" class="logo-width"
+                  /></label>
+                </label>
+              </div>
+              <div class="flex-view flex-direction-row dp-b-status justify-content-c bottom-div">
+                <div class="flex-view align-items-center">
+                  <img src="../../../../assets/school-24px.svg" class="mr-2" />
+                  <label class="subtitle-1 font-family-bold">{{this.$store.getters.getTotalEnrolledCoursesCount ? this.$store.getters.getTotalEnrolledCoursesCount : 0}} Courses Enrolled</label>
+                </div>
+              </div>
+  
+            </div>
+            <button
+            v-if="currentUser"
+            class="subtitle-2 flex-view justify-content-c signout align-items-center"
+            @click="logout()"
+          >
+            <img src="../../../../assets/open-account-logout.svg" class="mr-2" /> SIGN OUT
+          </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-else class="flex-view flex-direction-row align-items-center justify-content-a"  @click="closeWebview" >
+      <img
+          src="../../../../assets/Icon-Close-black.svg"
+          class="cross-icon"
+      />
+    </div>
+  </div>
+</div>

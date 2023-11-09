@@ -1,0 +1,958 @@
+<div class="login-page align-item-center flex-view backgd-img HeightSet">
+  <div id="webView" class="flex-view width-100" v-if="!guestMode">
+    <suspicious-user-popup v-if="isSuspiciousUser" @close="closeSusPopup" :user="suspiciousUser"></suspicious-user-popup>
+    <app-otp
+      :banner="false"
+      :signupPopUp="false"
+      :emailVerification="false"
+      :guestUser="false"
+      :OTP="OTP"
+      :logoutAll="logoutAll"
+      :sessions="sessions"
+      :userData="user"
+      :from="$route.query.from"
+      ref="appVerification"
+      v-if="verificationNeeded"
+      @close="closePopup"
+      @onLoginLiveSession="onLoginLiveSession"
+      :enterOTP="enterOTP"
+      :otpVerification="otpVerification"
+    />
+    <!-- "OTP" -->
+    <div
+      class="flex-view align-item-center_ flex-wrap_ justify-content-c justify-content-b-c width-100 HeightSet max-width"
+    >
+      <div class="top_ text-center">
+        <img
+          src="./../../assets/np-red.svg"
+          class="np-red"
+          v-if="!form.forget"
+        />
+        <img src="./../../assets/np-white.svg" class="np-white" />
+        <div class="display-none">
+          <img
+            src="./../../assets/Login-Sign-Up-Illustration.svg"
+            v-if="!form.forget"
+            class="illustration"
+          />
+          <img
+            src="./../../assets/forgot-password-logo-and-illustration.svg"
+            v-if="form.forget"
+            class="forget-illustration"
+          />
+
+          <h5 class="welcome-text mt-4 mb-2" v-if="!form.forget">
+            Welcome to the Nearpeer Velocity Portal
+          </h5>
+
+          <p class="body-2 text-align-center" v-if="!form.forget">
+            All your study requirements in one place.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-center tab-div-adj fixed-container">
+          <div class="flex-view mbt-4 align-item-center justify-content-b">
+            <div
+              class="b-b"
+              v-bind:class="(form.signIn || form.forget || form.otp || form.otpCode)?'activeBorder':''"
+            >
+              <button
+                id="signIn"
+                class="signInButton text-transform-none"
+                @click="filter('signIn')"
+              >
+                <h5>
+                  Login
+                </h5>
+              </button>
+            </div>
+            <div
+              class="b-b"
+              v-bind:class="(form.signUp || form.confirmation)?'activeBorder':''"
+            >
+              <button
+                id="signUp"
+                class="signUpButton text-transform-none"
+                @click="filter('signUp')"
+              >
+                <h5 class="text-align-end">Sign Up</h5>
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="flex-view flex-direction-col ease-out"
+            v-if="form.signIn"
+            v-on:keyup.enter="post(signIn)"
+          >
+            <div class="flex-view mb-3 flex-direction-col input-border">
+              <label class="subtitle-1">Email or Phone</label>
+              <input
+                class="body-2"
+                v-model="signIn.email"
+                type="email"
+                placeholder="nearpeer@gmail.com or 923*********"
+                id="email"
+              />
+            </div>
+            <div class="flex-view flex-direction-col input-border">
+              <label class="subtitle-1">Password</label>
+              <input
+                class="body-2"
+                v-model="signIn.your_password"
+                placeholder="********"
+                type="password"
+                id="password"
+              />
+            </div>
+            <div class="error-div ellipsis_">
+              <div class="blue-loader" v-if="loader"></div>
+              <p class="error-message" v-if="errorMessage">
+                {{errorMessage}}
+              </p>
+            </div>
+            <div
+              class="flex-view justify-content-between align-items-center mb-2"
+            >
+              <!-- <div
+                class="flex-view flex-direction-row justify-content-b"
+                style="width: 105px;"
+              >
+                <label class="forget-password">Remember Me</label>
+                <input
+                  type="checkbox"
+                  id="remember_me"
+                  v-model="signIn.remember_me"
+                  @change="rememberMe(signIn.remember_me)"
+                />
+              </div> -->
+              <div>
+                <a
+                  href="javascript:void(0)"
+                  @click="filter('otp')"
+                  class="forget-password"
+                  >Login with OTP</a
+                >
+              </div>
+              <div>
+                <a
+                  href="javascript:void(0)"
+                  @click="filter('forget')"
+                  class="forget-password"
+                  >Forgot Password?</a
+                >
+              </div>
+            </div>
+            <div>
+              <button
+                id="login-button"
+                @click="post(signIn)"
+                class="btn-contained button-alignment button-alignment-login"
+                :disabled="loader"
+              >
+                Login
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="flex-view flex-direction-col ease-out"
+            v-if="form.signUp"
+            v-on:keyup.enter="postSignup(signUp)"
+          >
+            <div class="flex-view mb-2 flex-direction-col input-border">
+              <label class="subtitle-1">Full Name</label>
+              <input
+                class="body-2"
+                v-model="signUp.full_name"
+                placeholder="Full Name"
+              />
+            </div>
+            <div class="flex-view mb-2 flex-direction-col input-border">
+              <label class="subtitle-1">Email</label>
+              <input
+                class="body-2"
+                v-model="signUp.email"
+                type="email"
+                placeholder="Email"
+              />
+            </div>
+            <div class="flex-view mb-2 flex-direction-col input-border">
+              <label class="subtitle-1">Contact Number</label>
+
+              <div style="display: flex; flex-direction: row;">
+                <!-- <select
+                  name="countryCode"
+                  id=""
+                  style="border: 0px;"
+                  v-model="signUp.countryCode"
+                >
+                  <option value="92">+92</option>
+                </select> -->
+                <input type="text" id="country" class="country-code-dropdown" >
+                <input class="body-2" style="margin-left: 20px;" maxlength="16" v-model="signUp.contact" placeholder="3*********" />
+              </div>
+            </div>
+
+            <div class="flex-view mb-2 flex-direction-col input-border">
+              <label class="subtitle-1">Password</label>
+              <input
+                class="body-2"
+                v-model="signUp.password"
+                placeholder="Enter 8 to 20 characters"
+                type="password"
+              />
+            </div>
+            <div class="flex-view flex-direction-col mb-2 input-border">
+              <label class="subtitle-1">Confirm Password</label>
+              <input
+                class="body-2"
+                v-model="signUp.confirmPassword"
+                placeholder="Confirm your password"
+                type="password"
+              />
+            </div>
+            <div
+              class="flex-view mb-2 flex-direction-row justify-content-between align-items-center"
+            >
+              <div class="flex-view flex-direction-col mr-3">
+                <label class="subtitle-1">Date of Birth</label>
+                <div
+                  class="flex-view justify-content-between mt-2"
+                  style="width: 168px;
+                "
+                >
+                  <input
+                    type="date"
+                    class="body-2"
+                    id="date"
+                    :max="currentDate"
+                    name="date"
+                    value="dob"
+                    v-model="signUp.dob"
+                    style="    width: 150px;
+                  "
+                  />
+                </div>
+              </div>
+              <div class="flex-view flex-direction-col">
+                <label class="subtitle-1">Gender</label>
+                <div class="flex-view gen-div mt-2">
+                  <div class="flex-view justify-content-between mr-3">
+                    <label class="subtitle-1">Male</label>
+                    <input
+                      type="radio"
+                      class="body-2 ml-2"
+                      id="gender"
+                      name="gender"
+                      value="male"
+                      v-model="signUp.gender"
+                    />
+                  </div>
+                  <div class="flex-view justify-content-between mr-3">
+                    <label class="subtitle-1">Female</label>
+                    <input
+                      type="radio"
+                      class="body-2 ml-2"
+                      id="gender"
+                      name="gender"
+                      value="female"
+                      v-model="signUp.gender"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="error-div ellipsis_">
+              <div class="blue-loader" v-if="loader"></div>
+              <p class="error-message" v-if="errorMessage">
+                {{errorMessage}}
+              </p>
+            </div>
+
+            <p class="pg-signup">
+              By creating an account, I accept Nearpeer's Terms of Service and
+              Privacy Policy.
+            </p>
+
+            <button
+              @click="postSignup(signUp)"
+              class="btn-contained button-alignment mt-3"
+              :disabled="loader"
+              style="    margin-bottom: 40px;
+              "
+            >
+              Create Account
+            </button>
+          </div>
+          <div
+            class="flex-view flex-direction-col ease-out"
+            v-if="form.confirmation"
+          >
+            <h4>Verify your Email Address!</h4>
+            <p class="align-self-baseline mt-3 font-family-bold">
+              Thank you for signing up with Nearpeer!
+            </p>
+            <p class="pg-forget body-2">
+              We have sent a verification email to <b>{{user_email}}</b>.
+            </p>
+            <p class="body-2 pg-forget">
+              Please verify your account to complete the sign up process.
+            </p>
+            <button
+              class="btn-contained align-self-center mt-3"
+              @click="filter('signIn')"
+            >
+              CONTINUE TO LOGIN
+            </button>
+          </div>
+          <div
+            class="flex-view flex-direction-col ease-out"
+            v-if="form.forget"
+            v-on:keyup.enter="postForget(forget)"
+          >
+            <p class="pg-forget">
+              Don't worry we will send you a code to reset your password.
+            </p>
+            <div class="flex-view flex-direction-col input-border">
+              <label class="subtitle-1">Email</label>
+              <input
+                class="body-2"
+                v-model="forget.email"
+                placeholder="Enter your Email"
+              />
+            </div>
+            <div class="error-div ellipsis_">
+              <div class="gray-loader" v-if="loader"></div>
+              <p class="error-message" v-if="errorMessage">
+                {{errorMessage}}
+              </p>
+            </div>
+            <div>
+              <a
+                href="javascript:void(0)"
+                @click="filter('signIn')"
+                class="forget-password"
+                >Login with password</a
+              >
+            </div>
+            <button
+              @click="postForget(forget)"
+              class="btn-contained button-alignment"
+            >
+              Send Email
+            </button>
+          </div>
+          <div
+            class="flex-view flex-direction-col ease-out"
+            v-if="form.otp"
+          >
+            <p class="pg-forget">
+              Login with OTP
+            </p>
+            <div class="flex-view flex-direction-col input-border">
+              <label class="subtitle-1">Email or Phone</label>
+              <input
+                class="body-2"
+                v-model="loginOtp.email"
+                placeholder="nearpeer@gmail.com or 923*********"
+              />
+            </div>
+            <div class="error-div ellipsis_">
+              <div class="blue-loader" v-if="loader"></div>
+              <p class="error-message" v-if="errorMessage && !loader">
+                {{errorMessage}}
+              </p>
+            </div>
+            <div style="margin-top: 10px;">
+              <a
+                href="javascript:void(0)"
+                @click="filter('signIn')"
+                class="forget-password"
+                >Login with password</a
+              >
+            </div>
+            <button
+              @click="sendOtp(loginOtp.email)"
+              class="btn-contained button-alignment"
+            >
+              Send OTP
+            </button>
+          </div>
+          <div class="flex-view flex-direction-col justify-content-around otp-options otp-padding"  v-if="form.otpCode">
+
+            <div>
+              <h4>Please enter the OTP sent to you.</h4>  
+              <p class="body-2 mt-3">A verification code has been sent to <b>example@email.com</b>. To complete your
+                email verification please enter the <b>6</b> digit verification code.</p>
+            </div>
+            <div class="flex-view flex-direction-col justify-content-around align-items-center mt-4">
+
+              <form method="get" class="digit-group" data-group-name="digits" data-autosubmit="false"
+                autocomplete="off">
+                <input type="text" @paste="onPasteOTP($event, 1)" id="digit-1" name="digit-1" data-next="digit-2" maxlength="1" @keydown="onKeydown"
+                  v-on:keyup="checkKey($event, 1)" v-model="digit1" />
+                <input type="text" id="digit-2" name="digit-2" data-next="digit-3" data-previous="digit-1" maxlength="1"
+                  @keydown="onKeydown" v-on:keyup="checkKey($event, 2)" v-model="digit2" />
+                <input type="text" id="digit-3" name="digit-3" data-next="digit-4" data-previous="digit-2" maxlength="1"
+                  @keydown="onKeydown" v-on:keyup="checkKey($event, 3)" v-model="digit3" />
+                <input type="text" id="digit-4" name="digit-4" data-next="digit-5" data-previous="digit-3" maxlength="1"
+                  @keydown="onKeydown" v-on:keyup="checkKey($event, 4)" v-model="digit4" />
+                <input type="text" id="digit-5" name="digit-5" data-next="digit-6" data-previous="digit-4" maxlength="1"
+                  @keydown="onKeydown" v-on:keyup="checkKey($event, 5)" v-model="digit5" />
+                <input type="text" id="digit-6" name="digit-6" data-next="digit-7" data-previous="digit-5" maxlength="1"
+                  v-model="digit6" @keydown="onKeydown" v-on:keyup="checkKey($event, 6)" />
+              </form>
+              <div>
+                <a
+                  href="javascript:void(0)"
+                  @click="filter('signIn')"
+                  class="forget-password"
+                  >Login with password</a
+                >
+              </div>
+              <button class="btn-contained mt-3" @click="sendOTPConfirmation">Submit</button>
+            </div>
+            <div v-if="otpError">
+              <p class="body-2" style="color: red !important;font-weight: bold;text-align: center;
+              margin-top: 8px;">{{otpError}}</p>
+            </div>
+            <div class="flex-view mt-3 justify-content-center">
+              <p class="subtitle-2" style="color: #838383 !important;">Didn't get the code? <b @click="resendOtp" style="color:var(--theme-bg); cursor: pointer">Resend</b></p>
+            </div>
+ 
+          </div>
+          <div
+            v-if="form.signIn"
+            class="flex-view justify-content-c flex-direction-col align-item-center ease-out"
+          >
+            <div class="flex-view flex-direction-row mt-4 mb-3">
+              <hr class="hr-set" />
+              <h6 class="text-center or">OR</h6>
+              <hr class="hr-set" />
+            </div>
+
+            <!-- <GoogleLogin
+              class="google-button Button subtitle-2 text-transform-none"
+              :params="params"
+              :onSuccess="onSuccess"
+              :onFailure="onFailure"
+            >
+              <img
+                src="./../../assets/Mask Group 82.svg"
+                class="google-icon"
+              />Connect with Google
+            </GoogleLogin> -->
+            <!-- <button
+              @click="postSignupAsGuest()"
+              class="google-button Button subtitle-2 text-transform-none"
+            >
+              <img
+                src="./../../assets/guest.svg"
+                style="width: 18px; margin-right: 8px;"
+              />
+              Continue as a Guest
+            </button> -->
+            <template v-if="!reactApp">
+              <button
+                v-google-signin-button="clientId"
+                class="google-button Button subtitle-2 text-transform-none"
+              >
+                <img
+                  src="./../../assets/Mask Group 82.svg"
+                  class="google-icon"
+                />
+                Connect with Google
+              </button>
+            </template>
+            <button
+              v-if="reactApp"
+              @click="googleForReactApp()"
+              class="google-button Button subtitle-2 text-transform-none"
+            >
+              <img src="./../../assets/Mask Group 82.svg" class="google-icon" />
+              Continue with Google
+            </button>
+            <button
+              @click="logInWithFacebook()"
+              class="google-button Button subtitle-2 text-transform-none"
+            >
+              <img
+                src="./../../assets/f-blue.svg"
+                class="facebook-icon"
+              />Connect with Facebook
+            </button>
+            <button
+              @click="authenticateApple()"
+              class="google-button Button subtitle-2 text-transform-none"
+              style="    margin-bottom: 40px;"
+            >
+              <img
+                src="./../../assets/apple-black.svg"
+                class="apple-icon"
+              />Connect with Apple
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex-view width-100" v-if="guestMode">
+    <app-otp
+      :type="type"
+      @onLogin="onLogin"
+      @onLoginLiveSession="onLoginLiveSession"
+      :banner="false"
+      :signupPopUp="false"
+      :emailVerification="false"
+      :guestUser="false"
+      :OTP="OTP"
+      :logoutAll="logoutAll"
+      :sessions="sessions"
+      :userData="user"
+      :from="$route.query.from"
+      ref="appVerification"
+      v-if="verificationNeeded"
+    />
+    <!--" -->
+    <div
+      class="signup-bg flex-view align-items-center custom-align"
+      style="overflow: auto;"
+    >
+      <div
+        class="email-holder tab-width backgd-img bg-size flex-view justify-content-around align-items-center flex-direction-col signup-parent login-popup"
+        style="width: 100%;
+        overflow: scroll;"
+      >
+        <span
+          class="closeButtonImage"
+          style="top: 0; 
+        "
+          @click="handleLoignForm"
+          v-if="!mandatory"
+          ><img src="./../../assets/Icon-Close-black.svg" class="cross-icon"
+        /></span>
+        <div>
+          <img
+            src="./../../assets/np-red.svg"
+            class="np-red-form"
+            v-if="!form.forget"
+          />
+          <img src="./../../assets/np-white.svg" class="np-white-form" />
+        </div>
+        <div
+          class="flex-view justify-content-around"
+          style="width:100%;margin-bottom: 20px;"
+        >
+          <div
+            class="flex-view flex-direction-col align-items-center justify-content-c display-none-form"
+          >
+            <img src="./../../assets/Group 10276.svg" class="illustration" />
+            <div class="mt-4">
+              <li>Highly Optimized Apps for Fast Streaming</li>
+              <li>High Quality Video Lectures</li>
+              <li>Access to 200+ Online Courses</li>
+              <li>10,000+ MCQs in the palm of your hands</li>
+            </div>
+            <!-- <li>Performance Evaluation tailored to Improve your Learning</li>  tab-div-adj -->
+          </div>
+
+          <div class="text-center fixed-container-form">
+            <div class="flex-view mbt-4 align-item-center justify-content-b">
+              <div
+                class="b-b"
+                v-bind:class="(form.signIn || form.forget)?'activeBorder':''"
+              >
+                <button
+                  id="signIn"
+                  class="signInButton text-transform-none"
+                  @click="filter('signIn')"
+                >
+                  <h5>
+                    Login
+                  </h5>
+                </button>
+              </div>
+              <div
+                class="b-b"
+                v-bind:class="(form.signUp || form.confirmation)?'activeBorder':''"
+              >
+                <button
+                  id="signUp"
+                  class="signUpButton text-transform-none"
+                  @click="filter('signUp')"
+                >
+                  <h5 class="text-align-end">Sign Up</h5>
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="flex-view flex-direction-col ease-out"
+              v-if="form.signIn"
+              v-on:keyup.enter="post(signIn)"
+            >
+              <div class="flex-view mb-3 flex-direction-col input-border">
+                <label class="subtitle-1">Email</label>
+                <input
+                  class="body-2"
+                  v-model="signIn.email"
+                  type="email"
+                  placeholder="nearpeer@gmail.com"
+                  id="email"
+                />
+              </div>
+              <div class="flex-view flex-direction-col input-border">
+                <label class="subtitle-1">Password</label>
+                <input
+                  class="body-2"
+                  v-model="signIn.your_password"
+                  placeholder="********"
+                  type="password"
+                  id="password"
+                />
+              </div>
+              <div class="error-div ellipsis_">
+                <div class="blue-loader" v-if="loader"></div>
+                <p class="error-message" v-if="errorMessage">
+                  {{errorMessage}}
+                </p>
+              </div>
+              <div
+                class="flex-view justify-content-between align-items-center mb-2"
+              >
+                <div
+                  class="flex-view flex-direction-row justify-content-b"
+                  style="width: 105px;"
+                >
+                  <label class="forget-password">Remember Me</label>
+                  <input
+                    type="checkbox"
+                    id="remember_me"
+                    v-model="signIn.remember_me"
+                    @change="rememberMe(signIn.remember_me)"
+                  />
+                </div>
+                <div>
+                  <a
+                    href="javascript:void(0)"
+                    @click="filter('forget')"
+                    class="forget-password"
+                    >Forgot Password?</a
+                  >
+                </div>
+              </div>
+              <div>
+                <button
+                  id="login-button"
+                  @click="post(signIn)"
+                  class="btn-contained button-alignment button-alignment-login"
+                  :disabled="loader"
+                >
+                  Login
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="flex-view flex-direction-col ease-out"
+              v-if="form.signUp"
+              v-on:keyup.enter="postSignup(signUp)"
+            >
+              <div class="flex-view mb-2 flex-direction-col input-border">
+                <label class="subtitle-1">Full Name</label>
+                <input
+                  class="body-2"
+                  v-model="signUp.full_name"
+                  placeholder="Full Name"
+                />
+              </div>
+              <div class="flex-view mb-2 flex-direction-col input-border">
+                <label class="subtitle-1">Email</label>
+                <input
+                  class="body-2"
+                  v-model="signUp.email"
+                  type="email"
+                  placeholder="Email"
+                />
+              </div>
+              <div class="flex-view mb-2 flex-direction-col input-border">
+                <label class="subtitle-1">Contact Number</label>
+                <div style="display: flex; flex-direction: row;">
+                  <input type="text" id="country" class="country-code-dropdown" >
+                  <input class="body-2" style="margin-left: 20px;" maxlength="16" v-model="signUp.contact" placeholder="3*********" />
+                </div>
+              </div>
+
+              <div class="flex-view mb-2 flex-direction-col input-border">
+                <label class="subtitle-1">Password</label>
+                <input
+                  class="body-2"
+                  v-model="signUp.password"
+                  placeholder="Enter 8 to 20 characters"
+                  type="password"
+                />
+              </div>
+              <div class="flex-view flex-direction-col mb-2 input-border">
+                <label class="subtitle-1">Confirm Password</label>
+                <input
+                  class="body-2"
+                  v-model="signUp.confirmPassword"
+                  placeholder="Confirm your password"
+                  type="password"
+                />
+              </div>
+              <div
+                class="flex-view mb-2 flex-direction-row justify-content-between align-items-center"
+              >
+                <div class="flex-view flex-direction-col mr-3">
+                  <label class="subtitle-1">Date of Birth</label>
+                  <div
+                    class="flex-view justify-content-between mt-2"
+                    style="width: 168px;
+              "
+                  >
+                    <input
+                      type="date"
+                      class="body-2"
+                      id="date"
+                      :max="currentDate"
+                      name="date"
+                      value="dob"
+                      v-model="signUp.dob"
+                      style="    width: 150px;
+                "
+                    />
+                  </div>
+                </div>
+                <div class="flex-view flex-direction-col">
+                  <label class="subtitle-1">Gender</label>
+                  <div class="flex-view gen-div mt-2">
+                    <div class="flex-view justify-content-between mr-2">
+                      <label class="subtitle-1">Male</label>
+                      <input
+                        type="radio"
+                        class="body-2 ml-2"
+                        id="gender"
+                        name="gender"
+                        value="male"
+                        v-model="signUp.gender"
+                      />
+                    </div>
+                    <div class="flex-view justify-content-between mr-2">
+                      <label class="subtitle-1">Female</label>
+                      <input
+                        type="radio"
+                        class="body-2 ml-2"
+                        id="gender"
+                        name="gender"
+                        value="female"
+                        v-model="signUp.gender"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="error-div ellipsis_">
+                <div class="blue-loader" v-if="loader"></div>
+                <p class="error-message" v-if="errorMessage">
+                  {{errorMessage}}
+                </p>
+              </div>
+
+              <p class="pg-signup">
+                By creating an account, I accept Nearpeer's Terms of Service and
+                Privacy Policy.
+              </p>
+
+              <button
+                @click="postSignup(signUp)"
+                class="btn-contained button-alignment mt-3"
+                :disabled="loader"
+              >
+                Create Account
+              </button>
+            </div>
+            <div
+              class="flex-view flex-direction-col ease-out"
+              v-if="form.confirmation"
+            >
+              <h4>Verify your Email Address!</h4>
+              <p class="align-self-baseline mt-3 font-family-bold">
+                Thank you for signing up with Nearpeer!
+              </p>
+              <p class="pg-forget body-2">
+                We have sent a verification email to <b>{{user_email}}</b>.
+              </p>
+              <p class="body-2 pg-forget">
+                Please verify your account to complete the sign up process.
+              </p>
+              <button
+                class="btn-contained align-self-center mt-3"
+                @click="filter('signIn')"
+              >
+                CONTINUE TO LOGIN
+              </button>
+            </div>
+            <div
+              class="flex-view flex-direction-col ease-out"
+              v-if="form.forget"
+              v-on:keyup.enter="postForget(forget)"
+            >
+              <p class="pg-forget">
+                Don't worry we will send you a code to reset your password.
+              </p>
+              <div class="flex-view flex-direction-col input-border">
+                <label class="subtitle-1">Email</label>
+                <input
+                  class="body-2"
+                  v-model="forget.email"
+                  placeholder="Enter your Email"
+                />
+              </div>
+              <div class="error-div ellipsis_">
+                <div class="gray-loader" v-if="loader"></div>
+                <p class="error-message" v-if="errorMessage">
+                  {{errorMessage}}
+                </p>
+              </div>
+
+              <div>
+                <a
+                  href="javascript:void(0)"
+                  @click="filter('signIn')"
+                  class="forget-password"
+                  >Login with password</a
+                >
+              </div>
+              <button
+                @click="postForget(forget)"
+                class="btn-contained button-alignment"
+              >
+                Send Email
+              </button>
+            </div>
+            <div
+              v-if="form.signIn"
+              class="flex-view justify-content-c flex-direction-col align-item-center ease-out"
+            >
+              <div class="flex-view flex-direction-row mt-4 mb-3">
+                <hr class="hr-set" />
+                <h6 class="text-center or">OR</h6>
+                <hr class="hr-set" />
+              </div>
+
+              <!-- <GoogleLogin
+            class="google-button Button subtitle-2 text-transform-none"
+            :params="params"
+            :onSuccess="onSuccess"
+            :onFailure="onFailure"
+          >
+            <img
+              src="./../../assets/Mask Group 82.svg"
+              class="google-icon"
+            />Connect with Google
+          </GoogleLogin> -->
+              <!-- <button @click="postSignupAsGuest()" class="google-button Button subtitle-2 text-transform-none">
+            <img src="./../../assets/guest.svg" style="width: 18px; margin-right: 8px;" />
+            Continue as a Guest
+          </button> -->
+
+
+
+
+              <!-- <template>
+                <button
+                  v-if="reactApp"
+                  @click="googleForReactApp()"
+                  class="google-button Button subtitle-2 text-transform-none"
+                >
+                  <img
+                    src="./../../assets/Mask Group 82.svg"
+                    class="google-icon"
+                  />
+                  Continue with Google
+                </button>
+                <button
+                  v-google-signin-button="clientId"
+                  class="google-button Button subtitle-2 text-transform-none"
+                  v-if="!reactApp"
+                >
+                  <img
+                    src="./../../assets/Mask Group 82.svg"
+                    class="google-icon"
+                  />
+                  Continue with Google
+                </button>
+              </template>
+              <button
+                @click="logInWithFacebook()"
+                class="google-button Button subtitle-2 text-transform-none"
+              >
+                <img
+                  src="./../../assets/f-blue.svg"
+                  class="facebook-icon"
+                />Connect with Facebook
+              </button>
+              <button
+                @click="authenticateApple()"
+                class="google-button Button subtitle-2 text-transform-none"
+              >
+                <img
+                  src="./../../assets/apple-black.svg"
+                  class="apple-icon"
+                />Connect with Apple
+              </button> -->
+
+
+
+
+              <div v-if="!reactApp" style="width: 100%;">
+                <button
+                  v-google-signin-button="clientId"
+                  class="google-button Button subtitle-2 text-transform-none"
+                >
+                  <img
+                    src="./../../assets/Mask Group 82.svg"
+                    class="google-icon"
+                  />
+                  Connect with Google
+                </button>
+              </div>
+              <button
+                v-if="reactApp"
+                @click="googleForReactApp()"
+                class="google-guest Button subtitle-2 text-transform-none"
+              >
+     
+                <img src="./../../assets/Mask Group 82.svg" class="google-icon" />
+                Continue with Google
+              </button>
+              <button
+                @click="logInWithFacebook()"
+                class="google-button Button subtitle-2 text-transform-none"
+              >
+                <img
+                  src="./../../assets/f-blue.svg"
+                  class="facebook-icon"
+                />Connect with Facebook
+              </button>
+              <button
+                @click="authenticateApple()"
+                class="google-button Button subtitle-2 text-transform-none"
+                style="    margin-bottom: 40px;"
+              >
+                <img
+                  src="./../../assets/apple-black.svg"
+                  class="apple-icon"
+                />Connect with Apple
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

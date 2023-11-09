@@ -1,0 +1,254 @@
+<div id="feedback-component">
+  <div class="flex-view flex-direction-col justify-content-c align-items-center mb-3">
+  <img src="../../../../assets/side-bar.svg" style="width: 160px;
+  margin-bottom: 10px;"/>
+  <button @click="feedbackPopUp" class="btn-np outlined flex-view justify-content-c">
+    Send Feedback
+  </button>
+</div>
+  <div class="feedback-bg flex-view flex-direction-col justify-content-c scroll-div main-feed" v-if="showFeedback" style="overflow: scroll;">
+    <div class="feedback-holder flex-view flex-direction-col align-self-center mt-div">
+      <div class="feedback-title flex-view justify-content-b">
+        <div>
+          <h6 class="font-color">Help Us Provide Better Services.</h6>
+        </div>
+        <div class="closeButton" @click="showFeedback = false"><img src="./../../../../assets/Icon - Wrong Answer.svg" style="width: 20px;"></div>
+      </div>
+      <div class="progress">
+        <div
+          class="progress-bar bg-color"
+          id="progress-bar"
+          role="progressbar"
+          :style="{ 'width': feedbackPercentage+'%'}"
+          aria-valuenow="60"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      <div class="feedback-middle-div">
+        <div class="flex-view flex-directin-row justify-content-b height-100">
+          <div class="flex-view flex-direction-col justify-content-b width-100 height-100">
+   
+            <div class="user-experience-emoticons ux-div" v-if="feedbackType == 1">
+              <div>
+                <p class="body-2 mt-3 text-align-center">
+                  How was your experience with us today?
+                </p>
+              </div>
+              <div class="flex-view flex-direction-row-col justify-content-b mt-3 height-100 padding-div">
+                <div class="flex-view flex-direction-col justify-content-c align-items-center">
+                  <div class="experience-div" v-bind:class="{ active: terrible }" @click="userExperience('terrible')">
+                    <img src="./../../../../assets/icon-terrible.svg" />
+                    <img src="./../../../../assets/icon-terrible-hover.svg" />
+                  </div>
+                  <div>
+                    <p class="caption">Terrible</p>
+                  </div>
+                </div>
+                <div class="flex-view flex-direction-col justify-content-c align-items-center">
+                  <div class="experience-div" v-bind:class="{ active: poor }" @click="userExperience('poor')">
+                    <img src="./../../../../assets/icon-bad.svg" />
+                    <img src="./../../../../assets/icon-bad-hover.svg" />
+                  </div>
+                  <div>
+                    <p class="caption">Poor</p>
+                  </div>
+                </div>
+                <div class="flex-view flex-direction-col justify-content-c align-items-center">
+                  <div class="experience-div" v-bind:class="{ active: average }" @click="userExperience('average')">
+                    <img src="./../../../../assets/icon-average.svg" />
+                    <img src="./../../../../assets/icon-average-hover.svg" />
+                  </div>
+                  <div>
+                    <p class="caption">Average</p>
+                  </div>
+                </div>
+                <div class="flex-view flex-direction-col justify-content-c align-items-center">
+                  <div class="experience-div" v-bind:class="{ active: good }" @click="userExperience('good')">
+                    <img src="./../../../../assets/icon-good.svg" />
+                    <img src="./../../../../assets/icon-good-hover.svg" />
+                  </div>
+                  <div>
+                    <p class="caption">Good</p>
+                  </div>
+                </div>
+                <div class="flex-view flex-direction-col justify-content-c align-items-center">
+                  <div class="experience-div" v-bind:class="{ active: great }" @click="userExperience('great')">
+                    <img src="./../../../../assets/icon-great.svg" />
+                    <img src="./../../../../assets/icon-great-hover.svg" />
+                  </div>
+                  <div>
+                    <p class="caption">Great</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="suggestion-box" v-if="feedbackType == 2">
+              <div class="flex-view flex-direction-row justify-content-b align-items-center mt-3">
+                <div>
+                  <p class="body-2">Do you have any suggestions for us?</p>
+                </div>
+                <div>
+                  <p class="caption">
+                  Max 250 Characters
+                </p>
+                </div>
+                
+              </div>
+              <div class="mt-3">
+                <textarea autofocus class="text-area" v-model="data.suggestion" >
+                  </textarea>
+              </div>
+  
+            </div>
+
+            <div class="feature" v-if="feedbackType == 3">
+              <div class="mb-4">
+                <p class="body-2 mt-3 text-align-center">Which feature would you like us to add next to improve your learning</p>
+              </div>
+              <div>
+              <div class="flex-view justify-content-a flex-direction-row-col"> 
+                <div class="flex-view flex-direction-col justify-content-a feature-box" v-bind:class="{ activeFeature: practice }" @click="feature('practice')">
+                  <div class="flex-view">
+                    <img src="./../../../../assets/practice questions (1).svg"/>
+                  </div>
+                  <div class="flex-view justify-content-c">
+                    <p class="body-2 font-family-bold text-align-center">
+                      Practice
+                    </p>
+                  </div>
+                  <div class="flex-view justify-content-c">
+                    <p class="subtitle-1 text-align-center">
+                      Quickly practice questions on any subject.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex-view flex-direction-col justify-content-a feature-box" v-bind:class="{ activeFeature: assignment }" @click="feature('assignment')">
+                  <div class="flex-view">
+                    <img src="./../../../../assets/Icon material-assignment.svg"/>
+                  </div>
+                  <div class="flex-view justify-content-c">
+                    <p class="body-2 font-family-bold text-align-center">
+                      Assignments
+                    </p>
+                  </div>
+                  <div class="flex-view justify-content-c">
+                    <p class="subtitle-1 text-align-center">
+                      Manage all your assignments in one place.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex-view flex-direction-col justify-content-a feature-box" v-bind:class="{ activeFeature: schedule }" @click="feature('schedule')">
+                  <div class="flex-view">
+                    <img src="./../../../../assets/Icon awesome-calendar-alt.svg"/>
+                  </div>
+                  <div class="flex-view justify-content-c">
+                    <p class="body-2 font-family-bold text-align-center">
+                      Schedule
+                    </p>
+                  </div>
+                  <div class="flex-view justify-content-c">
+                    <p class="subtitle-1 text-align-center">
+                      Organize workload by achieving daily study goals.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+          <div class="flex-view flex-direction-col height-100" v-if="feedbackType == 4">
+            <h3 class="text-align-center mt-5">
+              Thank you for your valuable feedback!
+            </h3>
+            <img src="./../../../../assets/Icon feather-heart.svg" class="flex-view mt-5 justify-content-c align-items-center"/>
+
+          </div>
+
+          <div class="flex-view justify-content-a mt-3 flex-direction-row-col" v-if="feedbackType != 4">
+            <button class="text-filled btn-np flex-view justify-content-c mt-2" v-if="feedbackType != 1" @click="back">Back</button>
+            <button class="btn-contained flex-view justify-content-c mt-2" v-if="feedbackType == 2" @click="skip">Next</button>
+            <button class="btn-contained flex-view justify-content-c mt-2" v-if="feedbackType == 3" @click="addFeedback">Submit</button>
+
+          </div>
+
+        </div>
+
+    
+            <!-- <div class="suggestion-box mt-3">
+
+              <div class="flex-view flex-direction-row justify-content-b align-items-center mt-3">
+                <div>
+                  <p class="body-2">Do you have any suggestions for us?</p>
+                </div>
+                <div>
+                  <p class="caption">
+                  Max 250 Characters
+                </p>
+                </div>
+                
+              </div>
+              <div class="mt-3">
+                <textarea  class="text-area" v-model="data.suggestion">
+                  </textarea>
+              </div>
+
+            </div>
+ 
+
+            <div class="recommendation mt-3">
+              <div class="mt-3">
+                <p class="body-2">How likely are you to recommend us to your peers?</p>
+              </div>
+              <div class="flex-view flex-direction-row mt-3">
+                <ul class="flex-view justify-content-b width-100 padding-0">
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1" 
+                  v-bind:class="{ activeList: selected == '1' }"
+                  @click="selected=1">1</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '2' }"
+                  @click="selected=2">2</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '3' }"
+                  @click="selected=3">3</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '4' }"
+                  @click="selected=4">4</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '5' }"
+                  @click="selected=5">5</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '6' }"
+                  @click="selected=6">6</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '7' }"
+                  @click="selected=7">7</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '8' }"
+                  @click="selected=8">8</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList: selected == '9' }"
+                  @click="selected=9">9</l1>
+                  <l1 class="flex-view justify-content-c align-items-center recommendation-list subtitle-1"
+                  v-bind:class="{ activeList : selected =='10'  }"
+                  @click="selected=10">10</l1>
+                </ul>
+              </div>
+            </div>
+
+            <div class="flex-view justify-content-end mt-3">
+              <button class="btn-contained" @click="addFeedback(data)">Submit</button>
+            </div> -->
+
+          
+      
+     
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,69 @@
+<div>
+  <div v-if="isPageLoading" class="website-loader flex-view flex-direction-row" style="background-color: black;">
+  </div>
+  <div v-if="!isPageLoading" :class="{ OFH: sideMenuOptions }">
+  
+    <div class="container_ ">
+      <div class="flex-view flex-direction-row-col">
+      <div
+        id="video-fixed"
+        class="flex-view flex-direction-col width-100"
+        v-bind:class="{'other-info-display': hideOtherInfo}"
+      >
+        <!-- v-bind:class=" mobileView ? 'mobile-fix-parent':''" -->
+        <div
+          id="video-parent"
+          :style="isRecomendationBanner ? {marginTop: totalHeight - 28+'px !important'} : {}" 
+          v-bind:class="{'mobile-fix-parent': mobileView ,'other-info-display': hideOtherInfo}"
+        >
+          <div
+            id="video-center"
+            :style="isRecomendationBanner ? {marginTop: totalHeight - 40 +'px !important'} : {}" 
+            class="mobile-fix-class-webview"
+            v-if="(selectedVideo.vss_id == null || selectedVideo.vss_id == undefined) || (selectedVideo.isSoundBoosted && selectedVideo.vssurls) "
+          >
+            <app-videojs-player
+              @toVideoMain="getDataFromChildren"
+              :updateOdooProgress="updateOdooProgress" 
+              :currentCourse="currentCourse"
+              :selectedVideo="selectedVideo"
+              :selectedModule="selectedModule"
+              :selectedChapter="selectedChapter"
+              :selectedTrackModule="selectedTrackModule"
+              :coursePurchased="coursePurchased"
+              :videoLastStat="videoLastStat"
+              :userData="user"
+              :webviewPlayer="true"
+              @showvideofeedback="showvideofeedback"
+              ref="videojs"
+            >
+            </app-videojs-player>
+          </div>
+          <div
+            id="video-center"
+            class="mobile-fix-class-webview mb-5"
+            v-if="selectedVideo.vss_id != null && this.selectedVideo.vss_id != undefined && !(selectedVideo.isSoundBoosted && selectedVideo.vssurls)"
+          >
+            <app-vimeo-player
+              @toVideoMain="getDataFromChildren"
+              :updateOdooProgress="updateOdooProgress" 
+              :currentCourse="currentCourse"
+              :selectedVideo="selectedVideo"
+              :selectedModule="selectedModule"
+              :selectedChapter="selectedChapter"
+              :selectedTrackModule="selectedTrackModule"
+              :coursePurchased="coursePurchased"
+              :videoLastStat="videoLastStat"
+              :userData="user"
+              :webviewPlayer="true"
+              @showvideofeedback="showvideofeedback"
+              ref="vimeojs"
+            >
+            </app-vimeo-player>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>

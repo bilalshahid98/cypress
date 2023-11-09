@@ -1,0 +1,21 @@
+<div class="page-not-found-div">
+    <h3 class="page-not-found">Oh ho...The page you are looking for does not exist.</h3>
+    <div id="img1" class="PG">
+        <router-link v-bind:to="{path: '/'}">
+
+        <img src="./../../../../assets/error-404-graphic.svg">
+
+        <button class="btn-contained" style="height: 35px;">BACK TO HOME</button>
+        <button class="btn-np outlined" @click="logout" style="height: 35px;">Logout</button>
+    </router-link>
+
+    </div>
+    <div id="img2" class="PG">
+        <router-link v-bind:to="{path: '/'}">
+
+        <img src="./../../../../assets/error-404-graphic.svg">
+        <button class="btn-contained">BACK TO HOME</button>
+        <button class="btn-np outlined" @click="logout">Logout</button>
+        </router-link>
+    </div>
+</div>

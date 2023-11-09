@@ -1,0 +1,2578 @@
+<div >
+  <div
+      id="loadingScreen"
+      v-if="pageLoader"
+      style="margin: 280px 0px;"
+      class="flex-view align-items-center justify-content-center"
+    >
+      <img src="./../../../../assets/website_loading_animation.gif" />
+    </div>
+  <div
+    id="loadedScreen"
+    class="hundred-vh flex-view flex-direction-row"
+    v-if="!pageLoader"
+    @click="closepopupsOutsideClick()"
+  >
+    <div id="nav-menu" class="side-menu">
+      <app-sidebar />
+    </div>
+    <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+    <div class="height-100p flex-view">
+      <div id="nav-bar" class="flex-view">
+        <app-header :collapse="false" />
+      </div>
+
+      <div
+        id="main-body"
+        class="height-100p right-side-responsive"
+        v-if="!isAllQuestions"
+      >
+        <!-- <div
+          class="t-d responsive_container flex-view flex-direction-row justify-content-c"
+        >
+          <div class="flex-view flex-direction-col align-items-center">
+            <div class="cont_breadcrumbs_1">
+              <ul>
+                <li style="min-height: 30px;">
+                  <router-link to="/course/course-landing">
+                    <p class="t-d-tags body-2 flex-view">
+                      <img
+                        src="./../../../../assets/breadcrumbs-home-icon.svg"
+                        class="mr-2"
+                      />Home
+                    </p>
+                  </router-link>
+                </li>
+                <li v-if="result.quiz.course_id" style="min-height: 30px;">
+                  <p
+                    class="t-d-tags body-2 flex-view cursor ellipsis"
+                    :title="moduleName"
+                    @click="modulePage"
+                  >
+                    {{moduleName}}
+                  </p>
+                </li>
+                <li class="ellipsis" style="min-height: 30px;">
+                  <p
+                    class="t-d-tags body-2 flex-view font-family-bold ellipsis"
+                    :title="result.quiz.name"
+                  >
+                    {{result.quiz.name}}
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="quiz-result-breadcrum">
+          <ul>
+            <li>
+              <router-link to="/course/course-landing">
+                <p>
+                  <img
+                    src="./../../../../assets/breadcrumbs-home-icon.svg"
+                    class="mr-2"
+                  />Home
+                </p>
+              </router-link>
+            </li>
+            <li v-if="result.quiz.course_id">
+              <p :title="moduleName" @click="modulePage">
+                {{moduleName}}
+              </p>
+            </li>
+            <li>
+              <p :title="result.quiz.name">
+                <b>{{result.quiz.name}}</b>
+              </p>
+            </li>
+          </ul>
+        </div> -->
+
+        <div style="margin-top: -65px;" v-if="!$store.state.isNewReactNative"><bread-crumbs  :crumbs="crumbs" @selected="selected" ></bread-crumbs></div>
+
+        <div>
+          <div class="parent-div mt-5" v-if="pageType == 1">
+            <div class="left">
+              <h3 class="font-color-green">QUIZ COMPLETED</h3>
+              <div class="img">
+                <img src="../../../../assets/Group 4041.png" />
+              </div>
+              <button @click="goBack(3)" class="btn-contained">
+                continue studying
+              </button>
+            </div>
+            <div class="right">
+              <div class="card">
+                <img src="../../../../assets/Icon-Attempted.svg" />
+                <p class="overline text-align-center">questions attempted</p>
+                <h4>
+                  {{result.questions.length - result.skipped_questions.length}}
+                </h4>
+                <p class="overline">out of {{result.questions.length}}</p>
+              </div>
+              <div class="card">
+                <img src="../../../../assets/Icon-Timer-grey.svg" />
+                <p class="overline text-align-center">time taken</p>
+                <h4>{{studentStats.totalTime}}</h4>
+              </div>
+              <div class="card">
+                <img src="../../../../assets/Icon - Skipped Question.svg" />
+                <p class="overline text-align-center">questions skipped</p>
+                <h4>{{result.skipped_questions.length }}</h4>
+                <p class="overline">out of {{result.questions.length}}</p>
+              </div>
+              <div class="card">
+                <img src="../../../../assets/Ionic-ios-timer-black.svg" />
+                <p class="overline text-align-center">average time/question</p>
+                <h4>{{studentStats.avgTimePerQuestion}} s</h4>
+              </div>
+              <p>
+                Your complete result will be available in
+                <b>{{result_remaning_time}}</b> .
+              </p>
+            </div>
+          </div>
+          <div class="parent-div mt-5" v-if="pageType == 2 || pageType == 3">
+              <div class="score w-100 d-block d-lg-flex justify-content-between" v-if="$store.state.mdcatScore > 0 && result.quiz.course_tag && result.quiz.course_tag.includes('MDCAT')">
+                <div class="d-block d-md-flex justify-content-between w-100">
+                  <div class="score-predictor-wrapper score-card" ref="scorePredictor">
+                    <h1 class="score-predictor-title">MDCAT score predictor</h1>
+                    <div class="score-predictor-meter">
+                      <vue-speedometer
+                        :fluidWidth="true"
+                        :needleHeightRatio="0.7"
+                        :value="$store.state.mdcatScore"
+                        :minValue="0"
+                        :maxValue="200"
+                        :currentValueText="$store.state.mdcatScore"
+                        :segments="4"
+                        :segmentColors="segmentColors"
+                        :ringWidth="20"
+                        :needleTransitionDuration="700"
+                        needleTransition="easeLinear"
+                        needleColor="#000000"
+                        textColor="#000"
+                      />
+                      <div class="score-predictor-counter" v-if="mdcatScoreDiff != 0">
+                        <div class="click-counter">
+                          <span class="counter">{{mdcatScoreDiff}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="score-predictor-detail">
+                      <!-- <div class="score-predictor-value">
+                        <div>0</div>
+                        <div>200</div>
+                      </div> -->
+                      <div class="score-predictor-predicted" style="position: relative;">
+                        <p class="position-count">Based on your overall performance so far,</p>
+                        <h5>Your predicted MDCAT scores are <span>{{$store.state.mdcatScore}}</span></h5>
+                        <p class="position-count"><span class="score-position-no-4">{{$store.state.mdcatPosition}}</span> students are ahead of you.</p>
+                        <div class="position-users-dd" style="top: 76px">
+                          <div v-for="(position, index) in $store.state.mdcatPositionUsers" class="position-user-item">
+                            <img :src="position.user.image ? position.user.image : 'https://storage.googleapis.com/nps3storage/nearpeer-imagees/default_user.png'" alt="#" />
+                            <p>{{position.user.name}}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                  <div class="score-tip">
+                    <div class="score-tip-card score-card">
+                      <p class="font-family-bold">Tips to score more </p>
+                      <ul class="score-tip-list">
+                        <li class="score-tip-item">
+                          {{this.tip1}}
+                        </li>
+                        <li class="score-tip-item">
+                          {{this.tip2}}
+                        </li>
+                        <li class="score-tip-item">
+                          {{this.tip3}}
+                        </li>
+                      </ul>
+                      <div class="score-tip-el">
+                        <img src="../../../../assets/predictor/tip-el.svg" alt="#" />
+                      </div>
+                    </div>
+                    <div class="score-tip-card score-card" v-if="isPass">
+                      <div class="social-share">
+                        <p>Share your achievement
+                          and inspire your peers:</p>
+                        <ul class="fail-social-icons">
+                          <li>
+                            <ShareNetwork
+                              network="facebook"
+                              :url="currentUrl"
+                              :title="result.quiz.name"
+                              :description="quizResultShareTitle"
+                              :quote="quizResultShareTitle"
+                              hashtags="nearpeer,nearpeerorg"
+                            >
+                              <img
+                                src="../../../../assets/Facebook Icon.svg"
+                                class="icon-width"
+                              />
+                            </ShareNetwork>
+                                
+                          </li>
+                          <li>
+                            <ShareNetwork
+                                  network="Twitter"
+                                  :title="quizResultShareTitle"
+                                  :description="quizResultShareTitle"
+                                  :quote="quizResultShareTitle"
+                                  :url="currentUrl"
+                                  :twitter-user="Nearpeer"
+                                >
+                                  <img
+                                    src="../../../../assets/Twitter Icon.svg"
+                                  />
+                                </ShareNetwork>
+                                
+                          </li>
+                          <li>
+                            <ShareNetwork
+                                  network="WhatsApp"
+                                  title="NP Result"
+                                  :description="quizResultShareTitle"
+                                  :quote="quizResultShareTitle"
+                                  :url="currentUrl"
+                                >
+                                  <img
+                                    src="../../../../assets/WhatsApp Logo.svg"
+                                  />
+                                </ShareNetwork>
+                          </li>
+                        </ul>
+                     </div>
+                      
+                    </div>
+                  </div>
+                </div>
+                <div class="score-status">
+                  <div class="score-status-card green">
+                    <div>
+                      <p class="font-family-bold text-uppercase">Position</p>
+                      <h2>
+                        {{quizPosition || $store.state.mdcatPosition + 1}}
+                      </h2>
+                    </div>
+                  </div>
+                  <div class="score-status-card orange">
+                     <div>
+                        <p class="font-family-bold text-uppercase">you scored</p>
+                        <h2>
+                          {{result.correct_percentage}}%
+                        </h2>
+                     </div>
+                  </div>
+                  <div class="score-status-card blue">
+                   <div>
+                      <p class="font-family-bold text-uppercase">Status</p>
+                      <h2 class="text-uppercase">
+                        {{isPass? 'PASS' : 'Fail'}}
+                      </h2>
+                   </div>
+                  </div>
+                  
+                </div>
+              </div>
+            <div
+              class="top-three-perfomers quiz-detail-container margin-auto"
+              v-if="topStudents.length > 2"
+            >
+              <h5>Top Performers</h5>
+              <div class="flex-view justify-content-center align-items-center">
+                <div
+                  class="user-position-profile"
+                  v-if="topStudents.length > 1"
+                >
+                  <div
+                    class="user-position-avatar second"
+                    v-if="topStudents.length > 1"
+                  >
+                    <span class="user-position">2nd</span>
+                    <img :src="topStudents[1].user.image" />
+                  </div>
+                  <div class="user-position-name ellipsis" v-if="topStudents.length > 1">
+                    <!-- <div v-if="topStudents[1].user.full_name == position">
+                      you
+                    </div>
+                    <div v-else>
+                      {{topStudents[1].user.full_name}}
+                    </div> -->
+                    {{topStudents[1].user.full_name}}
+                  </div>
+                  <div class="user-clap" v-if="topStudents.length > 1">
+                    <!-- <img
+                      src="../../../../assets/user-position/clap-icon.png"
+                      alt="#"
+                    /> -->
+                    <span class="clap-btn"  v-bind:class="{ 'clap-active': clap2 }" @click="clapClick(2)"></span>
+                  <span class="counter-fixed">{{topStudents[1].claps}}</span>
+                  <div id="clicker" class="click-counter" v-bind:class="{ 'active': clap2 }">
+                    <span class="counter">{{topStudents[1].claps}}</span>
+                  </div>
+                    
+                  </div>
+                </div>
+                <div
+                  class="user-position-profile top-perfomer"
+                  v-if="topStudents.length > 0"
+                >
+                  <div
+                    class="user-position-avatar first"
+                    v-if="topStudents.length > 0"
+                  >
+                    <span class="user-position">1st</span>
+                    <img :src="topStudents[0].user.image" />
+                  </div>
+                  <div class="user-position-name ellipsis" v-if="topStudents.length > 0">
+                    <!-- <div v-if="topStudents[0].user.full_name == position">
+                      you
+                    </div>
+                    <div v-else>
+                      {{topStudents[0].user.full_name}}
+                    </div> -->
+                    {{topStudents[0].user.full_name}}
+                  </div>
+
+                  <div class="user-clap" v-if="topStudents.length > 0">
+                    <!-- <img
+                      src="../../../../assets/user-position/clap-icon.png"
+                      alt="#"
+                    /> -->
+                    <!-- <div class="clap-counter-up">
+                      +1
+                    </div> -->
+                    <span class="clap-btn"  v-bind:class="{ 'clap-active': clap1 }" @click="clapClick(1)"></span>
+                    <span class="counter-fixed">{{topStudents[0].claps}}</span>
+                    <div id="clicker" class="click-counter" v-bind:class="{ 'active': clap1 }">
+                      <span class="counter">{{topStudents[0].claps}}</span>
+                    </div>
+                    
+                  </div>
+                </div>
+                <div
+                  class="user-position-profile"
+                  v-if="topStudents.length > 2"
+                >
+                  <div
+                    class="user-position-avatar third"
+                    v-if="topStudents.length > 2"
+                  >
+                    <span class="user-position">3rd</span>
+                    <img :src="topStudents[2].user.image" />
+                  </div>
+                  <div class="user-position-name ellipsis" v-if="topStudents.length > 2">
+                    <!-- <div v-if="topStudents[2].user.full_name == position">
+                      you
+                    </div>
+                    <div v-else>
+                      {{topStudents[2].user.full_name}}
+                    </div> -->
+                    {{topStudents[2].user.full_name}}
+
+                    <!-- <span class="user-clap-text"
+                    >Congrats to {{topStudents[2].user.full_name}}</span
+                  > -->
+                  </div>
+                  <div class="user-clap">
+                    <!-- <img
+                      src="../../../../assets/user-position/clap-icon.png"
+                      alt="#"
+                    /> -->
+                    <span class="clap-btn"  v-bind:class="{ 'clap-active': clap3 }" @click="clapClick(3)"></span>
+                  <span class="counter-fixed">{{topStudents[2].claps}}</span>
+                  <div id="clicker" class="click-counter" v-bind:class="{ 'active': clap3 }">
+                    <span class="counter">{{topStudents[2].claps}}</span>
+                  </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex-view flex-direction-col w-100">
+              <div class="flex-view flex-direction-row-col justify-content-between">
+                <div
+                  class="flex-view justify-content-center align-items-center align-items-md-stretch flex-direction-row-col-mob mb-md-5 mb-lg-0 "
+                >
+                  <div class="star flex-view flex-direction-col mt-4">
+                    <div class="g-card">
+                      <p class="overline">you scored</p>
+                      <h2
+                        v-bind:class="{ 'font-color-green': green,'font-color-yellow': yellow,'font-color-red': red}"
+                      >
+                        {{result.correct_percentage}}%
+                      </h2>
+                    </div>
+                    <!-- <div class="g-card grade-hover">
+                      <h4 class="question-mark">?</h4>
+                      <h3>Grade</h3>
+                      <h3
+                        v-bind:class="{ 'font-color-green': green,'font-color-yellow': yellow,'font-color-red': red}"
+                      >
+                        {{grade}}
+                      </h3>
+                      <div class="grade-details">
+                        <p class="body-2 font-color-green">
+                          <b>A</b> - 90% to 100%
+                        </p>
+                        <p class="body-2 font-color-green">
+                          <b>B</b> - 80% to 90%
+                        </p>
+                        <p class="body-2 font-color-green">
+                          <b>C</b> - 70% to 80%
+                        </p>
+                        <p class="body-2 font-color-yellow">
+                          <b>D</b> - 60% to 70%
+                        </p>
+                        <p class="body-2 font-color-yellow">
+                          <b>E</b> - 50% to 60%
+                        </p>
+                        <p class="body-2 font-color-red"><b>F</b> - < 50%</p>
+                      </div>
+                    </div> -->
+
+                    <div class="g-card status-hover">
+                      <h4 class="question-mark">?</h4>
+                      <h3>Status</h3>
+                      <h3
+                        v-bind:class="{ 'font-color-green': isPass,'font-color-red' : !isPass}"
+                      >
+                        {{isPass? 'PASS' : 'Fail'}}
+                      </h3>
+                      <div class="status-details">
+                        <p class="body-2 text-align-center">
+                          Passing %:<b>{{result.quiz.passing_percentage}}</b>
+                        </p>
+                        <p class="body-2 text-align-center font-color-green">
+                          Pass
+                        </p>
+                        <p class="body-2 font-color-red text-align-center">
+                          Fail
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                
+                </div>
+                <div class="stats-board-right">
+                  <div
+                    class="leader-title d-flex align-items-center justify-content-between"
+                  >
+                    <h6>Leaderboard</h6>
+                    <div class="current-attempt" @click="attempField" v-if="latestAttemptTopStudents.length">
+                      <img
+                        src="../../../../assets/attempt-filter-icon.png"
+                        alt=""
+                      />
+                      <p>
+                        {{firstAttempt ? "First Attempt": "Latest Attempt"}}
+                      </p>
+                      <img
+                        src="../../../../assets/attempt-filter-dd-icon.png"
+                        alt=""
+                      />
+                      <div
+                        class="current-attempt-dropdown"
+                        v-show="attemptDropDown"
+                      >
+                        <ul>
+                          <li @click="userAttempts('first')">
+                            First Attempt
+                          </li>
+                          <li @click="userAttempts('latest')">
+                            Latest Attempt
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="!wireFramesT"
+                    v-for="(student, index) in topStudents"
+                    v-bind:class="{ 'stats-board-background': student._id == resultId}"
+                    class="stats-board-right-row justify-content-b flex-view flex-direction-row"
+                  >
+                    <div class="d-flex align-items-center">
+                      <img class="img" :src="student.user.image" />
+                      <div class="stats-board-right-row-unit">
+                        <h6>
+                          <b
+                            >{{student.rank ? student.rank : index + 1}}.
+                            {{student.user.full_name}}</b
+                          >
+                        </h6>
+                        <div
+                          class="flex-view align-items-center leader-user-time"
+                        >
+                          <!-- <label class="mr-1"
+                    >{{((student.obtained_marks / student.total_marks) *
+                    100).toFixed(0)}}%</label
+                  > -->
+                          <label
+                            style="margin-right: 10px;"
+                            class="subtitle-2"
+                            >{{student ? student.correct_percentage :
+                            0}}%</label
+                          >
+                          <label class="align-items-center flex-view ">
+                            <img
+                              src="./../../../../assets/Icon-Timer-grey.svg"
+                              class="right-icon"
+                            />
+                            <p>
+                              {{student.time_spent}}
+                            </p>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="user-madle">
+                      <img
+                        v-if="(student, index == 0)"
+                        src="../../../../assets/1st-madle.png"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Gold"
+                        alt="#"
+                      />
+                      <img
+                        v-if="(student, index == 1)"
+                        src="../../../../assets/2nd-madle.png"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Silver"
+                        alt="#"
+                      />
+                      <img
+                        v-if="(student, index == 2)"
+                        src="../../../../assets/3rd-madle.png"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Bronze"
+                        alt="#"
+                      />
+                    </div>
+                    <div
+                      style="display: flex; align-items: center; flex-direction:column; height: 100%; font-weight: bold;"
+                    >
+                      <img src="../../../../assets/arrow-upward.png" />
+                      <div v-if="(student, index == 0)">Ist</div>
+                      <div v-if="(student, index == 1)">2nd</div>
+                      <div v-if="(student, index == 2)">3rd</div>
+                    </div>
+                  </div>
+                  <div v-if="wireFramesT" class="flex-view width-100">
+                    <img
+                      src="./../../../../assets/standard-quiz-intro-wireframes.svg"
+                      class="max-width-100 holder"
+                    />
+                  </div>
+                </div>
+                <div
+                  class="flex-view justify-content-center align-items-center align-items-md-stretch flex-direction-row-col-mob mb-md-5 mb-lg-0"
+                >
+                  <!-- <div
+                    class="quiz-top-performers"
+                    v-if="topStudents.length > 2"
+                  >
+                    <h6>top performers</h6>
+                    <div
+                      class="user-position-profile"
+                      v-if="topStudents.length > 0"
+                    >
+                      <div
+                        class="user-position-avatar first"
+                        v-if="topStudents.length > 0"
+                      >
+                        <span class="user-position">1st</span>
+                        <img :src="topStudents[0].user.image" alt="" />
+                      </div>
+                      <div
+                        class="user-position-name"
+                        v-if="topStudents.length > 0"
+                      >
+                        {{topStudents[0].user.full_name}}
+                      </div>
+                      <div class="user-quiz-time" v-if="topStudents.length > 0">
+                        {{topStudents[0].correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{topStudents[0].time_spent}}
+                      </div>
+                    </div>
+                    <div
+                      class="user-position-profile"
+                      v-if="topStudents.length > 1"
+                    >
+                      <div
+                        class="user-position-avatar second"
+                        v-if="topStudents.length > 1"
+                      >
+                        <span class="user-position">2nd</span>
+                        <img :src="topStudents[1].user.image" alt="" />
+                      </div>
+                      <div
+                        class="user-position-name"
+                        v-if="topStudents.length > 1"
+                      >
+                        {{topStudents[1].user.full_name}}
+                      </div>
+                      <div class="user-quiz-time" v-if="topStudents.length > 1">
+                        {{topStudents[1].correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{topStudents[1].time_spent}}
+                      </div>
+                    </div>
+                    <div
+                      class="user-position-profile"
+                      v-if="topStudents.length > 2"
+                    >
+                      <div
+                        class="user-position-avatar third"
+                        v-if="topStudents.length > 2"
+                      >
+                        <span class="user-position">3rd</span>
+                        <img :src="topStudents[2].user.image" alt="" />
+                      </div>
+                      <div
+                        class="user-position-name"
+                        v-if="topStudents.length > 2"
+                      >
+                        {{topStudents[2].user.full_name}}
+                      </div>
+                      <div class="user-quiz-time" v-if="topStudents.length > 2">
+                        {{topStudents[2].correct_percentage}}%
+                        <img
+                          src="../../../../assets/user-position/clock-icon.png"
+                          alt="Clock icon"
+                        />
+                        {{topStudents[2].time_spent}}
+                      </div>
+                    </div>
+                  </div> -->
+                  <!-- <div v-if="pageType == 2" class="congratulations">
+                    <div
+                      class="feedback-bg"
+                      style="background: var(--white);"
+                      v-if="showAnimation"
+                    >
+                      <div v-if="pageType == 2" class="congratulations wt-holder">
+                        <div class="congratulations-img">
+                          <img
+                            src="./../../../../assets/confetti.svg"
+                            class="confetti"
+                          />
+                          <img
+                            src="../../../../assets/guy-with-trophy.svg"
+                            class="trophy-guy"
+                          />
+                        </div>
+                        <h3 class="mt-2">Amazing Effort!</h3>
+                        <p class="overline mt-2">You Scored a perfect 100!</p>
+                      </div>
+                    </div>
+                    <h3>Congratulations!</h3>
+                    <p class="overline">You Scored a perfect 100!</p>
+                    <div>
+                      <img src="../../../../assets/Group 4045.svg" class="mt-5" />
+                    </div>
+                  </div> -->
+                  <div
+                    v-if="pageType == 2 && (firstAttempt == false || certificateEligible == false)"
+                    class="congratulations"
+                  >
+                    <h3>Congratulations</h3>
+                    <p
+                      v-if="result.prediction && result.correct_percentage > result.prediction"
+                    >
+                      Wow you beaten the odds. your predictive score was
+                      <span> {{result.prediction.toFixed(0)}}%</span> you got
+                      <span> {{result.correct_percentage}}%</span> score
+                    </p>
+                    <p v-else>
+                      You have scored
+                      <span> {{result.correct_percentage}}%</span>
+                    </p>
+                    <img
+                      class="achivement-img"
+                      src="../../../../assets/achivement-img.png"
+                      alt=""
+                    />
+
+                    <div>
+                      <p class="subtitle-1">
+                        Share your achievement and inspire your peers:
+                      </p>
+                      <div
+                        class="flex-view flex-direction-row justify-content-center mt-2"
+                      >
+                        <!-- <img src="../../../../assets/Facebook Icon.svg" class="icon-width" />
+                          <img src="../../../../assets/Twitter Icon.svg" class="ml-4 icon-width" />
+                          <img src="../../../../assets/WhatsApp Logo.svg" class="ml-4 icon-width" /> -->
+                        <ShareNetwork
+                          network="facebook"
+                          :url="currentShareUrl"
+                          :title="result.quiz.name"
+                          :description="customDescription"
+                          :quote="customDescription"
+                          hashtags="nearpeer,nearpeerorg"
+                        >
+                          <img
+                            src="../../../../assets/Facebook Icon.svg"
+                            class="icon-width"
+                          />
+                        </ShareNetwork>
+                        <ShareNetwork
+                          network="Twitter"
+                          :url="currentShareUrl"
+                          :title="customDescriptionWA"
+                          :description="customDescriptionWA"
+                          :quote="result.quiz.name"
+                          hashtags="nearpeer,nearpeerorg"
+                          :twitter-user="Nearpeer"
+                        >
+                          <img
+                            src="../../../../assets/Twitter Icon.svg"
+                            class="ml-4 icon-width"
+                          />
+                        </ShareNetwork>
+                        <ShareNetwork
+                          network="WhatsApp"
+                          :url="currentShareUrl"
+                          :title="customDescriptionWA"
+                          :description="'Best of luck!'"
+                          :quote="result.quiz.name"
+                          hashtags="nearpeer,nearpeerorg"
+                        >
+                          <img
+                            src="../../../../assets/WhatsApp Logo.svg"
+                            class="ml-4 icon-width"
+                          />
+                        </ShareNetwork>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="pageType == 3 && (firstAttempt == false || certificateEligible == false)"
+                    class="congratulations"
+                  >
+                    <h5>Better luck next time.</h5>
+                    <div class="perfection">
+                      <img class="bow" src="../../../../assets/Group4049.svg" />
+                      <img
+                        class="arrow"
+                        src="../../../../assets/Group1258.svg"
+                      />
+                    </div>
+                    <h5>
+                      Let’s aim for perfection!
+                    </h5>
+                     
+                  </div>
+
+                  <div
+                    v-if="firstAttempt && certificateEligible"
+                    class="congratulations certificate"
+                  >
+                    <h5 >Your Certificate <span class="result-tooltip">
+                      <img src="../../../../assets/practice/tooltip-icon.svg" alt="">
+                      <p class="practice-tooltip-text">Certificates are available for the first attempt of the quiz only. Your position in the certificate depends upon the actual time of submission.</p>
+                    </span></h5>
+                    <div class="user-certificate">
+                      <!-- <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 804.56 564.69"
+                      >
+                        <g id="Layer_2" data-name="Layer 2">
+                          <g id="Layer_1-2" data-name="Layer 1">
+                            <path
+                              class="cls-1"
+                              d="M804.5,0V127.35H701.9l-10.72-3.52s-172.8-46.08-342.24-35c0,0-144.94,6.71-225.1,31.67q-11.55,3.59-22.08,6.88H1.1L0,0Z"
+                            />
+                            <path
+                              class="cls-2"
+                              d="M804.48,127.41l.08,0-.48,33.94c0-3.35-45.94-16.43-51-18.08q-26.76-8.76-53.94-16.18-54.33-14.84-110-24.2C516.44,90.67,441.71,84.77,367.9,87.79c-64.76,2.66-129.41,9.49-193,22.06C115,121.68,57.93,140.89,0,159.35V127.67l1.11-.32C151.37,84.68,304.53,68.1,460.67,73.11c25.34.81,50.6,2.23,75.83,4.61C579.81,81.84,622.73,88.58,665.73,95,712.06,104,759.8,112,804.48,127.41Z"
+                            />
+                            <polygon
+                              class="cls-3"
+                              points="60.76 120.47 60.76 201.59 83 186.47 105.64 201.59 105.64 120.47 60.76 120.47"
+                            />
+                            <ellipse
+                              class="cls-4"
+                              cx="83.2"
+                              cy="125.57"
+                              rx="22.44"
+                              ry="12.37"
+                            />
+                            <circle
+                              class="cls-5"
+                              cx="83.2"
+                              cy="79.19"
+                              r="51.36"
+                            />
+                            <circle
+                              class="cls-6"
+                              cx="83.2"
+                              cy="79.19"
+                              r="38.16"
+                            />
+                            <path
+                              class="cls-7"
+                              d="M1.64,446l24.64,24.48s.32,69.92,0,69.44,68.64,0,68.64,0l25.6,24.79H1Z"
+                            />
+                            <polygon
+                              class="cls-8"
+                              points="1.64 456.38 19.56 473.98 19.56 546.93 92.2 546.93 110.44 564.69 1 564.69 1 455.74 1.64 456.38"
+                            />
+                            <g class="cls-9">
+                              <path
+                                class="cls-10"
+                                d="M390.93,238.05c3.34,1.21,4,3.78,5.47,5.64a102.78,102.78,0,0,0,80.85,41.12A51.12,51.12,0,0,0,530,242.36a51.91,51.91,0,0,0-32.33-57.7,51.11,51.11,0,0,0-63.17,22.57c-.75,1.21-1.57,2.36-3.07,4.61A119.34,119.34,0,0,0,415,176.72c-2.48-3.43.54-5.37,2.58-7.42a88.27,88.27,0,0,1,130.33,7.5,84.1,84.1,0,0,1,10.38,95.74A85.06,85.06,0,0,1,474,321.68a88.13,88.13,0,0,1-83.05-83.63Z"
+                              />
+                              <path
+                                class="cls-10"
+                                d="M442.83,271.07a92.47,92.47,0,0,1-53.78-52.23A58,58,0,0,0,366,189.08a51.64,51.64,0,0,0-78.84,43.26c-.45,27.16-.12,54.33-.13,81.49,0,8.89-.49,9.21-9.32,6.91a34.94,34.94,0,0,1-27.22-31.42,406.46,406.46,0,0,1,1-71,88.51,88.51,0,0,1,174.75.26,100.9,100.9,0,0,1,1.28,14A58.58,58.58,0,0,0,442.83,271.07Z"
+                              />
+                              <path
+                                class="cls-10"
+                                d="M391.81,269.48a98.82,98.82,0,0,0,33.09,41.18,7.77,7.77,0,0,1,2.67,7.25c0,28.89-.13,57.79.07,86.68,0,5.56-1.7,6.87-7,5.73a36.66,36.66,0,0,1-30-34.79c-.35-34.6-.1-69.19-.06-103.77C390.61,271.42,391,271.06,391.81,269.48Z"
+                              />
+                            </g>
+                            <path
+                              class="cls-7"
+                              d="M803.61,445.58,779,470.05s-.32,69.92,0,69.44-68.64,0-68.64,0l-25.6,24.8H804.25Z"
+                            />
+                            <polygon
+                              class="cls-8"
+                              points="803.61 455.98 785.69 473.57 785.69 546.53 713.05 546.53 694.81 564.29 804.25 564.29 804.25 455.33 803.61 455.98"
+                            />
+                            <text />
+                            <text />
+                            <text
+                              class="cls-11"
+                              transform="translate(244.6 183.29)"
+                            >
+                              CERTIFIC
+                              <tspan class="cls-12" x="225.56" y="0">A</tspan>
+                              <tspan class="cls-13" x="258.07" y="0">TE</tspan>
+                            </text>
+                            <text
+                              class="cls-14"
+                              transform="translate(302.14 210.06)"
+                            >
+                              <tspan xml:space="preserve">OF PERFORMENCE</tspan>
+                            </text>
+                            <text
+                              class="cls-15"
+                              transform="translate(524.59 508.19)"
+                            >
+                              Shahrukh
+                              <tspan class="cls-16" x="91.01" y="0">S</tspan>
+                              <tspan class="cls-17" x="103.07" y="0">w</tspan>
+                              <tspan x="119.09" y="0">ati</tspan>
+                            </text>
+                            <text
+                              class="cls-18"
+                              transform="translate(616.73 525.07)"
+                            >
+                              Direc
+                              <tspan class="cls-19" x="32.06" y="0">t</tspan>
+                              <tspan x="36.5" y="0">or</tspan>
+                            </text>
+                            <text
+                              class="cls-20"
+                              transform="translate(314.37 277.12)"
+                            >
+                              PROUD
+                              <tspan class="cls-21" x="56.04" y="0">L</tspan>
+                              <tspan x="64.16" y="0">Y PRESENT TO</tspan>
+                            </text>
+                            <text
+                              class="cls-22"
+                              transform="translate(149.69 405.48)"
+                            >
+                              For securing
+                              <tspan class="cls-23" x="88.34" y="0"></tspan>
+                              <tspan class="cls-24" x="92.34" y="0">
+                                3rd Position
+                              </tspan>
+                              <tspan class="cls-23" x="180.76" y="0"></tspan>
+                              <tspan x="184.76" y="0">with</tspan>
+                              <tspan class="cls-23" x="217.29" y="0"></tspan>
+                              <tspan class="cls-24" x="221.29" y="0">
+                                90% scores
+                              </tspan>
+                              <tspan class="cls-23" x="299.95" y="0"></tspan>
+                              <tspan x="303.95" y="0">in the</tspan>
+                              <tspan class="cls-23" x="344.11" y="0"></tspan>
+                              <tspan class="cls-24" x="348.11" y="0">MDC</tspan>
+                              <tspan class="cls-25" x="388.96" y="0">A</tspan>
+                              <tspan class="cls-24" x="400.22" y="0">
+                                T Physics
+                              </tspan>
+                              <tspan x="473.96" y="0">Quiz at</tspan>
+                              <tspan x="215.78" y="19.2">Nearpeer.org</tspan>
+                            </text>
+                            <text
+                              class="cls-26"
+                              transform="translate(202.47 355.66)"
+                            >
+                              Shahrukh Swati
+                            </text>
+                            <rect
+                              x="165.3"
+                              y="371.03"
+                              width="480.61"
+                              height="2.14"
+                            />
+                            <rect
+                              x="532.03"
+                              y="483.64"
+                              width="124.01"
+                              height="1.34"
+                            />
+                            <text
+                              class="cls-27"
+                              transform="translate(59.36 89.42)"
+                            >
+                              3rd
+                            </text>
+                          </g>
+                        </g>
+                      </svg> -->
+                      <img v-if="this.result.certificate_url" width="100%" :src="result.certificate_url" alt="">
+                      <img src="../../../../assets/Certificate 2 svg.jpg" width="100%" v-else alt="">
+                      
+                      <!-- <svg
+                      v-else
+                        id="Layer_1"
+                        data-name="Layer 1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 804.56 593.69"
+                      >
+                        <defs>
+                          <style>
+                            .cls-1 {
+                              fill: #060644;
+                            }
+                            .cls-2 {
+                              fill: #febd59;
+                            }
+                            .cls-3 {
+                              fill: #df3a3e;
+                            }
+                            .cls-4 {
+                              fill: #c92834;
+                            }
+                            .cls-5 {
+                              fill: #fccc2e;
+                            }
+                            .cls-6 {
+                              fill: #fee45c;
+                              stroke: #edb625;
+                              stroke-miterlimit: 10;
+                            }
+                            .cls-7 {
+                              fill: #fabb54;
+                            }
+                            .cls-8 {
+                              fill: #050541;
+                            }
+                            .cls-9 {
+                              opacity: 0.1;
+                            }
+                            .cls-10 {
+                              fill: #1dacce;
+                            }
+                            .cls-11 {
+                              font-size: 40px;
+                              letter-spacing: 0.11em;
+                            }
+                            .cls-11,
+                            .cls-14,
+                            .cls-21,
+                            .cls-24,
+                            .cls-25,
+                            .cls-26 {
+                              font-family: PalatinoLinotype-Bold,
+                                Palatino Linotype;
+                              font-weight: 700;
+                            }
+                            .cls-12 {
+                              letter-spacing: 0.03em;
+                            }
+                            .cls-13 {
+                              letter-spacing: 0.11em;
+                            }
+                            .cls-14,
+                            .cls-15 {
+                              font-size: 18px;
+                            }
+                            .cls-14 {
+                              letter-spacing: 0.11em;
+                            }
+                            .cls-15 {
+                              font-family: Nunito-SemiBold, Nunito;
+                              font-weight: 600;
+                              letter-spacing: 0.05em;
+                            }
+                            .cls-16 {
+                              letter-spacing: 0.04em;
+                            }
+                            .cls-17 {
+                              letter-spacing: 0.04em;
+                            }
+                            .cls-18 {
+                              font-size: 25px;
+                              font-family: KarstarFree-Regular, Karstar Free;
+                              letter-spacing: 0.11em;
+                            }
+                            .cls-19 {
+                              font-size: 14px;
+                              font-family: Roboto-Regular, Roboto;
+                            }
+                            .cls-20 {
+                              letter-spacing: -0.01em;
+                            }
+                            .cls-21 {
+                              font-size: 13px;
+                              letter-spacing: 0.11em;
+                            }
+                            .cls-22 {
+                              letter-spacing: 0.02em;
+                            }
+                            .cls-23 {
+                              font-size: 16px;
+                              font-family: PalatinoLinotype-Roman,
+                                Palatino Linotype;
+                            }
+                            .cls-25,
+                            .cls-26 {
+                              text-decoration: underline;
+                            }
+                            .cls-26 {
+                              letter-spacing: -0.07em;
+                            }
+                            .cls-27 {
+                              font-size: 73px;
+                              fill: #ffc060;
+                              font-family: GreatVibes-Regular, Great Vibes;
+                              letter-spacing: 0.01em;
+                            }
+                            .cls-28 {
+                              font-size: 20px;
+                              fill: #fff;
+                              font-family: Roboto-Black, Roboto;
+                              font-weight: 800;
+                            }
+                          </style>
+                        </defs>
+                        <path
+                          class="cls-1"
+                          d="M823.16,2.29V129.64H720.56l-10.71-3.52S537.05,80,367.61,91.09c0,0-145,6.72-225.11,31.67l-22.07,6.88H19.77L18.67,2.29Z"
+                          transform="translate(-18.67 -2.29)"
+                        />
+                        <path
+                          class="cls-2"
+                          d="M823.14,129.7l.08,0q-.22,17-.47,33.94c0-3.35-45.94-16.43-51-18.07q-26.76-8.78-53.94-16.19-54.33-14.84-110-24.2C535.11,93,460.37,87.06,386.57,90.08c-64.76,2.66-129.41,9.49-193,22.06-59.87,11.84-117,31-174.88,49.5V130l1.11-.32C170,87,323.19,70.39,479.33,75.4c25.35.81,50.6,2.23,75.84,4.61,43.31,4.12,86.23,10.86,129.23,17.31C730.73,106.31,778.47,114.27,823.14,129.7Z"
+                          transform="translate(-18.67 -2.29)"
+                        />
+                        <polygon
+                          class="cls-3"
+                          points="60.76 120.47 60.76 201.59 83 186.47 105.64 201.59 105.64 120.47 60.76 120.47"
+                        />
+                        <ellipse
+                          class="cls-4"
+                          cx="83.2"
+                          cy="125.57"
+                          rx="22.44"
+                          ry="12.37"
+                        />
+                        <circle class="cls-5" cx="83.2" cy="79.19" r="51.36" />
+                        <circle class="cls-6" cx="83.2" cy="79.19" r="38.16" />
+                        <path
+                          class="cls-7"
+                          d="M20.31,477.27,45,501.75s.32,69.92,0,69.44,68.64,0,68.64,0L139.19,596H19.67Z"
+                          transform="translate(-18.67 -2.29)"
+                        />
+                        <polygon
+                          class="cls-8"
+                          points="1.64 485.38 19.56 502.98 19.56 575.93 92.2 575.93 110.44 593.69 1 593.69 1 484.74 1.64 485.38"
+                        />
+                        <g class="cls-9">
+                          <path
+                            class="cls-10"
+                            d="M409.6,239.79c3.33,1.2,4,3.78,5.47,5.63a102.7,102.7,0,0,0,80.85,41.12,51.12,51.12,0,0,0,52.76-42.45,51.93,51.93,0,0,0-32.33-57.7A51.12,51.12,0,0,0,453.17,209c-.74,1.21-1.56,2.37-3.06,4.61a119.71,119.71,0,0,0-16.48-35.12c-2.48-3.43.54-5.36,2.58-7.42a88.29,88.29,0,0,1,130.33,7.5,84.15,84.15,0,0,1,10.38,95.74,85.06,85.06,0,0,1-84.27,49.14,88.14,88.14,0,0,1-83-83.62Z"
+                            transform="translate(-18.67 -2.29)"
+                          />
+                          <path
+                            class="cls-10"
+                            d="M461.5,272.8a92.47,92.47,0,0,1-53.78-52.23,58,58,0,0,0-23.09-29.76,51.66,51.66,0,0,0-78.85,43.26c-.44,27.16-.11,54.33-.12,81.49,0,8.89-.49,9.21-9.32,6.91a34.94,34.94,0,0,1-27.22-31.41,406.58,406.58,0,0,1,1-71,88.51,88.51,0,0,1,174.75.26,102.46,102.46,0,0,1,1.28,14A58.51,58.51,0,0,0,461.5,272.8Z"
+                            transform="translate(-18.67 -2.29)"
+                          />
+                          <path
+                            class="cls-10"
+                            d="M410.47,271.21a98.77,98.77,0,0,0,33.1,41.18,7.77,7.77,0,0,1,2.67,7.25c0,28.89-.14,57.79.06,86.68,0,5.56-1.7,6.87-7,5.73a36.67,36.67,0,0,1-30-34.79c-.36-34.59-.1-69.19-.07-103.77C409.27,273.15,409.64,272.79,410.47,271.21Z"
+                            transform="translate(-18.67 -2.29)"
+                          />
+                        </g>
+                        <path
+                          class="cls-3"
+                          d="M99,78.42c.53.2.64.61.87.91a16.46,16.46,0,0,0,12.94,6.57,8.28,8.28,0,0,0,7.51-12.33,8.28,8.28,0,0,0-4.24-3.69A8.2,8.2,0,0,0,106,73.49c-.12.2-.25.38-.49.74a19.27,19.27,0,0,0-2.64-5.62c-.39-.55.09-.86.42-1.19a14.15,14.15,0,0,1,4.92-3.13,14.16,14.16,0,0,1,11.4.66,14.26,14.26,0,0,1,4.53,3.67A14.52,14.52,0,0,1,120.25,90a13.68,13.68,0,0,1-8,1.8A14.1,14.1,0,0,1,99,78.42Z"
+                          transform="translate(-18.67 -2.29)"
+                        />
+                        <path
+                          class="cls-3"
+                          d="M107.28,83.71a14.8,14.8,0,0,1-5.18-3.27,14.65,14.65,0,0,1-3.42-5.09A9.29,9.29,0,0,0,95,70.59a8.26,8.26,0,0,0-12.61,6.92c-.07,4.34,0,8.69,0,13,0,1.42-.08,1.47-1.49,1.1a5.55,5.55,0,0,1-4.35-5,65.29,65.29,0,0,1,.15-11.36,14.16,14.16,0,0,1,28,0,16.81,16.81,0,0,1,.21,2.24A9.39,9.39,0,0,0,107.28,83.71Z"
+                          transform="translate(-18.67 -2.29)"
+                        />
+                        <path
+                          class="cls-3"
+                          d="M99.12,83.45A15.72,15.72,0,0,0,104.41,90a1.19,1.19,0,0,1,.37.52,1.18,1.18,0,0,1,.06.64c0,4.62,0,9.24,0,13.87,0,.89-.27,1.1-1.12.91a5.85,5.85,0,0,1-4.8-5.56c-.05-5.54,0-11.07,0-16.6A3.26,3.26,0,0,1,99.12,83.45Z"
+                          transform="translate(-18.67 -2.29)"
+                        />
+                        <path
+                          class="cls-7"
+                          d="M822.28,476.87l-24.64,24.48s-.32,69.91,0,69.43-68.64,0-68.64,0l-25.6,24.8H822.92Z"
+                          transform="translate(-18.67 -2.29)"
+                        />
+                        <polygon
+                          class="cls-8"
+                          points="803.61 484.98 785.69 502.57 785.69 575.53 713.05 575.53 694.81 593.29 804.25 593.29 804.25 484.33 803.61 484.98"
+                        />
+                        <text x="-18.67" y="-2.29" />
+                        <text x="-18.67" y="-2.29" />
+                        <text
+                          class="cls-11"
+                          transform="translate(244.6 182.73)"
+                        >
+                          CERTIFIC
+                          <tspan class="cls-12" x="225.56" y="0">A</tspan>
+                          <tspan class="cls-13" x="258.07" y="0">TE</tspan>
+                        </text>
+                        <text
+                          class="cls-14"
+                          transform="translate(302.14 209.5)"
+                        >
+                          <tspan xml:space="preserve">OF PERFORMENCE</tspan>
+                        </text>
+                        <text
+                          class="cls-15"
+                          transform="translate(525.34 527.2)"
+                        >
+                          Shahrukh
+                          <tspan class="cls-16" x="91.01" y="0">S</tspan>
+                          <tspan class="cls-17" x="103.07" y="0">w</tspan>
+                          <tspan x="119.09" y="0">ati</tspan>
+                        </text>
+                        <text
+                          class="cls-18"
+                          transform="matrix(0.99, -0.13, 0.13, 0.99, 542.74, 492.54)"
+                        >
+                          Shahrukh Swati
+                        </text>
+                        <text
+                          class="cls-19"
+                          transform="translate(617.49 544.08)"
+                        >
+                          Direc
+                          <tspan class="cls-20" x="32.06" y="0">t</tspan>
+                          <tspan x="36.5" y="0">or</tspan>
+                        </text>
+                        <text
+                          class="cls-21"
+                          transform="translate(314.37 259.77)"
+                        >
+                          PROUD
+                          <tspan class="cls-22" x="56.04" y="0">L</tspan>
+                          <tspan x="64.16" y="0">Y PRESENT TO</tspan>
+                        </text>
+                        <text
+                          class="cls-23"
+                          transform="translate(149.69 397.52)"
+                        >
+                          For securing
+                          <tspan class="cls-24" x="88.34" y="0"></tspan>
+                          <tspan class="cls-25" x="92.34" y="0">
+                            3rd Position
+                          </tspan>
+                          <tspan class="cls-24" x="180.76" y="0"></tspan>
+                          <tspan x="184.76" y="0">with</tspan>
+                          <tspan class="cls-24" x="217.29" y="0"></tspan>
+                          <tspan class="cls-25" x="221.29" y="0">
+                            90% scores
+                          </tspan>
+                          <tspan class="cls-24" x="299.95" y="0"></tspan>
+                          <tspan x="303.95" y="0">in the</tspan>
+                          <tspan class="cls-24" x="344.11" y="0"></tspan>
+                          <tspan class="cls-25" x="348.11" y="0">MDC</tspan>
+                          <tspan class="cls-26" x="388.96" y="0">A</tspan>
+                          <tspan class="cls-25" x="400.22" y="0">
+                            T Physics
+                          </tspan>
+                          <tspan x="473.96" y="0">Quiz at</tspan>
+                          <tspan x="215.78" y="19.2">Nearpeer.org</tspan>
+                        </text>
+                        <text
+                          class="cls-27"
+                          transform="translate(202.47 347.7)"
+                        >
+                          Shahrukh Swati
+                        </text>
+                        <rect
+                          x="165.3"
+                          y="363.07"
+                          width="480.61"
+                          height="2.14"
+                        />
+                        <rect
+                          x="532.79"
+                          y="502.65"
+                          width="124.01"
+                          height="1.34"
+                        />
+                        <text
+                          class="cls-28"
+                          transform="translate(68.71 168.61)"
+                        >
+                          3rd
+                        </text>
+                      </svg> -->
+                    </div>
+                  <div>
+                    <button class="btn-np outlined" @click="getCertificate(false)">
+                      Preview
+                    </button>
+                      <button class="btn-contained mb-4 mb-md-0 text-center" @click="getCertificate(true)">
+                        Save Your Certificate
+                      </button>
+                  </div>
+                 <div class="social-share">
+                    <p>Or share with</p>
+                    <ul class="fail-social-icons">
+                      <li>
+                        <ShareNetwork
+                              network="facebook"
+                              title="Certificate"
+                              :description="currentShareTitleCertificate"
+                              :quote="currentShareTitleCertificate"
+                              :url="currentShareUrlCertificate"
+                            >
+                              <img
+                                src="../../../../assets/Facebook Icon.svg"
+                              />
+                            </ShareNetwork>
+                            
+                      </li>
+                      <li>
+                        <ShareNetwork
+                              network="Twitter"
+                              :title="currentShareTitleCertificate"
+                              :description="currentShareTitleCertificate"
+                              :quote="currentShareTitleCertificate"
+                              :url="currentShareUrlCertificate"
+                              :twitter-user="Nearpeer"
+                            >
+                              <img
+                                src="../../../../assets/Twitter Icon.svg"
+                              />
+                            </ShareNetwork>
+                            
+                      </li>
+                      <li>
+                        <ShareNetwork
+                              network="WhatsApp"
+                              title="Certificate"
+                              :description="currentShareTitleCertificate"
+                              :quote="currentShareTitleCertificate"
+                              :url="currentShareUrlCertificate"
+                            >
+                              <img
+                                src="../../../../assets/WhatsApp Logo.svg"
+                              />
+                            </ShareNetwork>
+                      </li>
+                      <li>
+                        <ShareNetwork
+                              network="LinkedIn"
+                              
+                              :description="currentShareTitleCertificate"
+                              :quote="currentShareTitleCertificate"
+                              :url="currentShareUrlCertificate"
+                            >
+                              <img
+                                src="../../../../assets/linkedin icon.png"
+                              />
+                            </ShareNetwork>
+                      </li>
+                    </ul>
+                 </div>
+                  </div>
+
+                  <div
+                    style="display: flex; align-items: flex-start; height: 100%;"
+                  >
+                    <!-- <img src="../../../../assets/Icon - Move Up Arrow.svg" /> -->
+                  </div>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-center flex-direction-row-col-mob flex-column  mt-5 mb-3"
+              >
+                <!-- <button class="btn-contained mb-4 mb-md-0"> Save Your Certificate </button> -->
+                <button class="btn-np outlined" @click="scrollDown">
+                  Review Your Performance
+                  <img
+                    src="./../../../../assets/scroll-down-icon.svg"
+                    class="ml-2"
+                  />
+                </button>
+              </div>
+              <div class="floating-button" v-if="windowTop > 70" @click="practiceAgain" v-if="!$store.state.isNewReactNative">
+                <button class="practice-again-btn">{{result.quiz.quiz_type === "practice" ? "Try Free Practice" : "Let's practice"}}</button>
+              </div>
+              <!-- <div
+                class="flex-view flex-direction-row-col justify-content-a align-items-center ml-2"
+              >
+                <p class="subtitle-1">
+                  Share your achievement and inspire your peers:
+                </p>
+                <div class="flex-view flex-direction-row mt-2 mb-2">
+                  <img src="../../../../assets/Facebook Icon.svg" class="icon-width" />
+                  <img src="../../../../assets/Twitter Icon.svg" class="ml-4 icon-width" />
+                  <img src="../../../../assets/WhatsApp Logo.svg" class="ml-4 icon-width" />
+                  <ShareNetwork
+                    network="facebook"
+                    :url="currentShareUrl"
+                    :title="result.quiz.name"
+                    :description="customDescription"
+                    :quote="customDescription"
+                    hashtags="nearpeer,nearpeerorg"
+                  >
+                    <img
+                      src="../../../../assets/Facebook Icon.svg"
+                      class="icon-width"
+                    />
+                  </ShareNetwork>
+                  <ShareNetwork
+                    network="Twitter"
+                    :url="currentShareUrl"
+                    :title="result.quiz.name"
+                    :description="customDescription"
+                    :quote="result.quiz.name"
+                    hashtags="nearpeer,nearpeerorg"
+                    :twitter-user="Nearpeer"
+                  >
+                    <img
+                      src="../../../../assets/Twitter Icon.svg"
+                      class="ml-4 icon-width"
+                    />
+                  </ShareNetwork>
+                  <ShareNetwork
+                    network="WhatsApp"
+                    :url="currentShareUrl"
+                    :title="result.quiz.name"
+                    :description="customDescription"
+                    :quote="result.quiz.name"
+                    hashtags="nearpeer,nearpeerorg"
+                  >
+                    <img
+                      src="../../../../assets/WhatsApp Logo.svg"
+                      class="ml-4 icon-width"
+                    />
+                  </ShareNetwork>
+                </div>
+              </div> -->
+            </div>
+          </div>
+          <div v-if="pageType != 1" class="max-width-100p">
+            <div class="max-width-100p bg-gray">
+              <div class="max-div-width">
+                <div class="score-board blocks flex-view flex-direction-col">
+                  <div
+                    class="align-items-center justify-content-a flex-view flex-direction-row"
+                  >
+                    <h3 class="flex-view small-font-mob" style="margin:0;">
+                      Score:
+                      <p
+                        class="ml-2"
+                        v-bind:class="{ 'font-color-green': green,'font-color-yellow': yellow,'font-color-red': red}"
+                      >
+                        {{result.correct_percentage}}%
+                      </p>
+                    </h3>
+                    <!-- <h5 class="flex-view">
+                      Grade:
+                      <h4
+                        class="ml-2"
+                        v-bind:class="{ 'font-color-green': green,'font-color-yellow': yellow,'font-color-red': red}"
+                      >
+                        {{grade}}
+                      </h4>
+                    </h5> -->
+                    <h3
+                      class="flex-view ml-2 small-font-mob"
+                      v-bind:class="{ 'font-color-green': isPass,'font-color-red' : !isPass}"
+                    >
+                      {{isPass? 'PASS' : 'Fail'}}
+                    </h3>
+                  </div>
+                  <div
+                    class="flex-view flex-direction-row justify-content-c"
+                    style="height:180px;"
+                  >
+                    <div
+                      class="flex-view flex-direction-col"
+                      style="    margin-right: 15px;
+                      margin-top: 10px;
+                      justify-content: space-around;
+                      margin-bottom: 10px;"
+                    >
+                      <div
+                        class="flex-view flex-direction-row justify-content-b"
+                      >
+                        <p class="subtitle-1 font-family-bold">
+                          Your Performance
+                        </p>
+                        <img
+                        class="hide-img"
+                          src="../../../../assets/stats-icons/Icon - One Student.svg"
+                        />
+                      </div>
+                      <div
+                        class="flex-view flex-direction-row justify-content-b"
+                        style="margin-top: 35px;"
+                      >
+                        <p class="subtitle-1">
+                          Class Average
+                        </p>
+                        <img
+                        class="hide-img"
+                        src="../../../../assets/stats-icons/Icon - Students.svg"
+                        />
+                      </div>
+                      <div
+                        class="flex-view flex-direction-row justify-content-b"
+                        style="margin-top: 35px;"
+                      >
+                        <p class="subtitle-1">
+                          Best Performer<br />
+                        </p>
+                        <img
+                        class="hide-img"
+                        src="../../../../assets/stats-icons/Icon - One Student.svg"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="flex-view flex-direction-col justify-content-a pg-bar-div"
+                    >
+                      <div class="progress">
+                        <div
+                          class="progress-bar your-progress"
+                          role="progressbar"
+                          aria-valuenow="70"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          :style="{ 'width': result.correct_percentage+'%'}"
+                          :title="result.correct_percentage.toFixed(2)+'%'"
+                        >
+                          <span class="sr-only">70% Complete</span>
+                        </div>
+                        <p
+                        class="progress-percentage"
+                        >
+                          {{result.correct_percentage.toFixed(1)+'%'}}
+                        </p>
+                      </div>
+                      <div class="progress">
+                        <div
+                          class="progress-bar class-progress"
+                          role="progressbar"
+                          aria-valuenow="70"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          :style="{ 'width': classQuizAverage+'%'}"
+                          :title="classQuizAverage.toFixed(2)+'%'"
+                        >
+                          <span class="sr-only">70% Complete</span>
+                        </div>
+                        <p class="progress-percentage">
+                          {{classQuizAverage.toFixed(1)+'%'}}
+                        </p>
+                      </div>
+                      <div class="progress">
+                        <div
+                          class="progress-bar best-progress"
+                          role="progressbar"
+                          aria-valuenow="70"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                          :style="{ 'width': (topStudents[0].correct_percentage || 0)+'%' }"
+                          :title="(topStudents[0].correct_percentage || 0).toFixed(2)+'%'"
+                        >
+                          <span class="sr-only">70% Complete</span>
+                        </div>
+                        <p class="progress-percentage">
+                          {{(topStudents[0].correct_percentage ||
+                          0).toFixed(1)+'%'}}
+                        </p>
+                      </div>
+                      <!-- <div class="progress" style="opacity: 0.6;">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  aria-valuenow="70"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                 :style="{ 'width': (topStudents[0].obtained_marks / topStudents[0].total_marks) *
+                  100+'%'}"
+                >
+                  <span class="sr-only">70% Complete</span>
+                </div>
+              </div> -->
+                    </div>
+                  </div>
+                  <div
+                    class="flex-view flex-direction-col perfomance-second-div justify-content-c table-width margin-auto"
+                  >
+                    <div class="flex-view flex-direction-row">
+                      <div class="flex-view table-cell"></div>
+                      <div class="flex-view table-cell">
+                        <img
+                          src="../../../../assets/stats-icons/Icon - Done or Correct.svg"
+                        />
+                        <p class="body-2">
+                          Correct
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <img
+                          src="../../../../assets/stats-icons/Icon - Wrong Answer.svg"
+                        />
+                        <p class="body-2">Incorrect</p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <img
+                          src="../../../../assets/stats-icons/Icon - Skipped Question.svg"
+                        />
+                        <p class="body-2">
+                          Skipped
+                        </p>
+                      </div>
+                      <div
+                        class="flex-view table-cell"
+                        title="Avg. Time per Question"
+                      >
+                        <p class="body-2">
+                          Av. Time per Question
+                        </p>
+                      </div>
+                      <div
+                        class="flex-view table-cell"
+                        title="Total Time Taken"
+                      >
+                        <p class="body-2">
+                          Total Time Taken
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex-view flex-direction-row">
+                      <div class="flex-view table-cell-title justify-content-b">
+                        <div>
+                          <p class="subtitle-1 font-family-bold">
+                            Your Performance
+                          </p>
+                        </div>
+                        <div>
+                          <img
+                            src="../../../../assets/stats-icons/Icon - One Student.svg"
+                          />
+                        </div>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-1 font-family-bold extra-bold">
+                          {{studentStats.correct.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-1 font-family-bold extra-bold">
+                          {{studentStats.incorrect.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-1 font-family-bold extra-bold">
+                          {{studentStats.skipped.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-1 font-family-bold extra-bold">
+                          {{studentStats.avgTimePerQuestion || '0s'}} 
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-1 font-family-bold extra-bold">
+                          {{studentStats.totalTime}}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex-view flex-direction-row">
+                      <div class="flex-view table-cell-title justify-content-b">
+                        <div>
+                          <p class="subtitle-1">
+                            Class Average
+                          </p>
+                        </div>
+                        <div>
+                          <img
+                            src="../../../../assets/stats-icons/Icon - Students.svg"
+                          />
+                        </div>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{classAverageStats.correct.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{classAverageStats.incorrect.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{classAverageStats.skipped.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{classAverageStats.avgTimePerQuestion || '0s'}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{classAverageStats.totalTime}}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex-view flex-direction-row">
+                      <div class="flex-view table-cell-title justify-content-b">
+                        <p class="subtitle-1">
+                          Best Performer<br />
+                          {{bestPerformanceAverageStats.fullname}}
+                        </p>
+                        <img
+                          src="../../../../assets/Icon ionic-md-trophy.svg"
+                        />
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{bestPerformanceAverageStats.correct.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{bestPerformanceAverageStats.incorrect.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{bestPerformanceAverageStats.skipped.toFixed(0)}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{bestPerformanceAverageStats.avgTimePerQuestion || '0s'}}
+                        </p>
+                      </div>
+                      <div class="flex-view table-cell">
+                        <p class="body-2">
+                          {{bestPerformanceAverageStats.totalTime}}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="max-width-100p bg-white"
+              v-if="pageType == 3"
+              id="incorrect"
+            >
+              <div class="max-div-width" style="padding-bottom:0">
+                <div class="questions flex-view flex-direction-col">
+                  <div class="blocks" style="margin-bottom: 0;">
+                    <div
+                      class="flex-view flex-direction-row-col justify-content-b"
+                    >
+                      <h3>Incorrect and Skipped Questions</h3>
+                      <button
+                        class="text-filled mt-2 btn-np d-none"
+                        @click="reviewAll"
+                      >
+                        REVIEW ALL QUESTIONS
+                      </button>
+                    </div>
+                    <!-- <div
+                  v-for="(question, index) in result.questions"
+                  class="circle-with-number mb-4"
+                  :style="question.result ? 'border: 2px solid green;' : question.skipped ? 'border: 2px solid grey;': 'border: 2px solid red;'"
+                  @click="selectQuestion(question, index)"
+                > -->
+                     
+                   <div class="d-block d-md-flex align-items-center justify-content-between">
+                      <div class="flex-view mt-4" style="overflow: auto;">
+                        <div
+                          v-for="(questionn, index) in this.result.questions"
+                          class="circle-with-number mb-4"
+                          :style="questionn.result ? 'border: 2px solid green;' : questionn.is_skipped ? 'border: 2px solid grey;': 'border: 2px solid red;'"
+                          @click="selectQuestion(questionn, index)"
+                          :class="{'selected-circle-gray': index+1 === questionNo && questionn.is_skipped ,'selected-circle-green': index+1 === questionNo && questionn.result, 'selected-circle-red': index+1 === questionNo && !questionn.is_skipped && !questionn.result }"
+                          :id="index+1"
+                        >
+                          {{index+1}}
+                        </div>
+                      </div>
+                      <div class="related-topic" v-if="question && ((question.related_video && question.related_video.name != 'Link to video') || (question.question_id && question.question_id.related_video && question.question_id.related_video.name != 'Link to video'))">
+                        <h6>Recommended Video for this topic</h6>
+                        <div class="related-topic-card d-flex align-item-center" @click="watchVideo(question.related_video ? question.related_video : question.question_id.related_video)">
+                          <div class="related-topic-video">
+                            <img src="../../../../assets/Course-Card-Locked.svg" class="img-fluid" alt="#">
+                            <div class="play-btn-overlay">
+                              <img src="../../../../assets/play-icon.svg" alt="#">
+                            </div>
+                          </div>
+                          <div class="related-topic-content d-flex align-item-center">
+                            <p>{{question.related_video ? question.related_video.name : question.question_id.related_video.name}}</p>
+                            <div class="detail d-flex align-items-center justify-content-between">
+                              <div class="video-time">
+                                {{question.related_video ? question.related_video.duration : question.question_id.related_video.duration}}                   
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                   </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="max-width-100p bg-white" v-if="pageType == 2">
+              <div
+                class="max-div-width flex-view align-items-center flex-direction-row-col"
+              >
+                <div>
+                  <img
+                    style="width: 100%; height: auto;"
+                    src="./../../../../assets/all-questions-correct.svg"
+                  />
+                </div>
+                <div
+                  class="flex-view flex-direction-col justify-content-c align-items-center"
+                >
+                  <h3 class="text-align-center">
+                    Excellent! You got all your questions correct.
+                  </h3>
+                  <button class="text-filled mt-3 btn-np d-none" @click="reviewAll">
+                    REVIEW ALL QUESTIONS
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="max-width-100p bg-white" v-if="pageType == 3">
+              <div class="max-div-width">
+                <div class="flex-view justify-content-c">
+                  <app-single-question-stat
+                    :questionNo="questionNo"
+                    :question="question"
+                    :totalAttempts="totalAttempts"
+                    @reviewAll="reviewAll"
+                  ></app-single-question-stat>
+                </div>
+              </div>
+            </div>
+
+            <div id="city_and_map_div">
+              <!-- <div v-if="isCityLoading" class="wire-frame" style="width: 80%; margin: auto;">
+                <div
+                  class="wire-frame-details-p m-0 Module-Page-Top-Wireframe flex-view justify-content-c"
+                >
+                  <img
+                    style="margin-top: 50px;"
+                    class="holder"
+                    src="../../../../assets/wireframes/Mapp.svg"
+                  />
+                </div>
+              </div> -->
+              <div class="max-div-width" v-if="cityWiseStats && cityWiseStats.length > 0">
+                <div class="container-fluid">
+                  <div class="row">
+                    <!-- <div class="col-md-12 col-lg-8" style="z-index: 1;">
+                      <div class="national-level">
+                        <div class="national-level-header">
+                          <h3>City  Wise Performance</h3>
+                          <div class="national-city" @click="nationalCity">
+                            <div class="d-flex align-items-center">
+                              <img
+                                src="../../../../assets/region-icon.png"
+                                alt="#"
+                              />
+                              <p>{{selectedRegion}}</p>
+                            </div>
+                            <img
+                              src="../../../../assets/attempt-filter-dd-icon.png"
+                              alt="#"
+                            />
+                            <ul
+                              class="national-city-dropdown"
+                              v-show="nationCityDD"
+                            >
+                              <li @click="selectRegion('World')">World</li>
+                              <li @click="selectRegion('Pakistan')">
+                                Pakistan
+                              </li>
+                              <li @click="selectRegion('KPK')">KPK</li>
+                              <li @click="selectRegion('Gilgit')">Gilgit</li>
+                              <li @click="selectRegion('Blochistan')">
+                                Blochistan
+                              </li>
+                              <li @click="selectRegion('Punjab')">Punjab</li>
+                              <li @click="selectRegion('Sindh')">Sindh</li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="national-map">
+                          <l-map
+                            style="height: 400px"
+                            :zoom="zoom"
+                            :center="center"
+                          >
+                            <l-tile-layer
+                              :url="url"
+                              :attribution="attribution"
+                            ></l-tile-layer>
+                            <l-marker
+                              v-for="(marker, index) in markers"
+                              :key="index"
+                              ref="markersRef"
+                              :lat-lng="marker.position"
+                            >
+                              <l-tooltip :content="marker.name" />
+                            </l-marker>
+                          </l-map>
+                        </div>
+                      </div>
+                    </div> -->
+                    <!-- <div class="col-md-12 col-lg-4">
+                      <div class="trend-city">
+                        <h3>Trending Cities</h3>
+                        <ul>
+                          <li v-for="(city, index) in cityWiseStats">
+                            <div class="trending-city">
+                              <img
+                                src="../../../../assets/trending-city-icon.png"
+                                alt="#"
+                              />
+                              <div class="trending-city-detail">
+                                <h6 style="margin-left: 5px;">
+                                  #{{index + 1}} {{city.city}}
+                                </h6>
+                              </div>
+                              <div class="city-percentage">
+                                <h4>{{city.percentageAvg.toFixed(0)+'%'}}</h4>
+                                <small style="font-size:8px">average Score</small>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+             <div class="topic-wise bg-gray" v-if="topicsStats.length > 0">
+                <div class="max-div-width blocks" style="margin-inline: auto;">
+                  <div class="topic-wise-header d-block d-md-flex align-items-center justify-content-between">
+                    <div class="topic-wise-header-title">
+                      <h3>Topic Wise Strengths and Weaknesses</h3>
+                    </div>
+                    <div class="topic-wise-status d-block d-md-flex">
+                      <div class="topic-wise-status-title" :class="{'line-through': !showTopicWeakness}" @click="setTopicWeakness()">Your Weaknesses</div>
+                      <div class="topic-wise-status-title green" :class="{'line-through': !showTopicStrength}" @click="setTopicStrength()">Your Strengths</div>
+                    </div>
+                  </div>
+                  <div class="topic-wise-chart">
+                    <div v-for="(topic, index) in topicsStats" v-if="(showTopicWeakness && showTopicStrength) || (showTopicWeakness && topic.score_percentage < 51) || (showTopicStrength && topic.score_percentage > 50)">
+                        <apexchart type="radialBar" height="180" width="180" :options="topic.score_percentage > 50 ? courseStatschart : courseStatschartWeakness" :series="[topic.score_percentage]"></apexchart>
+                        <p>{{topic.name}}</p>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+            <!-- </div> -->
+            <div id="performance-trend-graph">
+              <div v-if="isPerformanceTrendLoading" class="wire-frame" style="width: 80%; margin: auto;">
+                <div
+                  class="wire-frame-details-p m-0 Module-Page-Top-Wireframe flex-view justify-content-c"
+                >
+                  <img
+                    style="margin-top: 50px;"
+                    class="holder"
+                    src="../../../../assets/wireframes/Graphh (1).svg"
+                  />
+                </div>
+              </div>
+              <!-- <div v-if="isPerformanceTrendLoading"><img src="../../../../assets/wireframes/Graph.svg" width="100%" alt=""></div> -->
+              <div class="max-width-100p bg-gray" v-if="!wireFrames && performanceTrendGraphData && performanceTrendGraphData.length && performanceTrendGraphData[0].data && performanceTrendGraphData[0].data.length">
+                <div class="max-div-width">
+                  <div class="strengths blocks flex-view flex-direction-col">
+                    <div
+                      class="flex-view flex-direction-row-col justify-content-b"
+                    >
+                      <h3>
+                        Performance Trend
+                        <span v-if="result.quiz.course_id"> In This Course</span>
+                      </h3>
+                      <div class="flex-view flex-direction-row-col">
+                        <div
+                          style="align-items: flex-start; margin: 10px;"
+                          class="flex-view flex-direction-row"
+                        >
+                          <img
+                            src="../../../../assets/stats-icons/Icon - One Student.svg"
+                          />
+                          <div
+                            style="margin-left: 10px;"
+                            class="flex-view flex-direction-col"
+                          >
+                            <h4 style="margin-bottom: 5px;">
+                              Your performance
+                            </h4>
+                            <div class="status-bar"></div>
+                          </div>
+                        </div>
+                        <div
+                          style="align-items: flex-start; margin: 10px;"
+                          class="flex-view flex-direction-row"
+                        >
+                          <img
+                            src="../../../../assets/stats-icons/Icon - Students.svg"
+                          />
+                          <div
+                            style="margin-left: 10px;"
+                            class="flex-view flex-direction-col"
+                          >
+                            <h4 style="margin-bottom: 5px;">
+                              Class performance
+                            </h4>
+                            <div class="status-bar-yellow"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex-view on-left">
+                      <p class="body-1 font-family-bold">
+                        Score Percentage
+                      </p>
+                    </div>
+                    <div style="overflow: auto;">
+                      <div
+                        v-if="!wireFrames && performanceTrendGraphData"
+                        :style="{ 'min-width': widthGraph  }"
+                      >
+                        <app-bars
+                          style="margin-bottom: 10px;"
+                          :data="performanceTrendGraphData"
+                          :labels="trendGraphLabels"
+                        ></app-bars>
+                      </div>
+                    </div>
+                    <div class="flex-view justify-content-c mt-3">
+                      <p class="body-1 font-family-bold">
+                        Quizzes you have Attempted
+                        <span v-if="result.quiz.course_id">in this Course.</span>
+                      </p>
+                    </div>
+                    <div v-if="wireFrames" class="flex-view width-100">
+                      <img
+                        src="./../../../../assets/standard-quiz-intro-wireframes.svg"
+                        class="max-width-100 holder"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="tag-graph" v-if="showTopicGraph">
+              <div v-if="isTagDataGraphLoading" class="wire-frame" style="width: 80%; margin: auto;">
+                <div
+                  class="wire-frame-details-p m-0 Module-Page-Top-Wireframe flex-view justify-content-c"
+                >
+                  <img
+                    style="margin-top: 50px;"
+                    class="holder"
+                    src="../../../../assets/wireframes/Graphh (1).svg"
+                  />
+                </div>
+              </div>
+              
+             
+              <div class="max-width-100p bg-white" v-if="tagsGraphData && tagsGraphData.length && tagsGraphData[0].data && tagsGraphData[0].data.length">
+                <div class="max-div-width">
+                  <div class="strengths blocks flex-view flex-direction-col">
+                    <div
+                      class="flex-view flex-direction-row-col justify-content-b"
+                    >
+                      <h3>Topic Wise Strengths</h3>
+                      <div class="flex-view flex-direction-row-col">
+                        <div
+                          style="align-items: flex-start; margin: 10px;"
+                          class="flex-view flex-direction-row"
+                        >
+                          <img
+                            src="../../../../assets/stats-icons/Icon - One Student.svg"
+                          />
+                          <div
+                            style="margin-left: 10px;"
+                            class="flex-view flex-direction-col"
+                          >
+                            <h4>
+                              Your performance
+                            </h4>
+                            <div class="status-bar"></div>
+                          </div>
+                        </div>
+                        <div
+                          style="align-items: flex-start; margin: 10px;"
+                          class="flex-view flex-direction-row"
+                        >
+                          <img
+                            src="../../../../assets/stats-icons/Icon - Students.svg"
+                          />
+                          <div class="flex-view flex-direction-col ml-2">
+                            <h4>
+                              Class performance
+                            </h4>
+                            <div class="status-bar-yellow"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mob-overflow" v-if="tagsGraphData">
+                      <!-- <div v-if="!wireFramesS" style="
+                   height: 400px;
+                    overflow: auto;"> -->
+                      <app-horizontal-bars
+                        style="margin-bottom: 10px;min-width: 1000px;"
+                        :style="{ 'height': tagGraphHeight+'px'}"
+                        :data="tagsGraphData"
+                        :labels="classTagsGraphLabels"
+                      ></app-horizontal-bars>
+                      <!-- </div> -->
+                    </div>
+                    <div v-if="wireFramesS" class="flex-view width-100">
+                      <img
+                        src="./../../../../assets/standard-quiz-intro-wireframes.svg"
+                        class="max-width-100 holder"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="loadingRevision">
+              <img
+                src="../../../../assets/wireframe-revision-section.svg"
+                style="width: 100%;"
+                alt=""
+              />
+            </div>
+            <div
+              class="max-width-100p bg-gray"
+              v-if="suggestedVideos.length > 0"
+            >
+              <div class="max-div-width">
+                <div
+                  class="revision blocks flex-view flex-direction-col"
+                  v-if="result.quiz.course_id"
+                >
+                  <h3>Revision</h3>
+                  <p class="body-2 mt-3">
+                    Based on your performance in this quiz, we recommend that
+                    you revisit the videos below in order to strengthen your
+                    concepts.
+                  </p>
+                  <div style="width: 100%;margin-top: 30px;">
+                    <!-- <div>
+                      <div style="border-bottom: 1px solid #707070;">
+                        <div>
+                          <h3>Suggested Videos to Review</h3>
+                        </div>
+                        <div></div>
+                        <div
+                          style="text-align: right;"
+                          vi-f="suggestedVideos[0]"
+                        >
+                
+                </div>
+              </div>
+            </div> -->
+                    <div
+                      v-if="suggestedVideos.length > 0"
+                      class="flex-view flex-direction-row flex-wrap jc-mob"
+                    >
+                      <!-- justify-content-a -->
+                      <div
+                        v-for="(video, index) in suggestedVideos"
+                        class="flex-view flex-direction-col video-cards"
+                        v-if="video.id"
+                      >
+                        <div
+                          class="video-upper-box module-card-head-bg card-head"
+                        >
+                          <div class="play-icon-div">
+                            <img
+                              src="./../../../../assets/video-card-icon.svg"
+                              alt=""
+                            />
+                          </div>
+                          <div
+                            style="float:right; margin-top: -35px;"
+                            v-if="video.isLocked"
+                          >
+                            <img
+                              class="ml-3 mr-3"
+                              src="../../../../assets/Icon - Locked-light.svg"
+                            />
+                          </div>
+                        </div>
+                        <div class="video-main-box">
+                          <div
+                            style="padding: 18px 22px;            
+    height: 80px;"
+                          >
+                            <p
+                              class="body-2 font-family-bold"
+                              style="overflow: hidden;
+                            max-height: 50px;"
+                              :title="video.name"
+                            >
+                              {{video.name}}
+                            </p>
+                          </div>
+                          <hr
+                            style="color: var(--line-border);    margin: 4px 22px 8px 22px;
+                            "
+                          />
+                          <div
+                            class="flex-view align-items-center justify-content-around"
+                            style="padding: 4px 22px;width: 100%;"
+                          >
+                            <p class="subtitle-1 flex-view align-items-center">
+                              {{video.duration}}
+                            </p>
+                            <p>
+                              <label
+                                class="subtitle-1 align-items-center flex-view"
+                              >
+                                <li
+                                  style="background-color: black;width:8px; height: 8px;border-radius: 8px;display: flex;margin-right: 5px"
+                                ></li>
+                                {{video.videoProgress? video.videoProgress < 100
+                                ? video.videoProgress + '% Watched': 'Watched' :
+                                'Yet to watch'}}
+                              </label>
+                              <label
+                                class="subtitle-1 align-items-center flex-view"
+                                v-if="watched"
+                              >
+                                <li
+                                  style="background-color: black;width:8px; height: 8px;border-radius: 8px;display: flex;margin-right: 5px;"
+                                ></li>
+                                Watched
+                              </label>
+                            </p>
+                          </div>
+                          <div
+                            class="flex-view justify-content-end"
+                            style="padding: 4px 16px;
+                          "
+                          >
+                            <!-- v-bind:to="{path: '/course/'+video.index_url+'/'+video.module_no+'/'+video.id}" -->
+                            <!-- <router-link
+                            > -->
+                            <button
+                              class="btn-np text-filled"
+                              @click="watchVideo(video)"
+                            >
+                              Watch
+                            </button>
+                            <!-- </router-link> -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <p>No Suggested Video</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="max-width-100p bg-white">
+              <div class="max-width-100p">
+                <div class="max-div-width">
+                  <div
+                    class="flex-view flex-direction-row justify-content-c mt-4 mb-4"
+                  >
+                    <button class="btn-np text-filled mr-3" @click="retakeQuiz">
+                      Retake Quiz
+                    </button>
+                    <button class="btn-contained" @click="goBack(3)">
+                      Continue Studying
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="main-body" class="height-100p right-side-responsive" v-else>
+        <div
+          class="flex-view flex-wrap__ align-items-center justify-content-b flex-direction-row nav-div"
+          id="nav-bar"
+        >
+          <img
+            src="./../../../../assets/np-red.svg"
+            class="np-logo"
+            @click="leaveQuiz = true"
+          />
+
+          <img
+            class="c-4"
+            src="../../../../assets/icon-total-questions.svg"
+            @click="quizSummary = !quizSummary"
+          />
+        </div>
+        <div class="quiz-result-breadcrum">
+          <ul>
+            <li>
+              <router-link to="/course/course-landing">
+                <p>
+                  <img
+                    src="./../../../../assets/breadcrumbs-home-icon.svg"
+                    class="mr-2"
+                  />Home
+                </p>
+              </router-link>
+            </li>
+            <li v-if="result.quiz.course_id">
+              <p :title="moduleName" @click="modulePage">
+                {{moduleName}}
+              </p>
+            </li>
+            <li>
+              <p :title="result.quiz.name">
+                <b>{{result.quiz.name}}</b>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <div v-if="quizSummary" class="poppup-cp-new-overlay">
+          <div class="quizSum" v-if="quizSummary">
+            <div class="top-container flex-view flex-direction-col">
+              <div class="illuminated">
+                <div class="top-bar ellipsis">
+                  <h5 class="body-2 font-family-bold">
+                    {{result.quiz.name}}
+                  </h5>
+                </div>
+              </div>
+              <div class="shadow_ flex-view flex-direction-col">
+                <div class="section">
+                  <div
+                    class="row-1 ellipsis"
+                    v-for="(question, index) in sidebarQuestions"
+                    @click="scrollToQuestion(index + 1)"
+                  >
+                    <div
+                      class="box flex-view align-items-center justify-content-b flex-direction-row hover-class"
+                      style="width: 100%;"
+                      v-if="question.question_id"
+                    >
+                      <div
+                        style="width: 100%;"
+                        class="flex-view flex-direction-row align-items-center ellipsis hover-class"
+                      >
+                        <label class="count mr-2">{{index + 1}}
+                        </label>
+                        <div v-if="question.question_id.question_and_equation">
+                          <p class="body-2 hover-class">
+                            <span
+                              class="maths-text-area hover-class"
+                              :id="`${index}-equation`"
+                              >{{mathCreator(question.question_id,`${index}-equation`,question.question_id.question_and_equation)}} 444</span
+                            >
+                          </p>
+                        </div>
+                        <div v-else>
+                          <div
+                            class="flex-view body-2"
+                            v-if="question.question_id.equation"
+                          >
+                            <div
+                              class="flex-view align-items-center"
+                              v-if="question.question_id.question"
+                            >
+                              <div
+                                v-if="isHTML(question.question_id.question)"
+                                v-html="span(question.question_id.question)"
+                              ></div>
+                              <p class="body-2" v-else>{{question.question_id.question}},55</p>
+                            </div>
+                            <div v-else>
+                              <span
+                                class="maths-text-area-summary"
+                                :id="`${index}-equation`"
+                                >{{mathCreator(question.question_id,`${index}-equation`,
+                                question.question_id.equation)}}</span
+                              >
+                            </div>
+                          </div>
+                          <div v-else>
+                            <div
+                              v-if="isHTML(question.question_id.question)"
+                              v-html="span(question.question_id.question)"
+                            ></div>
+                            <p class="body-2" v-else>{{question.question_id.question}}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div v-if="!quizSummary" class="t-d responsive_container flex-view flex-direction-row-col justify-content-c">
+          
+          <div class="flex-view flex-direction-col align-items-center fix-top">
+            
+            <div class="cont_breadcrumbs_1">
+              <ul>
+                <li>
+                  <router-link to="/course/course-landing">
+                    <p class="t-d-tags body-2 flex-view">
+                      <img src="./../../../../assets/breadcrumbs-home-icon.svg" class="mr-2" />Home
+                    </p>
+                  </router-link>
+                </li>
+                <li v-if="result.quiz.course_id">
+                  <p style="    min-height: 30px;
+                display: flex;
+                justify-content: center;
+                padding: 3px;" class="t-d-tags body-2 flex-view cursor" @click="modulePage">
+                    {{moduleName}}
+                  </p>
+                </li>
+                <li class="ellipsis">
+                  <p style="    min-height: 30px;
+                display: flex;
+                justify-content: center;
+                padding: 3px;" class="t-d-tags body-2 flex-view font-family-bold">
+                    {{result.quiz.name}}
+                  </p>
+                </li>
+              </ul>
+            </div>
+       
+          </div>
+        </div> -->
+
+        <div class="mt-5 padding-mob">
+          <div
+            class="flex-view justify-content-b flex-direction-row-col mb-5 width-100"
+          >
+            <div class="flex-view justify-content-c">
+              <button
+                class="text-filled mb-2"
+                @click="reviewIndividualQuestions"
+              >
+                REVIEW Result
+              </button>
+            </div>
+            <div
+              class="flex-view justify-content-b width-filter"
+              v-click-outside="closeBox"
+              style="position:relative"
+            >
+              <p class="subtitle-2 clear-hover" @click="clearAll">Clear All</p>
+              <div
+                class="flex-view filter-landing  justify-content-b mob-filter-width"
+                @click="listboxHandler"
+              >
+                <div class="flex-view align-items-center width-100">
+                  <img src="./../../../../assets/Icon - Filter.svg" />
+                  <img src="./../../../../assets/Icon-Filter-black.svg" />
+                  <label class="ml-2 subtitle-2"
+                    >{{allQuestions ? "All Questions" : correctQuestions ?
+                    "Correct Only" : wrongQuestions ? "Wrong Only" :
+                    skippedQuestions ? "Skipped Only" : "All Questions"}}</label
+                  >
+                </div>
+                <div class="flex-view">
+                  <img
+                    class="ml-2"
+                    src="../../../../assets/Icon-ArrowDropDown-Filled-gray.svg"
+                    style="width: 26px;
+              "
+                  />
+                  <img
+                    class="down-cart mr-2"
+                    src="../../../../assets/Icon ionic-md-arrow-dropdown.svg"
+                  />
+                  <div v-if="listBox" class="list-box">
+                    <label @click="setFilter(1)" class="subtitle-1">
+                      Correct Only
+                    </label>
+                    <label @click="setFilter(2)" class="subtitle-1">
+                      Wrong Only
+                    </label>
+                    <label @click="setFilter(3)" class="subtitle-1">
+                      Skipped Only
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="flex-view filter-landing justify-content-b mob-filter-width marg-left"
+                @click="sortboxHandler"
+              >
+                <div class="flex-view align-items-center width-100">
+                  <img src="./../../../../assets/Icon-Sort-by.svg" />
+                  <img src="./../../../../assets/Icon-Sort-by-black.svg" />
+                  <label class="ml-2 subtitle-2"
+                    >{{ difficultyAll ? "Difficulty Level" : easy ? "Easy
+                    Questions" : medium ? "Medium Questions" : difficult ?
+                    "Difficult Questions" : "All Questions"}}</label
+                  >
+                </div>
+                <div class="flex-view">
+                  <img
+                    class="ml-2"
+                    src="../../../../assets/Icon-ArrowDropDown-Filled-gray.svg"
+                    style="width: 26px;
+            "
+                  />
+                  <img
+                    class="down-cart mr-2"
+                    src="../../../../assets/Icon ionic-md-arrow-dropdown.svg"
+                  />
+                  <div v-if="listBoxR" class="list-box">
+                    <label @click="sortDifficulty(1)" class="subtitle-1">
+                      Easy Questions
+                    </label>
+                    <label @click="sortDifficulty(2)" class="subtitle-2">
+                      Medium Questions
+                    </label>
+                    <label @click="sortDifficulty(3)" class="subtitle-2">
+                      Difficult Questions
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="flex-view justify-content-c"
+            v-for="(question, index) in questionsCurrentPage"
+            :id="question.questionNo"
+          >
+            <app-single-question-stat
+              :questionNo="question.questionNo"
+              :question="question"
+              :totalAttempts="totalAttempts"
+              :key="index+1"
+            >
+            </app-single-question-stat>
+          </div>
+          <base-pagination
+            v-if="result.questions"
+            :page-count="pageCount"
+            v-model="pageNo"
+            ref="paginationss"
+          >
+          </base-pagination>
+        </div>
+      </div>
+    </div>
+    <div
+      id="loadingScreen"
+      v-if="pageLoader"
+      style="margin: 280px 0px;"
+      class="flex-view align-items-center justify-content-c"
+    >
+      <img src="./../../../../assets/website_loading_animation.gif" />
+    </div>
+    <div
+      class="feedback-bg flex-view flex-direction-col justify-content-c"
+      v-if="buyCoursePop"
+    >
+      <div class="dialog-holder" style="max-width: 550px;">
+        <h5 class="font-family-bold" style="word-break: break-word;">
+          Please Purchase this course or module
+        </h5>
+        <p class="body-2 mt-3" style="word-break: break-word;">
+          You are being redirected to Nearpeer.org where you can buy this
+          content. Do you want to continue?
+        </p>
+        <div class="flex-view flex-directin-row-col justify-content-end">
+          <div class="mt-3 align-self-center">
+            <button
+              class="btn-np text-filled mr-3"
+              @click="buyCoursePop = false"
+            >
+              Cancel
+            </button>
+          </div>
+          <div class="mt-3">
+            <button class="btn-contained" @click="redirectPage()">
+              <img src="./../../../../assets/Icon-external-link.svg" />
+              Proceed
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screenshot-btn" ref="printMe">
+      <div class="screenshot-icon">
+        <img src="../../../../assets/Camera.png" alt="#" />
+      </div>
+      <p>Take a screenshot</p>
+    </div>
+    <img :src="output" />
+  </div>
+</div>

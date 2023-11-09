@@ -1,0 +1,82 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+  <div class="flex-view">
+    <div class="flex-view" id="nav-bar">
+      <app-header />
+    </div>
+    <div id="main-body" class="right-side-responsive">
+      <div class="bg-parent">
+
+        <div class="max-width top-div-com right-inner-width">
+          <div class="practice-wrapper practice-previous">
+            <button @click="backToMainPractice" class="back-btn mb-4"> <img src="../../../assets/practice/back-icon-old.svg">
+              Go back</button>
+            <div class="practice-previous-title">
+              <h3>Your previously attempted quizzes</h3>
+              <p>All of your previously attempted quizzes are listed here:</p>
+            </div>
+            <div class="practice-previous-table table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Quiz No </th>
+                    <th>Course</th>
+                    <th>Module</th>
+                    <!-- <th>Topic</th> -->
+                    <th>Date& Time</th>
+                    <th>Friends competition</th>
+                    <th>Result</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(attempt, index) in attempts">
+                    <td> {{index + 1}}</td>
+                    <td>
+                      {{attempt.quiz_id.practice_data.coursesData[0].name}}
+                      <div class="prev-attempt-tooltip" v-if="attempt.quiz_id.practice_data.coursesData.length > 1">
+                        <b>{{attempt.quiz_id.practice_data.coursesData.length - 1}} More</b>
+                        <p style="z-index: 9;"><span v-for="(course, index) in attempt.quiz_id.practice_data.coursesData">{{course.name}}, </span></p>
+                      </div>
+                    </td>
+                    <td>
+                      {{attempt.quiz_id.practice_data.modulesData[0].name}}
+                      <div class="prev-attempt-tooltip" v-if="attempt.quiz_id.practice_data.modulesData.length > 1">
+                        <b>{{attempt.quiz_id.practice_data.modulesData.length - 1}} More</b>
+                        <p style="z-index: 9;"><span v-for="(module, index) in attempt.quiz_id.practice_data.modulesData">{{module.name}}, </span></p>
+                      </div>
+                    </td>
+                    <!-- <td>
+                      {{attempt.quiz_id.practice_data.topics[0]}}
+                      <div class="prev-attempt-tooltip">
+                        <b>5 More</b>
+                        <p><span>slie, </span><span>slie, </span></p>
+                      </div>
+                    </td> -->
+                    <td>{{attempt.created_at | formatDate}}</td>
+                    <td>{{attempt.count}}</td>
+                    <td>
+                      {{attempt.obtained_marks}}/{{attempt.total_marks}}
+                      <button @click="reattemptQuiz(attempt)">Re-Attempt</button>
+                    </td>
+                    <td>
+                      {{attempt.correct_percentage}}%
+                      <button @click="viewResult(attempt)">view</button>
+                    </td>
+                  </tr>
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,213 @@
+<div style="position: relative;">
+  <!-- margin-top: 65px; -->
+  <div
+    class="signup-bg flex-view align-items-center custom-align"
+    style="overflow: auto;"
+    v-if="mergeAccount"
+  >
+    <div
+      class="otp-holder tab-width flex-view justify-content-around align-items-center flex-direction-col signup-parent merge-overall-height"
+      v-if="mergeMain"
+    >
+      <span
+        class="closeButtonImage"
+        style="top: 0; 
+          "
+        @click="mergeAccount= false"
+        ><img src="./../../../../assets/Icon-Close-black.svg" class="cross-icon"
+      /></span>
+      <div
+        class="flex-view flex-direction-col"
+        style="    height: 100%;
+                  justify-content: space-evenly;
+                  width: 100%;"
+      >
+        <!-- <div class="flex-view justify-content-center">
+              <img src="./../../../../assets/np-red.svg" />
+            </div> -->
+        <div
+          class="flex-view flex-direction-col"
+          style="    width: 100%;
+                  justify-content: space-around;align-items: center;"
+        >
+          <div class="flex-view">
+            <img
+              src="./../../../../assets/Untitled-1ag.svg"
+              class="merge-image"
+              style="width: 180px;"
+            />
+          </div>
+          <div
+            class="flex-view flex-direction-col justify-content-around table-width"
+            style="
+                width: 100%;
+                margin-bottom: 30px;
+                padding: 0px 30px;"
+          >
+            <div>
+              <p class="mt-1 body-1 font-family-bold">
+                Multiple Accounts Detected
+              </p>
+              <p class="body-2 mt-2">
+                It seems that you have multiple Nearpeer accounts associated
+                with same <b>ID: {{userEmail}}</b>. You can merge all your
+                accounts with your Currently logged in account (highlighted
+                below):.
+              </p>
+            </div>
+            <div
+              class="flex-view flex-direction-col  mt-1 web-merge"
+              style=" overflow-y: scroll;
+            max-height: 235px;"
+            >
+              <div
+                class="flex-view flex-direction-row align-items-center mob-length row-border"
+                style="width: fit-content;"
+              >
+                <p class="ellipsis  body-2 " style="min-width: 200px;">
+                  <b>Login Medium</b>
+                </p>
+                <p class="ellipsis  body-2 " style="min-width: 200px;">
+                  <b>Courses Unlocked</b>
+                </p>
+                <p class="ellipsis body-2" style="min-width: 220px;">
+                  <b>Last Login</b>
+                </p>
+              </div>
+
+              <!-- for LOOP -->
+              <div
+                class="flex-view flex-direction-row align-items-center mob-length row-border"
+                style="width: fit-content;"
+                :class="{'row-bg': currentDevice}"
+                v-for="user in users"
+              >
+                <p class="ellipsis  subtitle-1" style="min-width: 200px;">
+                  {{user.provider}}
+                </p>
+                <p class="ellipsis  subtitle-1" style="min-width: 200px;">
+                  {{user.purchasedCoursesCount}}
+                </p>
+                <p
+                  class="ellipsis  subtitle-1 font-family-bold"
+                  style="min-width: 220px;"
+                >
+                {{user.lastLogin}}
+                  <img
+                    src="./../../../../assets/Group 10382.svg"
+                    v-if="user.id === userID"
+                    style="margin-left: 5px;"
+                  />
+                </p>
+              </div>
+              <!--/ FOR LOOP -->
+            </div>
+          </div>
+          <div class="flex-view merge-last">
+            <div>
+              <button class="btn-np outlined" @click="closeMerge">
+                Ignore
+              </button>
+              <button class="btn-contained ml-2" @click="mergeAccountCall">
+                Merge all accounts
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="otp-holder tab-width flex-view justify-content-around align-items-center flex-direction-col signup-parent"
+      style="   width: 100%;
+      height: 600px;"
+      v-if="mergeWait"
+    >
+      <div
+        class="flex-view flex-direction-col"
+        style="    height: 100%;
+            justify-content: space-evenly;
+            width: 100%;"
+      >
+        <div
+          class="flex-view flex-direction-col height-on-small"
+          style="    width: 100%;
+    justify-content: space-around;align-items: center;"
+        >
+          <h4>Your Accounts are being merged.</h4>
+
+          <div class="loader2">
+            <div class="box box0">
+              <div></div>
+            </div>
+            <div class="box box1">
+              <div></div>
+            </div>
+            <div class="box box2">
+              <div></div>
+            </div>
+            <div class="box box3">
+              <div></div>
+            </div>
+            <div class="box box4">
+              <div></div>
+            </div>
+            <div class="box box5">
+              <div></div>
+            </div>
+            <div class="box box6">
+              <div></div>
+            </div>
+            <div class="box box7">
+              <div></div>
+            </div>
+            <div class="ground">
+              <div></div>
+            </div>
+          </div>
+          <small>Nearpeer</small>
+        </div>
+      </div>
+    </div>
+    <div
+      class="otp-holder tab-width flex-view justify-content-around align-items-center flex-direction-col signup-parent custom-height"
+      style="width: 100%;"
+      v-if="mergeSuccess"
+    >
+      <span
+        class="closeButtonImage"
+        style="top: 0; 
+  "
+        @click="closeMerge"
+        ><img src="./../../../../assets/Icon-Close-black.svg" class="cross-icon"
+      /></span>
+      <div
+        class="flex-view flex-direction-row-col align-items-center"
+        style="    width: 100%;
+        justify-content: space-around;height: 480px;"
+      >
+        <div class="flex-view">
+          <img src="./../../../../assets/Group 10263.svg" />
+          <!-- class="success-image" -->
+        </div>
+        <div
+          class="flex-view flex-direction-col justify-content-around height-change"
+          style="max-width: 500px;padding: 0px 50px;height: 205px;"
+        >
+          <div>
+            <h4>Accounts Sucessfully Merged</h4>
+            <p class="body-2 mt-3">
+              Congratulations! Your accounts have successfully been merged. All
+              your courses will now be available in this account.
+            </p>
+          </div>
+          <div class="flex-view justify-content-end">
+            <button @click="closeMerge" class="btn-contained">
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,662 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+  <div class="flex-view">
+    <div class="flex-view" id="nav-bar">
+      <app-header />
+    </div>
+    <div id="main-body" class="right-side-responsive">
+      <!-- <app-verification v-if="verificationNeeded" /> -->
+      <div class="bg-parent main-page">
+
+        <!-- Practice main page -->
+        <div class="hundred-vh flex-view flex-direction-col align-content-center main-page" v-if="practiceMain">
+          <div class="practice-mobile">
+            
+            <div class="middle-div">
+              <div class="practice-welcome upper-text flex-view justify-content-c" v-if="!isPlaying">
+                <h3>Welcome to the world of Practice</h3>
+              </div>
+              <!-- <img src="../../assets/Practice-gif.gif" class="gif" /> -->
+             <div class="practice-video">
+              <video style="height: 100%;" v-if="width > 900" ref="myvideo" src="../../assets/practice/main-video/practice-web.mp4" muted></video>
+              <video style="height: 100%;" v-if="width < 900 && width > 600" ref="myvideo" src="../../assets/practice/main-video/practice-tab.mp4" muted></video>
+              <video style="height: 100%;" v-if="width < 600" ref="myvideo" src="../../assets/practice/main-video/practice-mob.mp4" muted></video>
+            
+              <div class="practice-video-overlay" :class="{ 'add-hover': isPlaying }">
+                <div class="practice-video-icon">
+                  <img src="../../assets/practice/play-icon.svg" v-if="!isPlaying" @click="play" />
+                  <img src="../../assets/practice/pause-icon.svg" style="margin-left: 0px;" v-if="isPlaying" @click="stop" />
+                </div>
+                <div class="practice-volume-icon" >
+                  <img v-if="muteBtn === true" @click="volume()" src="../../assets/practice/mute-fill.svg" alt="">
+                  <img v-if="unMuteBtn === true"  @click="volume()"src="../../assets/practice/unmute-fill.svg" alt="">
+                </div>
+              </div>
+              
+             </div>
+            </div>
+            <div class="flex-view flex-direction-col align-items-center justify-content-c">
+              <button class="btn-practice filled big" @click="openStartPractice">START PRACTICING</button>
+              <button class="btn-practice underline big" @click="openPreviousPractice">PREVIOUS ATTEMPTS</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="max-width top-div-com right-inner-width"  v-if="practiceStart">
+
+          <!-- Start Practice -->
+          <div class="practice-wrapper">
+            <!-- Practice Steps -->
+            <div class="practice-step" v-if=" practiceSteps">
+              <ul class="practice-step-list">
+                <li :class="{'active': step === 1, 'complete': step >= 2 }">
+                  <div class="text-desktop">
+                    Select Institute
+                  </div>
+                  <div class="text-responsive">
+                    Institute
+                  </div>
+                  <!-- <div class="practice-step-number">1</div>
+                  <div class="practice-step-name">Select Market</div> -->
+
+                </li>
+                <li :class="{'active': step === 2, 'complete': step >= 3 }">
+                  <div class="text-desktop">
+                    Select Course
+                  </div>
+                  <div class="text-responsive">
+                    Course
+                  </div>
+                  <!-- <div class="practice-step-number">2</div>
+                  <div class="practice-step-name">Select Course</div> -->
+                </li>
+                <li :class="{'active': step === 3, 'complete': step >= 4 }">
+                  <div class="text-desktop">
+                    Select Chapter
+                  </div>
+                  <div class="text-responsive">
+                    Chapter..
+                  </div>
+                  <!-- <div class="practice-step-number">3</div>
+                  <div class="practice-step-name">Select Module/Chapter</div> -->
+                </li>
+                <!-- <li :class="{'active': step === 4, 'complete': step >= 5 }">
+                  <div class="text-desktop">
+                    Select Topic
+                  </div>
+                  <div class="text-responsive">
+                    Topic
+                  </div>
+                </li> -->
+                <li :class="{'active': step === 4, 'complete': step >= 5 }">
+                  <div class="text-desktop">
+                    Difficulty Level
+                  </div>
+                  <div class="text-responsive">
+                    Level
+                  </div>
+                  <!-- <div class="practice-step-number">5</div>
+                  <div class="practice-step-name">Difficulty Level</div> -->
+                </li>
+                <li :class="{'active': step === 5 }">
+                  <div class="text-desktop">
+                    Question
+                  </div>
+                  <div class="text-responsive">
+                    Question
+                  </div>
+
+                  <!-- <div class="practice-step-number">6</div>
+                  <div class="practice-step-name">Time Limit</div> -->
+                </li>
+              </ul>
+            </div>
+
+            <!-- Practice weak Steps -->
+            <div class="practice-step" v-if="practiceWeakSteps">
+              <ul class="practice-step-list">
+                <!-- <li :class="{'active': step === 4, 'complete': step >= 5 }">
+                  Select Topic
+                </li> -->
+                <li :class="{'active': step === 4, 'complete': step >= 5 }">
+                  Difficulty Level
+                  <!-- <div class="practice-step-number">5</div>
+                  <div class="practice-step-name">Difficulty Level</div> -->
+                </li>
+                <li :class="{'active': step === 5 }">
+                  Question
+                  <!-- <div class="practice-step-number">6</div>
+                  <div class="practice-step-name">Time Limit</div> -->
+                </li>
+              </ul>
+            </div>
+
+            <div class="practice-main-area">
+
+              <!-- Market -->
+              <div class="page fade-in-right" v-show="step === 1">
+                <!-- <div class="practice-title">
+                  <h3>Practice questions by creating your custom quiz.</h3>
+                </div> -->
+                <div class="practice-content">
+                  <div class="practice-content-title">
+                    <h2>Select Your <b>Institute(s)</b> 
+                      <span class="practice-content-tooltip">
+                        <img src="../../assets/practice/tooltip-icon.svg" alt="">
+                        <p class="practice-tooltip-text">You can pick any of the following available categories to start your practice</p>
+                      </span>
+                    </h2>
+                    <p>Let’s start from your own Category</p>
+                  </div>
+                  <div class="practice-search">
+                    <div class="practice-search-field">
+                      <div class="practice-search-input" :class="isError ? 'shake-horizontal error-border' : ''">
+                        <input type="text" :value="marketKey" @input="e => marketKey = e.target.value" v-model="marketKey" id="practice-search" name="practice-search" autocomplete="off"
+                          @focus="openpracticeSearchDD()" @blur="closeSearch()" placeholder="Search your Institute" />
+                        <button class="practice-search-img" v-if="!practiceSearchDD">
+                          <img src="../../assets/practice/search-icon.svg" alt="#">
+                        </button>
+                        <button class="practice-search-close-img" @click="practiceSearchDD = false; marketKey = ''" v-if="practiceSearchDD">
+                          <img src="../../assets/practice/search-close.svg" alt="#">
+                        </button>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <p class="practice-search-error">{{isError ? 'Please select Institute' : ''}}</p>
+                        <button class="practice-search-clear" @click="marketKey = ''">
+                          <img src="../../assets/practice/search-clear-icon.svg" alt="#"> Clear
+                        </button>
+                      </div>
+                    </div>
+                    <div class="practice-search-dd" v-if="practiceSearchDD">
+                      <ul>
+                        <li v-for="(market, index) in filterData(markets, marketKey, 'name')" @click="selectMarket(market, 'dropdown')">
+                          <span>{{market.name}}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div v-if="isLoader" class="practice-search-category">
+                    <div class="d-flex justify-content-center">
+                      <div class="red-loader"> </div>
+                    </div>
+                  </div>
+                  <div v-else class="practice-search-category">
+                    <ul :class="{readLess:readMore == true}" ref="marketLoadLess">
+                      <li v-for="(market, index) in featuredMarkets" @click="selectMarket(market)">
+                        <button data-toggle="tooltip" data-placement="top" :title="market.name"
+                        class="featured-button" :class="checkIsSelectedMarket(market) ? 'active btn'+  getRandomButton(index) : 'btn' +  getRandomButton(index)">
+                          <div class="featured-button-text">{{market.name}}</div>
+                        </button>
+                      </li>
+                    </ul>
+                    <div class="read-more" v-if="featuredMarkets.length > 9">
+                      <a @click="scrollTop('marketLoadLess'); readMore =! readMore;">{{readMore ? 'Load Less' : 'Load More'}}</a>
+                    </div>
+                  </div>
+
+                  
+                </div>
+              </div>
+
+              <!-- Courses -->
+              <div class="page fade-in-right" v-show="step === 2">
+                <div class="practice-content">
+                  <div class="practice-content-title">
+                    <h2>Select Your <b>course(s)</b>
+                      <span class="practice-content-tooltip">
+                        <img src="../../assets/practice/tooltip-icon.svg" alt="">
+                        <p class="practice-tooltip-text">Questions from the selected courses will only appear in your practice.</p>
+                      </span>
+                    </h2>
+                    <p>Select as many courses as you want.</p>
+                  </div>
+                  <div class="practice-search">
+                    <div class="practice-search-field">
+                      <div class="practice-search-input" :class="isError ? 'shake-horizontal error-border' : ''">
+                        <input type="text" :value="courseKey" @input="e => courseKey = e.target.value" v-model="courseKey" id="practice-search" name="practice-search" autocomplete="off"
+                          @focus="openpracticeSearchDD()" @blur="closeSearch()" placeholder="Search your course" />
+                          <button class="practice-search-img" v-if="!practiceSearchDD">
+                            <img src="../../assets/practice/search-icon.svg" alt="#">
+                          </button>
+                          <button class="practice-search-close-img" @click="practiceSearchDD = false; courseKey = ''" v-if="practiceSearchDD">
+                            <img src="../../assets/practice/search-close.svg" alt="#">
+                          </button>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <p class="practice-search-error">{{isError ? 'Please select course' : ''}}</p>
+                        <button class="practice-search-clear" @click="courseKey = ''">
+                          <img src="../../assets/practice/search-clear-icon.svg" alt="#"> Clear
+                        </button>
+                      </div>
+                    </div>
+                    <div class="practice-search-dd" v-if="practiceSearchDD">
+                      <ul>
+                        <li v-for="(course, index) in filterData(courses, courseKey, 'name')" @click="selectCourse(course, 'dropdown')">
+                          <span>{{course.name}}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div v-if="isLoader" class="practice-search-category">
+                    <div class="d-flex justify-content-center">
+                      <div class="red-loader"> </div>
+                    </div>
+                  </div>
+                  <div v-else class="practice-search-category">
+                    <ul :class="{readLess:readMore == true}" ref="couresLoadLess">
+                      <li v-for="(course, index) in featuredCourses" @click="selectCourse(course)">
+                        <button data-toggle="tooltip" data-placement="top" :title="course.name"
+                        class="featured-button" :class="checkIsSelectedCourse(course) ? 'active btn'+  getRandomButton(index) : 'btn' +  getRandomButton(index)">
+                          <div class="featured-button-text">{{course.name}}</div>
+                        </button>
+                      </li>
+                    </ul>
+                    <div class="read-more" v-if="featuredCourses.length > 9">
+                      <a @click="scrollTop('couresLoadLess'); readMore =! readMore">{{readMore ? 'Load Less' : 'Load More'}}</a>
+                    </div>
+                  </div>
+
+                  
+                </div>
+              </div>
+
+              <!-- Practice weak attempts -->
+              <div class="page fade-in-right" v-show="step === 3">
+                <!-- <div class="practice-title">
+                  <button @click.prevent="prev()" class="back-btn"> <img src="../../assets/practice/back-icon.svg">
+                    Go back</button>
+                </div> -->
+                <div class="practice-content">
+                  <div class="practice-content-title" style="margin-bottom: 0px;">
+                    <h2 style="margin-bottom: 18px;">Select Your <b>CHAPTER(s)</b>
+                      <span class="practice-content-tooltip">
+                        <img src="../../assets/practice/tooltip-icon.svg" alt="">
+                        <p class="practice-tooltip-text">Select the desired chapter that you want to practice from.</p>
+                      </span>
+                    </h2>
+                    <p>We’ll pick questions from your selected module</p>
+                  </div>
+                  <!-- <h5 class="practice-content-divider" style="margin-bottom: 7px;">Or</h5>
+                  <div >
+                    <button v-if="isWrongAttempts" class="practice-btn-outline mb-4 mr-sm-4" @click="practiceWeakAttempt()">
+                      PRACTICE YOUR WEAK TOPICS
+                    </button>
+                    <button class="practice-btn-outline random mb-4" @click="randomSelection()">
+                      Select Random TOPICS
+                    </button>
+                  </div> -->
+                  <div class="practice-search">
+                    <div class="practice-search-field">
+                      <div class="practice-search-input" :class="isError ? 'shake-horizontal error-border' : ''">
+                        <input type="text" :value="moduleKey" @input="e => moduleKey = e.target.value" v-model="moduleKey" id="practice-search" name="practice-search" autocomplete="off"
+                          @focus="openpracticeSearchDD()" @blur="closeSearch()" placeholder="Search your modules" />
+                          <button class="practice-search-img" v-if="!practiceSearchDD">
+                            <img src="../../assets/practice/search-icon.svg" alt="#">
+                          </button>
+                          <button class="practice-search-close-img" @click="practiceSearchDD = false; moduleKey = ''" v-if="practiceSearchDD">
+                            <img src="../../assets/practice/search-close.svg" alt="#">
+                          </button>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <p class="practice-search-error">{{isError ? 'Please select chapter' : ''}}</p>
+                        <button class="practice-search-clear" @click="moduleKey = ''">
+                          <img src="../../assets/practice/search-clear-icon.svg" alt="#"> Clear
+                        </button>
+                      </div>
+                    </div>
+                    <div class="practice-search-dd" v-if="practiceSearchDD">
+                      <ul>
+                        <li v-for="(module, index) in filterData(modules, moduleKey, 'name')" @click="selectModule(module, 'dropdown')">
+                          <span>{{module.name}}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div v-if="isLoader" class="practice-search-category" style="margin-top: 2px;">
+                    <div class="d-flex justify-content-center">
+                      <div class="red-loader"> </div>
+                    </div>
+                  </div>
+                  <div v-else class="practice-search-category" style="margin-top: 2px;">
+                    <ul :class="{readLess:readMore == true}" ref="modulesLoadLess">
+                      <li v-for="(module, index) in featuredModules" @click="selectModule(module)">
+                        <button data-toggle="tooltip" data-placement="top" :title="module.name"
+                        class="featured-button" :class="checkIsSelectedModule(module) ? 'active btn'+  getRandomButton(index) : 'btn' +  getRandomButton(index)">
+                          <div class="featured-button-text">{{module.name}}</div>
+                        </button>
+                      </li>
+                    </ul>
+                    <div class="read-more" v-if="featuredModules.length > 9">
+                      <a @click="scrollTop('modulesLoadLess'); readMore =! readMore">{{readMore ? 'Load Less' : 'Load More'}}</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Topics -->
+              <div class="page fade-in-right" v-show="step === -1">
+                <!-- <div class="practice-title">
+                  <button @click.prevent="prev()" class="back-btn"> <img src="../../assets/practice/back-icon.svg">
+                    Go back</button>
+                  <div v-if="practiceWeakSteps != true">
+                    <h3>Practice questions by creating your custom quiz.</h3>
+                  </div>
+
+                </div> -->
+                <div class="practice-content">
+                  <!-- <div class="practice-content-title" v-if="practiceWeakSteps == false">
+                    <h2>Select Your <b>Topic</b></h2>
+                    <p>Lorem ipsum is dummy text used for graphics design</p>
+                  </div> -->
+                  <div>
+                    <button class="practice-btn-outline mb-4 mr-sm-4" v-if="practiceWeakSteps == true" @click="practiceLastAttempt()">
+                      ADD WRONG ANSWERS
+                    </button>
+                    <button class="practice-btn-outline random mb-4" @click="randomSelection()">
+                      Select RANDOM TOPICS
+                    </button>
+                    <h5 class="practice-content-divider mb-4">Or</h5>
+                  </div>
+                  <div class="practice-search">
+                    <div class="practice-search-field">
+                      <div class="practice-search-input" :class="isError ? 'shake-horizontal error-border' : ''">
+                        <input type="text" :value="topicKey" @input="e => topicKey = e.target.value" v-model="topicKey" id="practice-search" name="practice-search" autocomplete="off"
+                          @focus="openpracticeSearchDD()" @blur="closeSearch()" placeholder="Search your topic" />
+                          <button class="practice-search-img" v-if="!practiceSearchDD">
+                            <img src="../../assets/practice/search-icon.svg" alt="#">
+                          </button>
+                          <button class="practice-search-close-img" @click="practiceSearchDD = false; topicKey = ''" v-if="practiceSearchDD">
+                            <img src="../../assets/practice/search-close.svg" alt="#">
+                          </button>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <p class="practice-search-error">{{isError ? 'Please select topic' : ''}}</p>
+                        <button class="practice-search-clear" @click="topicKey = ''">
+                          <img src="../../assets/practice/search-clear-icon.svg" alt="#"> Clear
+                        </button>
+                      </div>
+                    </div>
+                    <div class="practice-search-dd" v-if="practiceSearchDD">
+                      <ul>
+                        <li v-for="(topic, index) in filterData(topics, topicKey, 'name')" @click="selectTopic(topic, 'dropdown')">
+                          <span>{{topic.name}}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div v-if="isLoader" class="practice-search-category">
+                    <div class="d-flex justify-content-center">
+                      <div class="red-loader"> </div>
+                    </div>
+                  </div>
+                  <div v-else class="practice-search-category">
+                    <ul :class="{readLess:readMore == true}" ref="topicLoadLess">
+                      <li v-for="(topic, index) in featuredTopics" @click="selectTopic(topic)">
+                        <button data-toggle="tooltip" data-placement="top" :title="topic.name"
+                        class="featured-button" :class="checkIsSelectedTopic(topic) ? 'active btn'+  getRandomButton(index) : 'btn' +  getRandomButton(index)">
+                          <div class="featured-button-text">{{topic.name}}</div>
+                        </button>
+                      </li>
+                    </ul>
+                    <div class="read-more" v-if="featuredTopics.length > 9">
+                      <a @click="scrollTop('topicLoadLess'); readMore =! readMore">{{readMore ? 'Load Less' : 'Load More'}}</a>
+                    </div>
+                  </div>
+                  <!-- <div class="d-flex justify-content-center justify-content-md-end align-item-center mt-5">
+                    <button @click.prevent="prev()" class="btn-practice filled small back-btn">
+                      <img src="../../assets/practice/back-icon.svg" alt="#" />
+                      Go back
+                    </button>
+                    <button @click.prevent="next()" class="btn-practice filled small">
+                      Next
+                      <img src="../../assets/practice/next-icon.svg" alt="#" />
+                    </button>
+                  </div> -->
+                </div>
+              </div>
+
+              <!-- Difficulty level -->
+              <div class="page fade-in-right" v-show="step === 4">
+                <!-- <div class="practice-title">
+                  <button @click.prevent="prev()" class="back-btn"> <img src="../../assets/practice/back-icon.svg">
+                    Go back</button>
+                  <h3>Practice questions by creating your custom quiz.</h3>
+                </div> -->
+                <div class="practice-content">
+                  <div class="practice-content-title">
+                    <h2>Select Your <b>Difficulty</b>
+                      <span class="practice-content-tooltip">
+                        <img src="../../assets/practice/tooltip-icon.svg" alt="">
+                        <p class="practice-tooltip-text">Now you can select the difficulty level of the questions.</p>
+                      </span>
+                    </h2>
+                    <p>We’ll pick questions for you based on your recommendations</p>
+                  </div>
+                  <div v-if="isLoader" class="practice-search-category">
+                    <div class="d-flex justify-content-center">
+                      <div class="red-loader"> </div>
+                    </div>
+                  </div>
+                  <div v-else class="practice-search-category">
+                    <ul v-if="difficulties.length > 0">
+                      <li v-for="(difficulty, index) in difficulties" @click="selectDifficulty(difficulty)">
+                        <button data-toggle="tooltip" data-placement="top" :title="difficulty.name"
+                        class="featured-button" class="featured-button" class="featured-button" :class="checkIsSelectedDifficulty(difficulty) ? 'active btn'+  getRandomButton(index) : 'btn' +  getRandomButton(index)">
+                          <div class="featured-button-text">{{difficulty.name}}</div>
+                        </button>
+                      </li>
+                      <!-- <li>
+                        <button class="btn2">Medium</button>
+                      </li>
+                      <li>
+                        <button class="btn3">Hard</button>
+                      </li> -->
+                    </ul>
+                    <div v-else>
+                      <p>{{this.practiceWeakSteps ? "You don't have wrong attempts in given selection" : "Difficulty level not exist in given selection"}}</p>
+                    </div>
+                  </div>
+                  <!-- <div class="d-flex justify-content-center justify-content-md-end align-item-center mt-5">
+                    <button @click.prevent="prev()" class="btn-practice filled small back-btn">
+                      <img src="../../assets/practice/back-icon.svg" alt="#" />
+                      Go back
+                    </button>
+                    <button @click.prevent="next()" class="btn-practice filled small">
+                      Next
+                      <img src="../../assets/practice/next-icon.svg" alt="#" />
+                    </button>
+                  </div> -->
+                </div>
+              </div>
+
+              <!-- Time Limit -->
+              <div class="page fade-in-right" v-show="step === 5">
+                <!-- <div class="practice-title">
+                  <button @click.prevent="prev()" class="back-btn"> <img src="../../assets/practice/back-icon.svg">
+                    Go back</button>
+                  <h3>Practice questions by creating your custom quiz.</h3>
+                </div> -->
+                <div class="practice-content">
+                  <div class="practice-content-title">
+                    <h2>Set number of <b>question</b></h2>
+                    <p> </p>
+                  </div>
+                  <!-- <div class="practice-time">
+                    <div class="practice-time-field">
+                      <div>
+                        <input type="text" name="practiceHour" id="practicehour" placeholder="0" />
+                        <input type="text" name="practiceHour" id="practicehour" placeholder="0" />
+                      </div>
+                      <p>Hours</p>
+                    </div>
+                    <div class="practice-time-field">
+                      <div>
+                        <input type="text" name="practiceHour" id="practicehour" placeholder="0" />
+                        <input type="text" name="practiceHour" id="practicehour" placeholder="0" />
+                      </div>
+                      <p>Minutes</p>
+                    </div>
+                    <div class="practice-min">
+
+                    </div>
+                  </div> -->
+                <div class="d-flex justify-content-center align-item-center">
+                    <div class="practice-counter"   v-if="!isLoader">
+                      <button @click="decrement"><img src="../../assets/practice/counter-minus.svg" alt="#" /></button>
+                      <input type="number" v-model="practiceQuestionCounter" @change="questionCountChange()" :max='maxQuestions'> 
+                      <button @click="increment"><img src="../../assets/practice/counter-plus.svg" alt="#" /></button>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center align-item-center" style="height: 200px;" v-if="!isLoader">
+                  <p style="color: gray; margin-top: 30px;"><span style="color: red;">Max</span> {{maxQuestions}} Question{{maxQuestions > 1 ? 's are' : ' is'}} allowed</p>
+                </div>
+                <div v-if="isLoader" class="practice-search-category">
+                  <div class="d-flex justify-content-center">
+                    <div class="red-loader"> </div>
+                  </div>
+                </div>
+
+
+                  <!-- <div class="text-right mt-5" v-if="practiceWeakSteps == false">
+                    <button @click.prevent="next()" class="btn-contained">Next</button>
+                  </div>
+                  <div class="text-right mt-5" v-else="practiceWeakSteps == true">
+                    <button @click.prevent="quizPage()" class="btn-contained">Next</button>
+                  </div> -->
+
+                  <!-- <div class="d-flex justify-content-center justify-content-md-end align-item-center mt-5">
+                    <button @click.prevent="prev()" class="btn-practice filled small back-btn">
+                      <img src="../../assets/practice/back-icon.svg" alt="#" />
+                      Go back
+                    </button>
+                    <button @click.prevent="next()" class="btn-practice filled small" v-if="practiceWeakSteps == false">
+                      Next
+                      <img src="../../assets/practice/next-icon.svg" alt="#" />
+                    </button>
+                    <button @click.prevent="quizPage()" class="btn-practice filled small" v-else="practiceWeakSteps == true">
+                      Next
+                      <img src="../../assets/practice/next-icon.svg" alt="#" />
+                    </button>
+                  </div> -->
+
+                </div>
+              </div>
+
+              <!-- Attempt last quizes -->
+              <div class="page" v-show="step === 6">
+                <!-- <div class="practice-title">
+                  <button @click.prevent="prev()" class="back-btn"> <img src="../../assets/practice/back-icon.svg">
+                    Go back</button>
+                  <h3>Wrong Questions You attempt in last Quizs</h3>
+                </div> -->
+                <div class="practice-content">
+                  <div class="practice-content-title">
+                    <h2>Your previous <b>attempt Topic</b></h2>
+                    <p>Lorem ipsum is dummy text used for graphics design</p>
+                  </div>
+                  <div class="practice-search-category">
+                    <ul :class="{readLess:readMore == true}">
+                      <li v-for="(topic, index) in featuredTopics" @click="selectTopic(topic)">
+                        <button :class="'btn' + getRandomButton(index)">{{topic.name}}</button>
+                      </li>
+                    </ul>
+                    <div v-if="readMore == true" class="read-more">
+                      <a @click="readMore =! readMore">Load Less</a>
+                    </div>
+                    <div v-else class="read-more">
+                      <a @click="readMore =! readMore">Load More</a>
+                    </div>
+                  </div>
+                      <!-- <div class="d-flex justify-content-center justify-content-md-end align-item-center mt-5">
+                        <button @click.prevent="prev()" class="btn-practice filled small back-btn">
+                          <img src="../../assets/practice/back-icon.svg" alt="#" />
+                          Go back
+                        </button>
+                        <button @click.prevent="next()" class="btn-practice filled small">
+                          Start
+                          <img src="../../assets/practice/next-icon.svg" alt="#" />
+                        </button>
+                      </div> -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Invite Friends -->
+              <!-- <div class="page" v-show="step === 8">
+                <div class="practice-content">
+                  <h5 class="practice-content-title">Share link with your friend given social media icon.</h5>
+
+                  <ul class="practice-social">
+                    <li><img src="../../assets/practice/social-fb.svg" alt="#" /></li>
+                    <li><img src="../../assets/practice/social-insta.svg" alt="#" /></li>
+                    <li><img src="../../assets/practice/social-whatsapp.svg" alt="#" /></li>
+                    <li><img src="../../assets/practice/social-twitter.svg" alt="#" /></li>
+                    <li><img src="../../assets/practice/social-linkedin.svg" alt="#" /></li>
+                    <li><img src="../../assets/practice/copy-icon.svg" alt="#" /></li>
+                  </ul>
+
+                  <div class="text-right mt-5"><button @click="quizPage()" class="btn-contained">Start without
+                      Friends</button>
+                  </div>
+                </div>
+              </div> -->
+
+              <!-- Loader screen -->
+              <div class="practice-loader bg-parent" v-if="practiceLoader">
+                <div>
+                  <div class="practice-loader-animation">
+                    <img src="../../assets/practice/practice-loader.gif" alt="#">
+                  </div>
+                  <div class="practice-loader-content">
+                    <h3>Your Quiz has been Created </h3>
+                    <p>Please Wait</p>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center align-item-center my-4 practice-action-btn">
+                <!-- <button v-if="step > 1" @click="prev" class="btn-practice filled small back-btn">
+                  <img src="../../assets/practice/back-icon.svg" alt="#" />
+                  Go back
+                </button> -->
+                <button v-if="step > 1" @click="prev" style="color: white" class="d-flex align-item-center btn-contained btn-practice back-btn">
+                  <img src="../../assets/practice/back-icon.svg" alt="#" />
+                  Previous
+                </button>
+                <!-- <button @click.prevent="next()" class="btn-practice filled small">
+                  Next
+                  <img src="../../assets/practice/next-icon.svg" alt="#" style="margin-left: 10px;"/>
+                </button> -->
+                <button @click.prevent="next()" class="d-flex align-item-center justify-content-center btn-contained">
+                  Next
+                  <img src="../../assets/practice/next-icon.svg" alt="#" style="margin-left: 10px;"/>
+                </button>
+                
+              </div>
+              <!-- <div :class="{'active': step === 5}"> 5</div> -->
+            </div>
+            <!-- <button @click.prevent="next()" class="btn btn-md">Next</button> -->
+
+            <!-- <div class="d-flex justify-content-end align-item-center mt-5">
+              <button @click.prevent="prev()" class="btn-practice filled small back-btn">
+                <img src="../../assets/practice/back-icon.svg" alt="#" />
+                Go back
+              </button>
+              <button @click.prevent="next()" class="btn-practice filled small">
+                Next
+                <img src="../../assets/practice/next-icon.svg" alt="#" />
+              </button>
+            </div> -->
+
+            <!-- <v-tour name="myTour" :steps="steps"></v-tour> -->
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>

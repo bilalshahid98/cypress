@@ -1,0 +1,51 @@
+diff a/src/app-module/app-login-page/login-page.vue b/src/app-module/app-login-page/login-page.vue	(rejected hunks)
+@@ -20 +20 @@ export default {
+-    GoogleSignInButton,
++    GoogleSignInButton
+@@ -23 +23 @@ export default {
+-    facebookLogin,
++    facebookLogin
+@@ -31 +31 @@ export default {
+-        confirmation: false,
++        confirmation: false
+@@ -45 +45 @@ export default {
+-        dob: "",
++        dob: ""
+@@ -56 +56 @@ export default {
+-      loader: false,
++      loader: false
+@@ -75,2 +75,2 @@ export default {
+-          img: decoded.picture,
+-        },
++          img: decoded.picture
++        }
+@@ -95,2 +95,2 @@ export default {
+-          name: data.detail.user ? data.detail.user.name : null,
+-        },
++          name: data.detail.user ? data.detail.user.name : null
++        }
+@@ -110 +110 @@ export default {
+-      Object.keys(this.form).forEach((element) => {
++      Object.keys(this.form).forEach(element => {
+@@ -171 +171 @@ export default {
+-            "dob",
++            "dob"
+@@ -187 +187 @@ export default {
+-              Object.keys(this.signUp).forEach((element) => {
++              Object.keys(this.signUp).forEach(element => {
+@@ -198 +198 @@ export default {
+-            this.errorMessage = 'Email already exist'
++            this.errorMessage = "Email already exist";
+@@ -221 +221 @@ export default {
+-            Object.keys(this.forget).forEach((element) => {
++            Object.keys(this.forget).forEach(element => {
+@@ -254,2 +254,2 @@ export default {
+-                    name: res.name ? res.name : null,
+-                  },
++                    name: res.name ? res.name : null
++                  }
+@@ -298,2 +298,2 @@ export default {
+-    },
+-  },
++    }
++  }

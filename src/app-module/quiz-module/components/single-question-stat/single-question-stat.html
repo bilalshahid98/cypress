@@ -1,0 +1,227 @@
+<div class="flex-view flex-direction-row-col top-container width-100" style="background-color: var(--background-gray);">
+  <div class="top-hanger" :class="{ 'green': (question.result && !question.is_skipped) , 'gray' :(question.is_skipped && question.is_skipped) ,'red' : (!question.result && !question.skipped) }">
+    <label>{{questionNo}}</label>
+  </div>
+  <!-- <div class="cross" @click="close" v-if="!toThePoint">
+    <img src="../../../../assets/Icon ionic-md-close.svg" />
+  </div> -->
+  <div class="flex-view flex-direction-row width-100">
+    <div class="left flex-view flex-direction-col">
+      <div>
+        <div
+        class="error-remainder flex-view flex-direction-row justify-content-b align-items-center"
+      >
+        <div v-if="question.result">
+
+          <img class="mr-2" src="../../../../assets/Checkbox_pressed.svg" alt="">
+          <label style="color: var(--result-green);"><b>CORRECT</b></label>
+        </div>
+        <div v-if="question.is_skipped && !question.result">
+
+          <img class="mr-2" src="../../../../assets/Icon - Skipped Question.svg" alt="">
+          <label style="color: var(--gray) !important;"><b>SKIPPED</b></label>
+        </div>
+        <div v-if="!question.result && !question.skipped">
+          <img class="mr-2" src="../../../../assets/Icon - Wrong Answer.svg" alt="">
+          <label style="color: var(--result-red);"><b>WRONG</b></label>
+        </div>
+        <div v-if="question.related_video && question.related_video.id && !toThePoint" class="flex-view ellipsis mob-rel" style="cursor: pointer;" :title="question.related_video.name">
+          <router-link  v-bind:to="{path: '/course/'+question.related_video.index_url+'/'+question.related_video.module_no+'/'+question.related_video.id}">
+            <label class="mr-2">Related Video:</label>
+            <label >
+              {{question.related_video.name}}</label
+            >  
+          </router-link>
+          
+        </div>
+      </div>
+      <div class="justify-content-a question flex-view flex-direction-col">
+        <div class="flex-grow-1 mr-2 overflow-auto question-length">
+          <p v-if="question.equation">
+            <span v-html="question.question"></span> <br> 
+            <span class="maths-text-area" :id="`${questionNo}-equation`"
+              >{{mathCreator(`${questionNo}-equation`,question.equation)}}</span
+            >
+          </p>
+          <p v-else>
+            <span v-html="question.question"></span>
+          </p>
+        </div>
+        <img
+          v-if="question.image_url"
+          :src="question.image_url"
+          class="flex-view option-image op-image-responsive"
+          />
+      </div>
+    </div>
+      <div
+        class="left-child flex-view flex-wrap flex-direction-row flex-grow-1"
+        
+      >
+        <div class="option" v-for="(option, index) in question.options" :key="questionNo+'--'+index">
+          <div class="flex-view flex-direction-row overflow-auto">
+            <div>
+              <label 
+                :class="{ 'green': (option.is_correct == true), 'warning': option._id == question.selected_option && option.is_correct == false }"
+                class="grey-star option-star">
+                {{alphabets[index]}}
+                <!-- {{index+1}} -->
+              </label>
+            </div>
+            <div >
+              <!-- style="overflow: auto;" -->
+              <div
+                class="flex-view flex-direction-col flex-grow-1 overflow-auto"
+              >
+                <p v-if="option.equation != ''">
+                  <p>
+                    {{option.option}}
+                  </p>
+                  <span class="maths-text-area" :id="`${index}-${questionNo}-equation-option`"
+                    >{{mathCreator(`${index}-${questionNo}-equation-option`,option.equation)}}</span
+                  >
+                </p>
+                <p v-else>
+                  {{option.option}}
+                </p>
+         
+              </div>
+              <img
+                v-if="option.image_url"
+                :src="option.image_url"
+                class="option-image"
+              />
+            </div>
+            <!-- <div v-if="option.correctCount" class="flex-view flex-direction-row align-items-center mt-3">
+              <label
+                >{{((option.correctCount / totalAttempts) * 100).toFixed(1)}}%</label
+              >
+              <div class="progress">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  aria-valuenow="71"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  :style="'width:' + (option.correctCount / totalAttempts) * 100 + '%'"
+                ></div>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="question && question.solution || question && question.solution_equation || question && question.solution_image_url"
+        class="left-child justify-content-c flex-view flex-direction-col flex-grow-1"
+        style="width: 100%;"
+      >
+        <div style="
+        max-width: 800px;
+        overflow: auto;
+        padding: 0px 20px;
+    ">
+          <h3><b>Solution</b></h3>
+          <p>
+            {{question.solution}}
+          </p>
+          <p
+            :id="`${questionNo}-solution-equation`"
+            v-if="question && question.solution_equation"
+            class="maths-text-area" 
+          >
+            {{mathCreator(`${questionNo}-solution-equation`,question.solution_equation)}}
+          </p>
+          
+        </div>
+        <div class="flex-view jcc-end-center">
+          <img
+            v-if="question.solution_image_url"
+            :src="question.solution_image_url"
+            class="option-image"
+            style="    margin-right: 15px;
+            "
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="right width-100" v-if="!toThePoint">
+    <button class="review-btn" @click="reviewAll()">
+      Review all questions
+    </button>
+    <div
+      class="flex-view flex-direction-col align-items-center justify-content-b"
+    >
+      <h3>QUESTION STATS</h3>
+      <label style="font-size: 12px;">Correct Responses</label>
+      <div style="position: relative;">
+        <app-Doughnut
+          style="margin-bottom: 10px; height: 150px; width: 150px;"
+          :value="[question.correctCount?question.correctCount:0, (totalAttempts-(question.correctCount?question.correctCount:0))]"
+          :backgroundColor="['#5169D5', '#E0E0E0']"
+        ></app-Doughnut>
+        <div class="middle-stat-average">
+          <label style="font-size: 20px"><b>{{question.correctCount? ((question.correctCount / totalAttempts ) * 100).toFixed(0):0}}%</b></label>
+        </div>
+      </div>
+
+      <label class="r-statyus"
+          >
+          <div v-if="difficultyLevel !== ''" class="star"></div>
+          {{difficultyLevel}}</label
+        >
+        <div class="time-board-row flex-view flex-direction-col">
+          <img src="../../../../assets/stats-icons/Icon - One Student.svg" />
+          <div
+            style="width: 100%;border-bottom: 1px solid #DDDDDD"
+            class="flex-view flex-direction-row justify-content-b"
+          >
+            <label>Your Time</label>
+            <label><b>{{question.time_spent ? question.time_spent.toFixed(0) : 0}} sec</b></label>
+          </div>
+        </div>
+        <div class="time-board-row flex-view flex-direction-col">
+          <img src="../../../../assets/stats-icons/Icon - Students.svg" />
+          <div
+            style="width: 100%;border-bottom: 1px solid #DDDDDD"
+            class="flex-view flex-direction-row justify-content-b"
+          >
+            <label>Average Time</label>
+            <label class="ellipsis max-width-50"><b>{{question.averageTime ? question.averageTime.toFixed(0) : 0}} sec
+            </b></label>
+          </div>
+          <!-- <div
+            style="width: 100%;border-bottom: 1px solid #DDDDDD"
+            class="flex-view flex-direction-row justify-content-b"
+          >
+            <label>Added to Collection</label>
+            <label class="ellipsis max-width-50"><b>0%</b></label>
+          </div> -->
+          <div
+            style="width: 100%;border-bottom: 1px solid #DDDDDD"
+            class="flex-view flex-direction-row justify-content-b"
+          >
+            <label>Skipped by</label>
+            <label class="ellipsis max-width-50"><b>{{question.skippedCount || 0}}</b></label>
+          </div>
+          <div
+            style="width: 100%;border-bottom: 1px solid #DDDDDD"
+            class="flex-view flex-direction-row justify-content-b"
+          >
+            <label>Marked for Review</label>
+            <label class="ellipsis max-width-50"><b>{{question.markedCount || 0}}</b></label>
+          </div>
+        </div>
+        <div class="time-board-row flex-view flex-direction-col">
+          <img src="../../../../assets/stats-icons/Icon - Best Score.svg" />
+          <div
+            style="width: 100%;border-bottom: 1px solid #DDDDDD"
+            class="flex-view flex-direction-row justify-content-b"
+          >
+            <label>Best Time</label>
+            <label class="ellipsis max-width-50"><b>{{question.bestTime || 0}}sec</b></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,9 @@
+diff a/src/app-module/shared-module/components/app-sidebar/app-sidebar.vue b/src/app-module/shared-module/components/app-sidebar/app-sidebar.vue	(rejected hunks)
+@@ -1,2 +1 @@
+-<template src="./app-sidebar.html">
+-</template>
++<template src="./app-sidebar.html"> </template>
+@@ -10,2 +9 @@ export default {
+-<style src="./app-sidebar.css" scoped>
+-</style>
++<style src="./app-sidebar.css" scoped></style>

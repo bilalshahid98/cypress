@@ -1,0 +1,38 @@
+
+<!-- <div class="poppup-cp-container">v-if="session.quiz.is_skippable" -->
+
+  <div class="poppup-cp-new-overlay align-items-center" style="z-index: 111;">
+    <div class="poppup-cp-container">
+      <div class="email-poppup-cp-new" style="height: auto; padding: 5px;">
+        <div class="f-c d-row flex-directin-row-col" style="position: relative;    padding: 60px 15px;
+        ">
+          <span class="closeBtn" style="    margin: 10px;
+          " @click="closeAccessPopup">
+            x
+          </span>
+          <div v-if="!isMobileOrTablet" class="flex-view justify-content-center" style="min-width: 180px;padding: 0px 30px;">
+            <img src="../../../../assets/DownloadPageMonitor 1.svg">
+          </div>
+          <div class="f-c d-col ppmaxwidth" style="padding: 0px 15px;
+          width: 380px;">
+          <div class="flex-view flex-direction-col justify-content-around" style="height: 245px;">
+            <h4>{{requestSubmit ? 'Request Submitted' : 'Suspicious domain detected!'}}</h4>
+            <p class="body-2">
+              {{requestSubmit ? "Your account review request has been submitted successfully. Please hold. We'll get back to you within 48 hours." : "We have observed that you're using a private domain to signup at Nearpeer. Your account has been created successfully but it is under review right now. if it gets approved, you'll get an email soon. In the meantime, please sign up with the social logins."}}
+            </p>
+            <div class="f-c d-row" style="justify-content: flex-end;">
+              <button class="btn-contained flex-view justify-content-center align-items-center" @click="submitRequest" style="width: 100%;">
+                {{requestSubmit ? "Understood" : "Submit Request"}}
+              </button>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+  </div>
+  
+  <!-- </div> -->
+  

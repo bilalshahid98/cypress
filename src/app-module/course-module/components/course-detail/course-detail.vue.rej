@@ -1,0 +1,8 @@
+diff a/src/app-module/course-module/components/course-detail/course-detail.vue b/src/app-module/course-module/components/course-detail/course-detail.vue	(rejected hunks)
+@@ -1,2 +1 @@
+-<template src='./course-detail.html'>
+-</template>
++<template src="./course-detail.html"> </template>
+@@ -10 +9 @@ export default {
+-<style src='./course-detail.css' scoped></style>
++<style src="./course-detail.css" scoped></style>

@@ -1,0 +1,31 @@
+<div class="height-100p flex-view flex-direction-row">
+  <div id="nav-menu" class="side-menu">
+    <app-sidebar />
+  </div>
+  <div class="poppup-cp-new-overlay" id="nav-menu-shadow"></div>
+  <div class="flex-view">
+    <div id="nav-bar" class="flex-view">
+      <app-header />
+    </div>
+    <div id="main-body" class="right-side-responsive">
+      <app-verification v-if="verificationNeeded" />
+      <div class="bg-parent">
+        <div
+          class="hundred-vh flex-view flex-direction-col align-content-center justify-content-c"
+        >
+        <div class="schedule-mobile">
+        <div class="upper-text flex-view justify-content-c">
+        <h3>Stay organized with a daily study schedule.</h3>
+      </div>
+      <div class="middle-div flex-view justify-content-c">
+        <img src="../../assets/Schedule-Gif.gif" class="gif"/>
+      </div>
+      <div class="bottom-text flex-view justify-content-c">
+        <p class="overline">Coming Soon...</p>
+      </div>
+      </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>

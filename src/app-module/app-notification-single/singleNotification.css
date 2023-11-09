@@ -1,0 +1,83 @@
+@import url(../app-notification/notification.css);
+.noti-single {
+  padding: 20px 40px;
+}
+
+.noti-single-image img {
+  width: 100%;
+  height: auto;
+}
+
+/* .noti-single-title{
+  margin: 0 0 25px;
+} */
+.noti-single-title h3 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.noti-single-title p {
+  font-size: 23px;
+  font-weight: 300;
+}
+
+.noti-single-desc {
+  font-size: 16px;
+  margin: 25px 0;
+}
+
+.noti-single-course li {
+  line-height: 1;
+  margin: 0 0 10px;
+}
+
+.noti-single-course .noti-btn {
+  background: #E03249;
+  color: #fff;
+  margin: 20px 0 0;
+}
+
+.avail_offer h4 {
+  font-size: 22px;
+}
+
+.avail_offer p {
+  font-size: 16px;
+  margin: 16px 0 24px;
+}
+
+.avail_offer .modal-footer {
+  border: none;
+}
+
+.avail_offer .noti-btn {
+  background: transparent;
+  color: #E03249;
+  border: 1px solid #EAEAEA;
+  padding: 8px 18px;
+}
+.avail_offer .noti-btn:hover {
+  background: #E03249;
+  color: #fff;
+}
+.avail_offer .noti-btn.active {
+  background: #E03249;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+.avail_offer .noti-btn img {
+  margin: 0 10px 0 0;
+}
+
+@media (max-width: 767px) {
+  .noti-single {
+    padding: 10px;
+  }
+}
+@media (max-width: 320px) {
+  .single-page-title {
+    width: 120px;
+    line-height: 1;
+  }
+}/*# sourceMappingURL=singleNotification.css.map */

@@ -1,0 +1,127 @@
+.side-menu {
+  animation: none !important;
+}
+.bg-parent {
+  background-image: url(../../assets/wireframes/Welcome-Screen-BG.svg);
+  background-repeat: round;
+  background-color: var(--white);
+}
+.hundred-vh {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.h-parent {
+  max-width: 350px;
+  animation: one-second-animation 1s;
+}
+.middle-div {
+  padding: 20px 0px;
+  margin: 0 auto;
+}
+.bottom-text {
+  margin: 0 auto;
+}
+.upper-text {
+  margin: 0 auto;
+}
+.gif {
+  width: 498px;
+  height: 198px;
+}
+.h-2 {
+  text-transform: capitalize;
+  font-family: Basis Grotesque Pro Regular;
+}
+@media only screen and (min-width: 600px) {
+  .hundred-vh {
+    flex-wrap: wrap;
+  }
+  .break {
+    flex-basis: 100%;
+    height: 0;
+    margin-bottom: 5px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .bg-parent {
+    background-image: url(../../assets/wireframes/Welcome-Screen-BG.svg);
+    background-repeat: no-repeat !important;
+    background-color: var(--white);
+  }
+
+  .hundred-vh {
+    padding: 0 20px;
+  }
+  .gif {
+    width: 298px;
+    height: 198px;
+  }
+  .schedule-mobile{
+    margin-top: 50px;
+  }
+}
+@keyframes anime-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes anime-scale-girl-behind-screen {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+    top: -35px;
+  }
+  33% {
+    opacity: 0;
+    transform: scale(0.5);
+    top: -35px;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    top: -83px;
+  }
+}
+@keyframes anime-scale-girl-with-laptop {
+  0% {
+    transform: scale(0);
+  }
+  33% {
+    transform: scale(0);
+  }
+  80% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes anime-scale-boy-holding-pencil {
+  0% {
+    opacity: 0;
+    left: -110px;
+    bottom: 0;
+  }
+  50% {
+    opacity: 0;
+    left: -110px;
+    bottom: 0;
+    transform: rotate(0deg);
+  }
+  85% {
+    opacity: 1;
+    left: -90px;
+    bottom: 0;
+    transform: rotate(10deg);
+  }
+  100% {
+    opacity: 1;
+    left: -90px;
+    bottom: 0;
+  }
+}

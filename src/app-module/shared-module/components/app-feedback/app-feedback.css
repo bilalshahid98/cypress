@@ -1,0 +1,214 @@
+.feedback-holder {
+  max-width: 700px;
+  background: var(--white);
+  width: 700px;
+  height: 375px;
+  background: var(--white);
+  border-radius: 6px;
+  box-shadow: 0px 5px 14px var(--light-black);
+}
+.feedback-holder h1 {
+  font-size: 20px;
+}
+.feedback-holder .mt-3 {
+  text-align: right;
+}
+.feedback-holder img {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.bg-color {
+  background-color: #60E0AC;
+}
+
+.progress {
+  height: 0.5rem;
+}
+
+.flex-direction-row-col {
+  flex-direction: row;
+}
+
+.padding-div {
+  padding: 0px 30px;
+}
+
+.ux-div {
+  padding: 20px 35px;
+}
+
+.height-100 {
+  height: 100%;
+}
+
+.feature-div {
+  padding: 20px;
+}
+
+.feature-box {
+  border: 1px solid var(--line-border);
+  border-radius: 20px;
+  height: 130px;
+  width: 190px;
+  margin: 5px 0px;
+}
+
+.feature-box:hover {
+  background-color: var(--background-gray);
+  cursor: pointer;
+}
+
+.activeFeature {
+  background-color: var(--background-gray);
+}
+
+.suggestion-box {
+  max-width: 560px;
+  padding: 0px 30px;
+}
+
+.btn-np {
+  min-width: 170px;
+}
+
+.heightFix {
+  overflow: auto;
+  padding: 100px 0;
+}
+
+.user-experience-emoticons {
+  max-width: 100%;
+}
+
+.experience-div img:nth-child(1) {
+  display: block;
+}
+.experience-div img:nth-child(2) {
+  display: none;
+}
+.experience-div:hover {
+  cursor: pointer;
+}
+.experience-div:hover img:nth-child(1) {
+  display: none;
+}
+.experience-div:hover img:nth-child(2) {
+  display: block;
+}
+
+.active img:nth-child(1) {
+  display: none;
+}
+.active img:nth-child(2) {
+  display: block;
+}
+
+.min-height {
+  min-height: 545px;
+}
+
+.feedback-title {
+  font-weight: bold;
+  background-color: var(--theme-bg);
+  color: white;
+  padding: 15px 25px;
+}
+
+.feedback-middle-div {
+  padding: 20px;
+  height: 100%;
+}
+
+.padding-0 {
+  padding: 0;
+}
+
+.text-area {
+  padding: 0;
+  width: 100%;
+  min-height: 150px;
+}
+
+.font-color {
+  color: var(--white) !important;
+}
+
+.recommendation-list {
+  border: 1px solid var(--black);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+.recommendation-list:hover {
+  cursor: pointer;
+}
+
+.activeList {
+  border: 1px solid var(--theme-bg);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-color: var(--theme-bg);
+  color: var(--white);
+}
+
+.width-100 {
+  width: 100%;
+}
+
+.closeButton {
+  position: relative;
+}
+.closeButton:hover {
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 850px) and (min-width: 600px) {
+  .feedback-holder {
+    max-width: 600px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .mt-div {
+    margin-top: 165px;
+  }
+  .scroll-div {
+    overflow: scroll;
+  }
+  .text-area {
+    padding: 0px;
+    width: 100%;
+    min-height: 140px;
+  }
+  .feedback-holder {
+    max-width: 550px;
+    height: 100%;
+  }
+  .flex-direction-row-col {
+    flex-direction: column;
+    align-items: center;
+  }
+  .suggestion-box {
+    width: 100%;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .mt-div {
+    margin-top: 90px;
+  }
+  .feedback-holder {
+    max-width: 98%;
+    height: 700px;
+  }
+}
+@media only screen and (max-height: 750px) {
+  .mt-div {
+    margin-bottom: -135px !important;
+  }
+}
+@media only screen and (max-height: 480px) and (min-height: 300px) {
+  .mt-div {
+    margin-top: 165px;
+  }
+}/*# sourceMappingURL=app-feedback.css.map */

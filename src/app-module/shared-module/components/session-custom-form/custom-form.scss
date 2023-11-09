@@ -1,0 +1,32 @@
+.session-form-wrapper{
+  width: 283px;
+  padding: 10px 8px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 0px 10px 10px 0px;
+}
+.session-form-title{
+  color: var(--black);
+  font-size: 14px;
+  margin-
+  img{
+    margin-right: 5px;
+  }
+}
+.session-form-button{
+  color: var(--white);
+  font-size: 12px;
+  padding: 5px 10px;
+  background: #434343;
+  border: 1px solid #8F8F8F;
+  border-radius: 30px;
+}
+.form-builder{
+  margin: 15px 0;
+  max-height: 307px;
+  overflow-y: auto;
+}
+@media (max-width:767px){
+  .form-builder{
+    max-height: 110px;
+  }
+}
