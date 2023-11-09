@@ -1,0 +1,12 @@
+{
+    "reporter": "mochawesome",
+    "reporterOptions": {
+      "reportDir": "cypress/reports/mochawesome",
+      "overwrite": false,
+      "html": false,
+      "json": true
+    },
+    "watchForFileChanges": false,
+    "pageLoadTimeout": 600000
+  }
+  

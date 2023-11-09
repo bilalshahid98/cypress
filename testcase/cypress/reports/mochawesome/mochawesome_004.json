@@ -1,0 +1,90 @@
+{
+  "stats": {
+    "suites": 0,
+    "tests": 1,
+    "passes": 0,
+    "pending": 0,
+    "failures": 1,
+    "start": "2023-11-08T13:29:19.023Z",
+    "end": "2023-11-08T13:29:29.645Z",
+    "duration": 10622,
+    "testsRegistered": 1,
+    "passPercent": 0,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "4a65cde2-412c-4cdd-bfd5-75781d0da836",
+      "title": "",
+      "fullFile": "cypress/integration/first.js",
+      "file": "cypress/integration/first.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [
+        {
+          "title": "google-test",
+          "fullTitle": "google-test",
+          "timedOut": null,
+          "duration": 7265,
+          "state": "failed",
+          "speed": null,
+          "pass": false,
+          "fail": true,
+          "pending": false,
+          "context": null,
+          "code": "cy.visit('https://lms.nearpeer.org/landing');\ncy.get('.flex-grow-1 > .flex-view').click();\ncy.get('.module-body-elements:nth-child(1) > .chapter > .body-2').click();\ncy.get('\\x31 432 .body-2').click();\ncy.get('\\x31 437 > .flex-view > .flex-view > .body-2').click();\ncy.get('.fixed-container-form').dblclick();\ncy.url().should('contains', 'https://accounts.google.com/o/oauth2/iframe');\ncy.get('.option-active .body-2').click();\ncy.get('.btn-contained').click();\ncy.get('.right > img').click();\ncy.get('.right-last > img').click();\ncy.get('.btn-contained:nth-child(2)').click();\ncy.get('.btn-contained').click();",
+          "err": {
+            "message": "AssertionError: Timed out retrying after 4000ms: Expected to find element: `.flex-grow-1 > .flex-view`, but never found it.",
+            "estack": "AssertionError: Timed out retrying after 4000ms: Expected to find element: `.flex-grow-1 > .flex-view`, but never found it.\n    at Context.eval (https://lms.nearpeer.org/__cypress/tests?p=cypress/integration/first.js:102:6)",
+            "diff": null
+          },
+          "uuid": "f4212adb-e667-4dcb-978e-8d72232cf583",
+          "parentUUID": "4a65cde2-412c-4cdd-bfd5-75781d0da836",
+          "isHook": false,
+          "skipped": false
+        }
+      ],
+      "suites": [],
+      "passes": [],
+      "failures": [
+        "f4212adb-e667-4dcb-978e-8d72232cf583"
+      ],
+      "pending": [],
+      "skipped": [],
+      "duration": 7265,
+      "root": true,
+      "rootEmpty": false,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.0.1"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "6.2.2"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports/mochawesome",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "5.2.0"
+    }
+  }
+}
