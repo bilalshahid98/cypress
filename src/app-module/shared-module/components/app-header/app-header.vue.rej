@@ -1,4 +1,0 @@
-diff a/src/app-module/shared-module/components/app-header/app-header.vue b/src/app-module/shared-module/components/app-header/app-header.vue	(rejected hunks)
-@@ -17 +17 @@ export default {
--    "desktop-app-header": DesktopAppHeader,
-+    "desktop-app-header": DesktopAppHeader

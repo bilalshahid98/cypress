@@ -1,9 +1,0 @@
-diff a/src/app-module/shared-module/components/app-header/app-header.vue b/src/app-module/shared-module/components/app-header/app-header.vue	(rejected hunks)
-@@ -1,2 +1 @@
--<template src='./app-header.html'>
--</template>
-+<template src="./app-header.html"> </template>
-@@ -10,2 +9 @@ export default {
--<style src='./app-header.css' scoped>
--</style>
-+<style src="./app-header.css" scoped></style>

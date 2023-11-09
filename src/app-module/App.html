@@ -1,7 +1,0 @@
-<div>
-  <desktop-app-header v-if="isDesktopApp"/>
-  <security-popup v-if="!isDesktopApp && !reactNativeApp && !noSecurity"/>
-  <ddos-popup />
-  <router-view />
-  <!-- <floating-button /> -->
-</div>
