@@ -1,27 +1,25 @@
 {
-  "name": "telegram_redirect",
-  "version": "0.0.1",
+  "name": "cypress-project",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env DEBUG=1 nodemon ./index.js",
-    "start": "node ./index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cypress:run": "npx cypress run",
+    "merge:reports": "mochawesome-merge cypress/reports/mochawesome/*.json > cypress/reports/mochawesome/merged.json",
+    "generate:report": "marge cypress/reports/mochawesome/merged.json -o cypress/reports/mochawesome",
+    "cypress:test": "npm run cypress:run && npm run merge:reports && npm run generate:report"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged --pattern \"**/*.*(js|jsx|html)\""
-    }
-  },
-  "nodemonConfig": {
-    "ext": "js,mjs,json,html,css"
-  },
+  "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "cypress": "^6.6.0"
+  },
   "devDependencies": {
-    "cross-env": "^7.0.0",
-    "husky": "^4.2.3",
-    "nodemon": "^2.0.2",
-    "prettier": "^1.19.1",
-    "pretty-quick": "^2.0.1"
+    "cypress-mochawesome-reporter": "^3.6.1",
+    "mochawesome": "^6.2.2",
+    "mochawesome-merge": "^4.3.0",
+    "mochawesome-report-generator": "^6.2.0"
   }
 }
