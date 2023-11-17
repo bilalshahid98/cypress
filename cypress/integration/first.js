@@ -9,7 +9,7 @@ it("google-test", function() {
     "Admin"
   );
   cy.get(":nth-child(3) > .oxd-input-group > :nth-child(2) > .oxd-input").type(
-    "admin1234"
+    "admin123"
   );
   cy.get(".oxd-button").click();
   cy.get(":nth-child(1) > .oxd-main-menu-item > .oxd-text").click();
